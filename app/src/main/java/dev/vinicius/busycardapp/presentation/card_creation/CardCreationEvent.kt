@@ -4,10 +4,20 @@ import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.domain.model.card.FieldType
 
 sealed class CardCreationEvent {
-    data class OnAddField(val fieldType: FieldType): CardCreationEvent()
-    data class OnDeleteField(val field: Field): CardCreationEvent()
-    data class OnSelectField(val field: Field?): CardCreationEvent()
+    sealed class CardEvent: CardCreationEvent() {
+        data class OnAddField(val fieldType: FieldType): CardEvent()
+        data class OnDeleteField(val field: Field): CardEvent()
+        data class OnSelectField(val field: Field?): CardEvent()
+    }
 
-    object OnDismissModalSheet: CardCreationEvent()
-    data class OnShowBottomSheet(val field: Field? = null): CardCreationEvent()
+    sealed class FieldEvent: CardCreationEvent() {
+        data class OnTextFieldChange(val field: Field.TextField): FieldEvent()
+    }
+
+    sealed class ModalEvent: CardCreationEvent() {
+        object OnDismissModalSheet: ModalEvent()
+        data class OnShowBottomSheet(val field: Field? = null): ModalEvent()
+    }
+
 }
+
