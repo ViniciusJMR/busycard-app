@@ -2,6 +2,7 @@ package dev.vinicius.busycardapp.presentation.card_creation
 
 import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.domain.model.card.FieldType
+import dev.vinicius.busycardapp.domain.model.card.TextType
 
 sealed class CardCreationEvent {
     sealed class CardEvent: CardCreationEvent() {
@@ -11,7 +12,15 @@ sealed class CardCreationEvent {
     }
 
     sealed class FieldEvent: CardCreationEvent() {
-        data class OnTextFieldChange(val field: Field.TextField): FieldEvent()
+        data class OnTextFieldChange(
+            var name: String? = null,
+            var offsetX: Float? = null,
+            var offsetY: Float? = null,
+            var size: Float? = null,
+            var textType: TextType? = null,
+            var value: String? = null,
+        ): FieldEvent()
+        data class OnTextFieldTypeChange(val textType: TextType): FieldEvent()
     }
 
     sealed class ModalEvent: CardCreationEvent() {

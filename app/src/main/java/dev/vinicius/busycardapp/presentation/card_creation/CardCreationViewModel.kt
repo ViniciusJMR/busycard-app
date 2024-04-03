@@ -51,8 +51,8 @@ class CardCreationViewModel @Inject constructor(
                     }
                     FieldType.EMAIL -> {
                         Field.TextField(
-                            name = "Phone field 1",
-                            value = "(99) 99999-9999",
+                            name = "email field 1",
+                            value = "place@holder",
                             offsetX = 200f,
                             offsetY = 200f,
                             textType = TextType.EMAIL
@@ -91,7 +91,24 @@ class CardCreationViewModel @Inject constructor(
                         currentlySelectedField =
                         ( it.currentlySelectedField as Field.TextField )
                             .apply {
-                                value = event.field.value
+                                event.name?.let {
+                                    name = it
+                                }
+                                event.offsetX?.let {
+                                    offsetX = it
+                                }
+                                event.offsetY?.let {
+                                    offsetY = it
+                                }
+                                event.size?.let {
+                                    size = it
+                                }
+                                event.textType?.let {
+                                    textType = it
+                                }
+                                event.value?.let {
+                                    value = it
+                                }
                             },
                         showBottomSheet = false
                     )
