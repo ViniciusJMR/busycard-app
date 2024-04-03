@@ -11,13 +11,12 @@ import dev.vinicius.busycardapp.domain.model.card.FieldType
 fun SelectableOption(
     modifier: Modifier = Modifier,
     text: String,
-    onClick: (FieldType) -> Unit,
-    fieldType: FieldType,
+    onClick: () -> Unit,
 ) {
 
     TextButton(
         modifier = modifier,
-        onClick = { onClick(fieldType) }
+        onClick = onClick
     ) {
         Text(
             textAlign = TextAlign.Center,

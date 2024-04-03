@@ -1,0 +1,53 @@
+package dev.vinicius.busycardapp.presentation.card_creation
+
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import dev.vinicius.busycardapp.presentation.card_creation.section.OptionsSection
+import dev.vinicius.busycardapp.presentation.card_creation.section.ShowCardSection
+
+@Composable
+fun Screen(
+    modifier: Modifier = Modifier,
+    state: CardCreationState,
+    event: (CardCreationEvent) -> Unit,
+) {
+    Scaffold(
+        floatingActionButton = {
+            ExtendedFloatingActionButton(
+                text = { Text("Add Field") },
+                icon = { Icon(Icons.Filled.Add, contentDescription = "") },
+                onClick = { event(CardCreationEvent.ModalEvent.OnShowBottomSheet()) }
+            )
+        }
+    ) { it ->
+        Box(
+            modifier
+                .fillMaxSize()
+                .padding(it),
+            contentAlignment = Alignment.Center
+        ) {
+            ShowCardSection(
+                event = event,
+                state = state
+            )
+            OptionsSection(
+                onAddField = { fieldType -> event(CardCreationEvent.CardEvent.OnAddField(fieldType)) },
+                onChangeField = { fieldEvent -> event(fieldEvent) },
+                onDismissModalSheet = { event(CardCreationEvent.ModalEvent.OnDismissModalSheet) },
+                onShowDialog = { event(CardCreationEvent.DialogEvent.OnShowTextTypeDialog) },
+                currentlySelectedField = state.currentlySelectedField,
+                showBottomSheet = state.showBottomSheet
+            )
+        }
+    }
+}
