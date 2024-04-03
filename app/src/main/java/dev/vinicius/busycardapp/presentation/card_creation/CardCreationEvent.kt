@@ -28,5 +28,10 @@ sealed class CardCreationEvent {
         data class OnShowBottomSheet(val field: Field? = null): ModalEvent()
     }
 
+    sealed class DialogEvent: CardCreationEvent() {
+        object OnShowTextTypeDialog: DialogEvent()
+        object OnDismissTextTypeDialog: DialogEvent()
+    }
+
 }
 

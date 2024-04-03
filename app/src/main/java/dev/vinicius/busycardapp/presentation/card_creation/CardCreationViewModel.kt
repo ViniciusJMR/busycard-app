@@ -18,12 +18,12 @@ class CardCreationViewModel @Inject constructor(
     private val _state = MutableStateFlow(CardCreationState())
     val state = _state.asStateFlow()
 
-
     fun onEvent(event: CardCreationEvent) {
         when (event) {
             is CardCreationEvent.CardEvent -> handleCardEvent(event)
             is CardCreationEvent.FieldEvent -> handleOnChangeFieldValue(event)
             is CardCreationEvent.ModalEvent -> handleOnModalEvent(event)
+            is CardCreationEvent.DialogEvent -> handleOnDialogEvent(event)
         }
     }
 
@@ -114,6 +114,19 @@ class CardCreationViewModel @Inject constructor(
                     )
                 }
             }
+
+            is CardCreationEvent.FieldEvent.OnTextFieldTypeChange -> {
+                _state.update {
+                    it.copy(
+                        currentlySelectedField =
+                        ( it.currentlySelectedField as Field.TextField )
+                            .apply {
+                                   textType = event.textType
+                            },
+                        showTextTypeDialog = false
+                    )
+                }
+            }
         }
     }
 
@@ -138,4 +151,24 @@ class CardCreationViewModel @Inject constructor(
             }
         }
     }
+
+    private fun handleOnDialogEvent(event: CardCreationEvent.DialogEvent) {
+        when (event) {
+            CardCreationEvent.DialogEvent.OnShowTextTypeDialog -> {
+                _state.update {
+                    it.copy(
+                        showTextTypeDialog = true
+                    )
+                }
+            }
+            CardCreationEvent.DialogEvent.OnDismissTextTypeDialog -> {
+                _state.update {
+                    it.copy(
+                        showTextTypeDialog = false
+                    )
+                }
+            }
+        }
+    }
+
 }

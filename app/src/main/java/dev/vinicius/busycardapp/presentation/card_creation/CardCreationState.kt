@@ -14,5 +14,6 @@ data class CardCreationState (
 
     var isLoading: Boolean = false,
     var showBottomSheet: Boolean = false,
+    var showTextTypeDialog: Boolean = false,
     var error: String? = null,
 )
