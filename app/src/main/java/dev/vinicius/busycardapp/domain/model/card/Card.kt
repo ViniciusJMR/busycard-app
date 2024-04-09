@@ -1,7 +1,7 @@
 package dev.vinicius.busycardapp.domain.model.card
 
 data class Card(
-    val id: Long,
+    val id: Long? = null,
     var name: String,
     var owner: String,
     val fields: List<Field>,
