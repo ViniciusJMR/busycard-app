@@ -7,6 +7,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.vinicius.busycardapp.domain.model.usecase.card.GetCardById
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,8 +27,27 @@ class CardInfoViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             getCardById(1)
-                .collect{
-                    Log.d(TAG, "Collected")
+                .onStart {
+                    Log.d(TAG, "Started")
+                    _state.update {
+                        it.copy(
+                            isLoading = true,
+                        )
+                    }
+                }
+                .catch {
+                    Log.e(TAG, "Error: ${it.message}")
+                }
+                .collect{ card ->
+                    Log.d(TAG, "Collected:  $card")
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            name = card.name,
+                            owner = card.owner,
+                            fields = card.fields
+                        )
+                    }
                 }
         }
     }
