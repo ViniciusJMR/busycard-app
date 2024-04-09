@@ -9,6 +9,9 @@ sealed class CardCreationEvent {
         data class OnAddField(val fieldType: FieldType): CardEvent()
         data class OnDeleteField(val field: Field): CardEvent()
         data class OnSelectField(val field: Field?): CardEvent()
+
+
+        object OnSaveCard: CardEvent()
     }
 
     sealed class FieldEvent: CardCreationEvent() {

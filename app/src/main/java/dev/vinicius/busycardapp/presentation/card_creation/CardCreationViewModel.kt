@@ -1,14 +1,19 @@
 package dev.vinicius.busycardapp.presentation.card_creation
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.vinicius.busycardapp.domain.model.card.Card
 import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.domain.model.card.FieldType
 import dev.vinicius.busycardapp.domain.model.card.TextType
 import dev.vinicius.busycardapp.domain.model.usecase.card.SaveCard
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -17,6 +22,10 @@ class CardCreationViewModel @Inject constructor(
 ): ViewModel(){
     private val _state = MutableStateFlow(CardCreationState())
     val state = _state.asStateFlow()
+
+    companion object {
+        val TAG = "CardCreationViewModel"
+    }
 
     fun onEvent(event: CardCreationEvent) {
         when (event) {
@@ -78,6 +87,24 @@ class CardCreationViewModel @Inject constructor(
                         currentlySelectedField = event.field
                     )
                 }
+            }
+            CardCreationEvent.CardEvent.OnSaveCard -> {
+                val card = Card(
+                    id = 1L,
+                    name = _state.value.cardName,
+                    fields = _state.value.cardFields,
+                    owner = "Vincius"
+                )
+                viewModelScope.launch {
+                    saveCard(card)
+                        .catch {
+                            Log.d(TAG, "handleCardEvent: error: $it")
+                        }
+                        .collect{
+                            Log.d(TAG, "handleCardEvent: Salvo com sucesso")
+                        }
+                }
+
             }
         }
 

@@ -13,7 +13,6 @@ fun SelectableOption(
     text: String,
     onClick: () -> Unit,
 ) {
-
     TextButton(
         modifier = modifier,
         onClick = onClick
