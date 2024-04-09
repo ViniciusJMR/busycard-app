@@ -10,7 +10,5 @@ import javax.inject.Inject
 class GetCardById @Inject constructor(
     private val repository: Repository<Long, Card>
 ): UseCase<Long, Card>() {
-    override suspend fun execute(param: Long) = flow {
-        emit(repository.getById(param))
-    }
+    override suspend fun execute(param: Long) = repository.getById(param)
 }
