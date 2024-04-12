@@ -10,6 +10,7 @@ import dev.vinicius.busycardapp.data.remote.firebase.mapper.mapToFirebaseModel
 import dev.vinicius.busycardapp.data.remote.firebase.model.FirebaseCardModel
 import dev.vinicius.busycardapp.data.repository.Repository
 import dev.vinicius.busycardapp.domain.model.card.Card
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -21,19 +22,30 @@ class CardRepository @Inject constructor(
     // TODO: move it to interface
     private val database = Firebase.database.reference
 
-    // Temp solution
-    val cards: MutableList<Card> = ArrayList()
 
-    override suspend fun getById(id: Long) = flow {
-        // TODO: Remove this!!
-        val card: Card
+    override suspend fun getAll(): Flow<List<Card>> = flow {
+        val dataSnapshot = database.child("cards").get()
+        dataSnapshot.await()
+        when {
+            dataSnapshot.isSuccessful -> {
+                val firebaseCards = dataSnapshot.result.getValue<List<FirebaseCardModel>>()
+                val cards = firebaseCards!!.map { it.mapToDomainModel() }
+                emit(cards)
+            }
+            dataSnapshot.isCanceled -> {
+                TODO()
+            }
+        }
+    }
+
+    override suspend fun getById(id: Long): Flow<Card> = flow {
         val dataSnapshot = database.child("cards").child(id.toString()).get()
         dataSnapshot.await()
 
         when {
             dataSnapshot.isSuccessful -> {
                 val firebaseCard = dataSnapshot.result.getValue<FirebaseCardModel>()
-                card = firebaseCard!!.mapToDomainModel()
+                val card = firebaseCard!!.mapToDomainModel()
                 emit(card)
             }
             dataSnapshot.isCanceled -> {
