@@ -14,6 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.vinicius.busycardapp.presentation.card_creation.CardCreationViewModel
 import dev.vinicius.busycardapp.presentation.card_creation.CardCreationScreen
 import dev.vinicius.busycardapp.presentation.card_info.CardInfoScreen
+import dev.vinicius.busycardapp.presentation.shared_cards.SharedCardsScreen
 import dev.vinicius.busycardapp.ui.theme.BusyCardAppTheme
 
 @AndroidEntryPoint
@@ -29,7 +30,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    CardInfoScreen()
+//                    CardInfoScreen()
+//                    CardCreationScreen()
+                    SharedCardsScreen()
                 }
             }
         }

@@ -26,11 +26,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.ramcosta.composedestinations.annotation.Destination
 import dev.vinicius.busycardapp.domain.model.card.Card
 import dev.vinicius.busycardapp.ui.theme.BusyCardAppTheme
 
 
 // Currently being used to check every card
+@Destination
 @Composable
 fun SharedCardsScreen(
     modifier: Modifier = Modifier,
@@ -38,6 +40,7 @@ fun SharedCardsScreen(
 ) {
     val state by viewModel.state.collectAsState()
 
+    // TODO: Change to Scarfold
     Box (
         modifier = modifier.fillMaxSize()
     ){

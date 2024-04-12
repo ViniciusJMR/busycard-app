@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.ramcosta.composedestinations.annotation.Destination
 import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.ui.theme.BusyCardAppTheme
 import kotlinx.coroutines.flow.collect
@@ -28,6 +29,7 @@ import kotlin.math.log
 import kotlin.math.roundToInt
 
 
+@Destination
 @Composable
 fun CardInfoScreen(
     modifier: Modifier = Modifier,
