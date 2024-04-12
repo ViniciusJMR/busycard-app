@@ -8,7 +8,7 @@ import dev.vinicius.busycardapp.domain.model.card.Card
 import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.domain.model.card.FieldType
 import dev.vinicius.busycardapp.domain.model.card.TextType
-import dev.vinicius.busycardapp.domain.model.usecase.card.SaveCard
+import dev.vinicius.busycardapp.domain.usecase.card.SaveCard
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
