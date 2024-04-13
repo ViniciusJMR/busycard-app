@@ -4,4 +4,6 @@
     <string name="txt_texttype_phone">Phone</string>
     <string name="txt_texttype_email">Email</string>
     <string name="desc_save_current_card">Save current card</string>
+    <string name="label_bottomnav_shared_screen">Shared</string>
+    <string name="label_bottomnav_mycards_screen">My Cards</string>
 </resources>
