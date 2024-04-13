@@ -22,6 +22,9 @@ class CardRepository @Inject constructor(
     // TODO: move it to interface
     private val database = Firebase.database.reference
 
+    companion object {
+        val TAG = "CardRepository"
+    }
 
     override suspend fun getAll(): Flow<List<Card>> = flow {
         val dataSnapshot = database.child("cards").get()
@@ -29,7 +32,7 @@ class CardRepository @Inject constructor(
         when {
             dataSnapshot.isSuccessful -> {
                 val firebaseCards = dataSnapshot.result.getValue<List<FirebaseCardModel>>()
-                val cards = firebaseCards!!.map { it.mapToDomainModel() }
+                val cards = firebaseCards?.map { it.mapToDomainModel() } ?: emptyList()
                 emit(cards)
             }
             dataSnapshot.isCanceled -> {
