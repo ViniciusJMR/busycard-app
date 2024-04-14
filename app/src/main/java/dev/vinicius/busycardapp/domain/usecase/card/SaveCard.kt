@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class SaveCard @Inject constructor(
-    private val repository: Repository<Long, Card>
+    private val repository: Repository<String, Card>
 ): UseCase.NoSource<Card>() {
     override suspend fun execute(param: Card) = flow {
         emit(repository.save(param))

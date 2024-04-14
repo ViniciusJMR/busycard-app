@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class GetCardById @Inject constructor(
-    private val repository: Repository<Long, Card>
-): UseCase<Long, Card>() {
-    override suspend fun execute(param: Long) = repository.getById(param)
+    private val repository: Repository<String, Card>
+): UseCase<String, Card>() {
+    override suspend fun execute(param: String) = repository.getById(param)
 }

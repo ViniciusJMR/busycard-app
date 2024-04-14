@@ -17,7 +17,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 class CardRepository @Inject constructor(
-): Repository<Long, Card> {
+): Repository<String, Card> {
 
     // TODO: move it to interface
     private val database = Firebase.database.reference
@@ -31,7 +31,8 @@ class CardRepository @Inject constructor(
         dataSnapshot.await()
         when {
             dataSnapshot.isSuccessful -> {
-                val firebaseCards = dataSnapshot.result.getValue<List<FirebaseCardModel>>()
+                val firebaseCardsMap = dataSnapshot.result.getValue<HashMap<String, FirebaseCardModel>>()
+                val firebaseCards = firebaseCardsMap?.entries?.map { it.value }
                 val cards = firebaseCards?.map { it.mapToDomainModel() } ?: emptyList()
                 emit(cards)
             }
@@ -41,8 +42,8 @@ class CardRepository @Inject constructor(
         }
     }
 
-    override suspend fun getById(id: Long): Flow<Card> = flow {
-        val dataSnapshot = database.child("cards").child(id.toString()).get()
+    override suspend fun getById(id: String): Flow<Card> = flow {
+        val dataSnapshot = database.child("cards").child(id).get()
         dataSnapshot.await()
 
         when {
@@ -58,7 +59,18 @@ class CardRepository @Inject constructor(
     }
 
     override suspend fun save(item: Card) {
-        database.child("cards").child(item.id.toString()).setValue(item.mapToFirebaseModel())
+        val key = database.child("cards").push().key
+        item.id = key
+
+        // Firebase saves 0 as Long and this will cause an exception when mapping back
+        item.fields.forEach{
+            it.size = if (it.size == 0f ) 0.0001f else it.size
+        }
+
+        database
+            .child("cards")
+            .child(item.id.toString())
+            .setValue(item.mapToFirebaseModel())
     }
 
 }

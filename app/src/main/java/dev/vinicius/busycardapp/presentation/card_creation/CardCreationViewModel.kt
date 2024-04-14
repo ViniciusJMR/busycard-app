@@ -90,7 +90,6 @@ class CardCreationViewModel @Inject constructor(
             }
             CardCreationEvent.CardEvent.OnSaveCard -> {
                 val card = Card(
-                    id = 1L,
                     name = _state.value.cardName,
                     fields = _state.value.cardFields,
                     owner = "Vincius"

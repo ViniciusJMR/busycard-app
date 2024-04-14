@@ -17,6 +17,6 @@ abstract class RepositoryModule {
     @Singleton
     abstract fun bindCardRepository(
         cardRepository: CardRepository
-    ): Repository<Long, Card>
+    ): Repository<String, Card>
 
 }

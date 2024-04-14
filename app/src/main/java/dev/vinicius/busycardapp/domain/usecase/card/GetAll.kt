@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class GetAll @Inject constructor(
-    private val repository: Repository<Long, Card>
+    private val repository: Repository<String, Card>
 ): UseCase.NoParam<List<Card>>() {
     override suspend fun execute(): Flow<List<Card>> =
         repository.getAll()
