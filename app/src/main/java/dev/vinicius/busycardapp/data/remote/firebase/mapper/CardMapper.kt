@@ -88,11 +88,21 @@ fun mapDomainFieldsToFirebaseModel(items: List<Field>): List<Map<String, Any>> =
 
 
 fun mapFieldToDomainModel(item: Map<String, Any>): Field {
+    val offsetXDouble = item["offsetX"] as? Double
+    val offsetXLong = item["offsetX"] as? Long
+
+    val offsetXFloat = offsetXDouble?.toFloat() ?: offsetXLong!!.toFloat()
+    val offsetYDouble = item["offsetY"] as? Double
+    val offsetYLong = item["offsetY"] as? Long
+
+    val offsetYFloat = offsetYDouble?.toFloat() ?: offsetYLong!!.toFloat()
+
+
     return when(item["type"] as String) {
         "ADDRESS" -> Field.AddressField(
             item["name"] as String,
-            (item["offsetX"] as Double).toFloat(),
-            (item["offsetY"] as Double).toFloat(),
+            offsetXFloat,
+            offsetYFloat,
             (item["size"] as Double).toFloat(),
             Pair(
                 (item["localization"] as Map<String, Long>)["x"],
@@ -102,15 +112,15 @@ fun mapFieldToDomainModel(item: Map<String, Any>): Field {
         )
         "IMAGE" -> Field.ImageField(
             item["name"] as String,
-            (item["offsetX"] as Double).toFloat(),
-            (item["offsetY"] as Double).toFloat(),
+            offsetXFloat,
+            offsetYFloat,
             (item["size"] as Double).toFloat(),
             item["imageUrl"] as String,
         )
         "TEXT" -> Field.TextField(
             item["name"] as String,
-            (item["offsetX"] as Double).toFloat(),
-            (item["offsetY"] as Double).toFloat(),
+            offsetXFloat,
+            offsetYFloat,
             (item["size"] as Double).toFloat(),
             TextType.valueOf(item["textType"] as String),
             item["value"] as String,
