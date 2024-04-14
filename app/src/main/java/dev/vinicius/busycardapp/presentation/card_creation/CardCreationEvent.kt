@@ -38,6 +38,10 @@ sealed class CardCreationEvent {
     sealed class DialogEvent: CardCreationEvent() {
         object OnShowTextTypeDialog: DialogEvent()
         object OnDismissTextTypeDialog: DialogEvent()
+
+        object OnShowCardInfoDialog: DialogEvent()
+        object OnDismissCardInfoDialog: DialogEvent()
+
     }
 
 }

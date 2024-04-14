@@ -7,8 +7,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -59,10 +64,20 @@ fun CardCreationScreen(
 
     val event = viewModel::onEvent
 
+    if (state.showCardInfoDialog) {
+        CardInfoDialog(
+            onConfirmation = { event(CardCreationEvent.CardEvent.OnChangeCard(it)) },
+            onDismiss = { event(CardCreationEvent.DialogEvent.OnDismissCardInfoDialog) },
+            cardName = state.cardName
+        )
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Card Creation") },
+                title = {
+                    Text( state.cardName.ifBlank { stringResource(R.string.txt_card_no_name) } )
+                },
                 actions = {
                     IconButton(onClick = { event(CardCreationEvent.CardEvent.OnSaveCard) }) {
                         Icon(
@@ -73,13 +88,23 @@ fun CardCreationScreen(
                 }
             )
         },
-        floatingActionButton = {
-            ExtendedFloatingActionButton(
-                text = { Text("Add Field") },
-                icon = { Icon(Icons.Filled.Add, contentDescription = "") },
-                onClick = { event(CardCreationEvent.ModalEvent.OnShowBottomSheet()) }
+        bottomBar = {
+            BottomAppBar(
+                actions = {
+                    IconButton(onClick = { event(CardCreationEvent.DialogEvent.OnShowCardInfoDialog)}) {
+                        Icon(Icons.Outlined.Settings, contentDescription = "")
+                    }
+                },
+                floatingActionButton = {
+                    FloatingActionButton(
+                        onClick = { event(CardCreationEvent.ModalEvent.OnShowBottomSheet()) },
+                        elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(),
+                    ) {
+                        Icon(Icons.Filled.Add, contentDescription = "")
+                    }
+                },
             )
-        }
+        },
     ) { it ->
         Box(
             Modifier
@@ -87,14 +112,6 @@ fun CardCreationScreen(
                 .padding(it),
             contentAlignment = Alignment.Center
         ) {
-            Log.d("CardCreation", "CardCreationScreen: Should show card dialog ${state.showCardInfoDialog}")
-            if (state.showCardInfoDialog) {
-                CardInfoDialog(
-                    onConfirmation = { event(CardCreationEvent.CardEvent.OnChangeCard(it)) },
-                    cardName = state.cardName
-                )
-            }
-
             ShowCardSection(
                 event = event,
                 state = state

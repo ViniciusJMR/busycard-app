@@ -89,11 +89,12 @@ fun FullScreenDialog(
 fun CardInfoDialog(
     modifier: Modifier = Modifier,
     onConfirmation: (String) -> Unit,
+    onDismiss: () -> Unit,
     cardName: String,
 
 ) {
     var newCardName by remember { mutableStateOf(cardName) }
-    FullScreenDialog(onDismissRequest = { /*TODO*/ }) {
+    FullScreenDialog(onDismissRequest = onDismiss) {
         Column {
             OutlinedTextField(value = newCardName, onValueChange = { newCardName = it })
 

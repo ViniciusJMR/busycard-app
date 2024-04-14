@@ -210,6 +210,22 @@ class CardCreationViewModel @Inject constructor(
                     )
                 }
             }
+
+            CardCreationEvent.DialogEvent.OnDismissCardInfoDialog -> {
+                _state.update {
+                    it.copy(
+                        showCardInfoDialog = false
+                    )
+                }
+            }
+
+            CardCreationEvent.DialogEvent.OnShowCardInfoDialog -> {
+                _state.update {
+                    it.copy(
+                        showCardInfoDialog = true
+                    )
+                }
+            }
         }
     }
 
