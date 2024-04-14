@@ -14,6 +14,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -23,21 +24,36 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.vinicius.busycardapp.R
 import dev.vinicius.busycardapp.presentation.card_creation.section.OptionsSection
 import dev.vinicius.busycardapp.presentation.card_creation.section.ShowCardSection
 import dev.vinicius.busycardapp.ui.theme.BusyCardAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
-@RootNavGraph
 @Destination
 @Composable
 fun CardCreationScreen(
-    modifier: Modifier = Modifier,
+    navigator: DestinationsNavigator,
     viewModel: CardCreationViewModel = hiltViewModel()
 ) {
 
     val state by viewModel.state.collectAsState()
+    val effect by viewModel.effect.collectAsState()
+
+    LaunchedEffect(effect) {
+        effect?.let {
+            when(it) {
+                CardCreationEffect.ClosePage -> {
+                    navigator.navigateUp()
+                }
+            }
+            viewModel.resetEffect()
+        }
+
+
+    }
+
     val event = viewModel::onEvent
 
     Scaffold(
@@ -63,7 +79,7 @@ fun CardCreationScreen(
         }
     ) { it ->
         Box(
-            modifier
+            Modifier
                 .fillMaxSize()
                 .padding(it),
             contentAlignment = Alignment.Center
@@ -89,6 +105,6 @@ fun CardCreationScreen(
 private fun ScreenPreview() {
     val state = CardCreationState()
     BusyCardAppTheme {
-        CardCreationScreen()
+        //CardCreationScreen()
     }
 }

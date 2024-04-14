@@ -23,6 +23,13 @@ class CardCreationViewModel @Inject constructor(
     private val _state = MutableStateFlow(CardCreationState())
     val state = _state.asStateFlow()
 
+    private val _effect: MutableStateFlow<CardCreationEffect?> = MutableStateFlow(null)
+    val effect = _effect.asStateFlow()
+
+    fun resetEffect() {
+        _effect.update { null }
+    }
+
     companion object {
         val TAG = "CardCreationViewModel"
     }
@@ -101,6 +108,7 @@ class CardCreationViewModel @Inject constructor(
                         }
                         .collect{
                             Log.d(TAG, "handleCardEvent: Salvo com sucesso")
+                            _effect.update { CardCreationEffect.ClosePage }
                         }
                 }
 
