@@ -1,10 +1,9 @@
 package dev.vinicius.busycardapp.data.repository.impl
 
-import android.util.Log
-import com.google.firebase.database.DatabaseException
 import com.google.firebase.database.getValue
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import dev.vinicius.busycardapp.data.remote.firebase.mapper.mapDomainFieldsToFirebaseModel
 import dev.vinicius.busycardapp.data.remote.firebase.mapper.mapToDomainModel
 import dev.vinicius.busycardapp.data.remote.firebase.mapper.mapToFirebaseModel
 import dev.vinicius.busycardapp.data.remote.firebase.model.FirebaseCardModel
@@ -14,7 +13,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
-import javax.inject.Singleton
 
 class CardRepository @Inject constructor(
 ): Repository<String, Card> {
@@ -29,11 +27,13 @@ class CardRepository @Inject constructor(
     override suspend fun getAll(): Flow<List<Card>> = flow {
         val dataSnapshot = database.child("cards").get()
         dataSnapshot.await()
+
         when {
             dataSnapshot.isSuccessful -> {
                 val firebaseCardsMap = dataSnapshot.result.getValue<HashMap<String, FirebaseCardModel>>()
                 val firebaseCards = firebaseCardsMap?.entries?.map { it.value }
-                val cards = firebaseCards?.map { it.mapToDomainModel() } ?: emptyList()
+                // TODO: Create new Card model for Card Meta data
+                val cards = firebaseCards?.map { it.mapToDomainModel(emptyList()) } ?: emptyList()
                 emit(cards)
             }
             dataSnapshot.isCanceled -> {
@@ -43,16 +43,21 @@ class CardRepository @Inject constructor(
     }
 
     override suspend fun getById(id: String): Flow<Card> = flow {
-        val dataSnapshot = database.child("cards").child(id).get()
-        dataSnapshot.await()
+        val cardsSnapshot = database.child("cards").child(id).get()
+        val fieldsSnapshot = database.child("fields").child(id).get()
+        cardsSnapshot.await()
+        fieldsSnapshot.await()
 
         when {
-            dataSnapshot.isSuccessful -> {
-                val firebaseCard = dataSnapshot.result.getValue<FirebaseCardModel>()
-                val card = firebaseCard!!.mapToDomainModel()
+            cardsSnapshot.isSuccessful -> {
+                val firebaseCard = cardsSnapshot.result.getValue<FirebaseCardModel>()
+                val firebaseFields = fieldsSnapshot.result
+                    .getValue<List<Map<String, Any>>>()
+                    ?: emptyList()
+                val card = firebaseCard!!.mapToDomainModel(firebaseFields)
                 emit(card)
             }
-            dataSnapshot.isCanceled -> {
+            cardsSnapshot.isCanceled -> {
                 TODO()
             }
         }
@@ -64,13 +69,18 @@ class CardRepository @Inject constructor(
 
         // Firebase saves 0 as Long and this will cause an exception when mapping back
         item.fields.forEach{
-            it.size = if (it.size == 0f ) 0.0001f else it.size
+            it.size = if (it.size == 0f ) 0.01f else it.size
         }
 
         database
             .child("cards")
             .child(item.id.toString())
             .setValue(item.mapToFirebaseModel())
+
+        database
+            .child("fields")
+            .child(item.id.toString())
+            .setValue(mapDomainFieldsToFirebaseModel(item.fields))
     }
 
 }

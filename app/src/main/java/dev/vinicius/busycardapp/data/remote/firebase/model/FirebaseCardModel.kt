@@ -9,6 +9,4 @@ data class FirebaseCardModel(
     var id: String? = null,
     var name: String? = null,
     var owner: String? = null,
-    var fields: List<Map<String, Any>>? = null,
-) {
-}
+)

@@ -4,7 +4,6 @@ import dev.vinicius.busycardapp.data.remote.firebase.model.FirebaseCardModel
 import dev.vinicius.busycardapp.data.remote.firebase.model.FirebaseFieldModel
 import dev.vinicius.busycardapp.domain.model.card.Card
 import dev.vinicius.busycardapp.domain.model.card.Field
-import dev.vinicius.busycardapp.domain.model.card.FieldType
 import dev.vinicius.busycardapp.domain.model.card.TextType
 
 fun Card.mapToFirebaseModel() =
@@ -12,15 +11,14 @@ fun Card.mapToFirebaseModel() =
         this.id,
         this.name,
         this.owner,
-        this.fields.map { it.mapToFirebaseModel() }
     )
 
-fun FirebaseCardModel.mapToDomainModel() =
+fun FirebaseCardModel.mapToDomainModel(fields: List<Map<String, Any>>) =
     Card(
         id,
         name ?: "",
         owner ?: "",
-        fields?.map { mapFieldToDomainModel(it) } ?: emptyList()
+        fields.map { mapFieldToDomainModel(it) }
     )
 
 
@@ -53,6 +51,41 @@ fun Field.mapToFirebaseModel(): Map<String, Any> =
             "value" to value,
         )
     }
+
+fun mapDomainFieldsToFirebaseModel(items: List<Field>): List<Map<String, Any>> =
+    items.map {
+        it.run {
+            when(this) {
+                is Field.AddressField -> mapOf(
+                    "type" to "ADDRESS",
+                    "name" to name,
+                    "offsetX" to offsetX.toDouble(),
+                    "offsetY" to offsetY.toDouble(),
+                    "size" to size,
+                    "localization" to mapOf("x" to localization.first, "y" to localization.second),
+                    "textLocalization" to textLocalization,
+                )
+                is Field.ImageField -> mapOf(
+                    "type" to "IMAGE",
+                    "name" to name,
+                    "offsetX" to offsetX.toDouble(),
+                    "offsetY" to offsetY.toDouble(),
+                    "size" to size,
+                    "imageUrl" to imageUrl,
+                )
+                is Field.TextField -> mapOf(
+                    "type" to "TEXT",
+                    "name" to name,
+                    "offsetX" to offsetX.toDouble(),
+                    "offsetY" to offsetY.toDouble(),
+                    "size" to size,
+                    "textType" to textType,
+                    "value" to value,
+                )
+            }
+        }
+    }
+
 
 fun mapFieldToDomainModel(item: Map<String, Any>): Field {
     return when(item["type"] as String) {
