@@ -87,8 +87,6 @@ class MainActivity : ComponentActivity() {
                             }
 
                             launchSingleTop = true
-
-                            restoreState = true
                         }
                     },
                     icon = { Icon(destination.icon, contentDescription = stringResource(destination.label)) },
