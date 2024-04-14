@@ -22,12 +22,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootNavGraph
 import dev.vinicius.busycardapp.R
 import dev.vinicius.busycardapp.presentation.card_creation.section.OptionsSection
 import dev.vinicius.busycardapp.presentation.card_creation.section.ShowCardSection
 import dev.vinicius.busycardapp.ui.theme.BusyCardAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
+@RootNavGraph
 @Destination
 @Composable
 fun CardCreationScreen(

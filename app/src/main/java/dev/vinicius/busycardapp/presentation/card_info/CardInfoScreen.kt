@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootNavGraph
 import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.ui.theme.BusyCardAppTheme
 import kotlinx.coroutines.flow.collect
@@ -29,11 +30,13 @@ import kotlin.math.log
 import kotlin.math.roundToInt
 
 
+@RootNavGraph
 @Destination
 @Composable
 fun CardInfoScreen(
     modifier: Modifier = Modifier,
     viewModel: CardInfoViewModel = hiltViewModel(),
+    id: String,
 ) {
     val state by viewModel.state.collectAsState()
     val TAG = "CardInfoScreen"

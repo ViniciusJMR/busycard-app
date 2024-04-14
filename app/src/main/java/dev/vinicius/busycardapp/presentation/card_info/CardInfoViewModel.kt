@@ -1,6 +1,7 @@
 package dev.vinicius.busycardapp.presentation.card_info
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,6 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CardInfoViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
     private val getCardById: GetCardById
 ): ViewModel() {
     private val _state = MutableStateFlow(CardInfoState())
@@ -26,7 +28,9 @@ class CardInfoViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            getCardById(1)
+            val id = savedStateHandle.get<String>("id") ?: return@launch
+            Log.d(TAG, "id: $id")
+            getCardById(id)
                 .onStart {
                     Log.d(TAG, "Started")
                     _state.update {
