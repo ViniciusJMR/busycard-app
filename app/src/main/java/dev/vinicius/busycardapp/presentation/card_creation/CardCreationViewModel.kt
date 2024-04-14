@@ -113,8 +113,16 @@ class CardCreationViewModel @Inject constructor(
                 }
 
             }
-        }
 
+            is CardCreationEvent.CardEvent.OnChangeCard -> {
+                _state.update {
+                    it.copy(
+                        cardName = event.name,
+                        showCardInfoDialog = false,
+                    )
+                }
+            }
+        }
     }
 
     private fun handleOnChangeFieldValue(event: CardCreationEvent.FieldEvent) {

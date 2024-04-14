@@ -12,6 +12,10 @@ sealed class CardCreationEvent {
 
 
         object OnSaveCard: CardEvent()
+
+        data class OnChangeCard(
+            var name: String = ""
+        ): CardEvent()
     }
 
     sealed class FieldEvent: CardCreationEvent() {

@@ -1,5 +1,6 @@
 package dev.vinicius.busycardapp.presentation.card_creation
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -26,9 +27,11 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.vinicius.busycardapp.R
+import dev.vinicius.busycardapp.presentation.card_creation.component.CardInfoDialog
 import dev.vinicius.busycardapp.presentation.card_creation.section.OptionsSection
 import dev.vinicius.busycardapp.presentation.card_creation.section.ShowCardSection
 import dev.vinicius.busycardapp.ui.theme.BusyCardAppTheme
+import kotlin.math.log
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination
@@ -84,6 +87,14 @@ fun CardCreationScreen(
                 .padding(it),
             contentAlignment = Alignment.Center
         ) {
+            Log.d("CardCreation", "CardCreationScreen: Should show card dialog ${state.showCardInfoDialog}")
+            if (state.showCardInfoDialog) {
+                CardInfoDialog(
+                    onConfirmation = { event(CardCreationEvent.CardEvent.OnChangeCard(it)) },
+                    cardName = state.cardName
+                )
+            }
+
             ShowCardSection(
                 event = event,
                 state = state
