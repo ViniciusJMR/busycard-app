@@ -17,10 +17,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.navigation.navigate
@@ -42,13 +44,17 @@ class MainActivity : ComponentActivity() {
             BusyCardAppTheme {
                 // A surface container using the 'background' color from the theme
                 val navController = rememberNavController()
+                val appState = rememberAppState(navController)
                 Scaffold(
                     bottomBar = {
-                        HomeBottomNavBar(navController = navController)
+                        if (appState.shouldShowBottomBar)
+                            HomeBottomNavBar(navController = navController)
                     }
                 ) {
                     Surface(
-                        modifier = Modifier.fillMaxSize().padding(it),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(it),
                         color = MaterialTheme.colorScheme.background
                     ) {
                         DestinationsNavHost(
@@ -61,7 +67,28 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private enum class BottomBarDestination(
+    @Composable
+    fun rememberAppState(
+        navController: NavController
+    ) =
+        remember(navController) {
+            AppState(navController)
+        }
+
+    data class AppState(
+        val navController: NavController,
+    ) {
+
+        val bottomBarTabs = BottomBarDestination.entries
+        private val bottomBarRoutes = bottomBarTabs.map { it.direction.route }
+
+        val shouldShowBottomBar: Boolean
+            @Composable get () = navController
+                .currentBackStackEntryAsState().value?.destination?.route in bottomBarRoutes
+
+    }
+
+    enum class BottomBarDestination(
         val direction: DirectionDestinationSpec,
         val icon: ImageVector,
         @StringRes val label: Int
