@@ -12,7 +12,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AddCard
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +33,10 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.vinicius.busycardapp.domain.model.card.Card
+import dev.vinicius.busycardapp.presentation.card_creation.CardCreationEvent
+import dev.vinicius.busycardapp.presentation.card_info.CardInfoScreen
+import dev.vinicius.busycardapp.presentation.destinations.CardCreationScreenDestination
+import dev.vinicius.busycardapp.presentation.destinations.CardInfoScreenDestination
 import dev.vinicius.busycardapp.presentation.shared_cards.CardItem
 import dev.vinicius.busycardapp.ui.theme.BusyCardAppTheme
 
@@ -42,12 +51,26 @@ fun MyCardsScreen(
 ) {
     val state by viewModel.state.collectAsState()
 
-    // TODO: Change to Scarfold
-    Box (
-        modifier = Modifier.fillMaxSize()
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    navigator.navigate(CardCreationScreenDestination)
+                }
+            ) {
+                Icon(Icons.Filled.AddCard, contentDescription = "")
+            }
+        }
     ){
         if (!state.isLoading) {
-            MyCardsListing(cards = state.cards)
+            MyCardsListing(
+                modifier = Modifier.padding(it),
+                onClickItemCard = { id ->
+                    navigator.navigate(CardInfoScreenDestination(id = id))
+                },
+                cards = state.cards
+            )
         } else {
             Text("Loading")
         }
@@ -57,6 +80,7 @@ fun MyCardsScreen(
 @Composable
 fun MyCardsListing(
     modifier: Modifier = Modifier,
+    onClickItemCard: (String) -> Unit,
     cards: List<Card>
 ) {
 
@@ -66,11 +90,12 @@ fun MyCardsListing(
         items(
             items = cards,
             key = { card -> card.id!! }
-        ) {
-            CardItem(
-                name = it.name,
+        ) { card ->
+            MyCardItem(
+                name = card.name,
                 mainContact = "place@holder", // TODO: Change this when adding main Contact,
                 imageUrl = "",
+                onClick = { onClickItemCard(card.id!!) }
             )
         }
     }
@@ -79,21 +104,25 @@ fun MyCardsListing(
 @Preview
 @Composable
 private fun MyCardsListingPreview() {
-    val a = List(30) { i -> Card(id = i.toLong(), name = "Card #$i", owner = "", fields = emptyList()) }
+    val a = List(30) { i -> Card(id = i.toString(), name = "Card #$i", owner = "", fields = emptyList()) }
     BusyCardAppTheme {
-        MyCardsListing(cards = a)
+        //MyCardsListing(cards = a)
     }
 }
 
 @Composable
 fun MyCardItem(
     modifier: Modifier = Modifier,
+    onClick: () -> Unit,
     name: String,
     mainContact: String,
     imageUrl: String,
 ) {
     Surface (
-        modifier = modifier.fillMaxWidth().height(45.dp)
+        modifier = modifier
+            .fillMaxWidth()
+            .height(45.dp),
+        onClick = onClick
     ){
         Row (
         ){

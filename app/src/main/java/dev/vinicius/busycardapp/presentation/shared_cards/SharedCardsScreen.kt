@@ -77,7 +77,7 @@ fun SharedCardsListing(
 @Preview
 @Composable
 private fun SharedListingPreview() {
-    val a = List(30) { i -> Card(id = i.toLong(), name = "Card #$i", owner = "", fields = emptyList()) }
+    val a = List(30) { i -> Card(id = i.toString(), name = "Card #$i", owner = "", fields = emptyList()) }
     BusyCardAppTheme {
         SharedCardsListing(cards = a)
     }
