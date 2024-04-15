@@ -9,4 +9,5 @@ data class FirebaseCardModel(
     var id: String? = null,
     var name: String? = null,
     var owner: String? = null,
+    var mainContact: String? = null,
 )

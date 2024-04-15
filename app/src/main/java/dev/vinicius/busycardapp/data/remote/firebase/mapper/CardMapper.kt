@@ -8,9 +8,10 @@ import dev.vinicius.busycardapp.domain.model.card.TextType
 
 fun Card.mapToFirebaseModel() =
     FirebaseCardModel(
-        this.id,
-        this.name,
-        this.owner,
+        id,
+        name,
+        owner,
+        mainContact,
     )
 
 fun FirebaseCardModel.mapToDomainModel(fields: List<Map<String, Any>>) =
@@ -18,6 +19,7 @@ fun FirebaseCardModel.mapToDomainModel(fields: List<Map<String, Any>>) =
         id,
         name ?: "",
         owner ?: "",
+        mainContact ?: "",
         fields.map { mapFieldToDomainModel(it) }
     )
 

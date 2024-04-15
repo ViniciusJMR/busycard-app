@@ -4,5 +4,6 @@ data class Card(
     var id: String? = null,
     var name: String,
     var owner: String,
+    var mainContact: String,
     val fields: List<Field>,
 )

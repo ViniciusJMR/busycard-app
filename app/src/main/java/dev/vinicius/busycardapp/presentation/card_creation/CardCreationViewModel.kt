@@ -99,6 +99,7 @@ class CardCreationViewModel @Inject constructor(
                 val card = Card(
                     name = _state.value.cardName,
                     fields = _state.value.cardFields,
+                    mainContact = _state.value.mainContactField?.value ?: "",
                     owner = "Vincius"
                 )
                 viewModelScope.launch {
