@@ -114,7 +114,25 @@ class CardCreationViewModel @Inject constructor(
 
             }
 
-            is CardCreationEvent.CardEvent.OnChangeCard -> {
+            is CardCreationEvent.CardEvent.OnChangeCard -> handleOnChangeCardValue(event)
+        }
+    }
+    
+    private fun handleOnChangeCardValue(event: CardCreationEvent.CardEvent.OnChangeCard) {
+        when (event) {
+            is CardCreationEvent.CardEvent.OnChangeCard.mainContact -> {
+                _state.update { cardState ->
+                    Log.d(TAG, "mainContactField: ${cardState.mainContactField} ")
+                    Log.d(TAG, "event field: ${event.field}")
+                    Log.d(TAG, "equals: ${cardState.mainContactField === event.field} ")
+                    cardState.copy(
+                        mainContactField = event.field.takeIf {
+                            cardState.mainContactField !== event.field
+                        },
+                    )
+                }
+            }
+            is CardCreationEvent.CardEvent.OnChangeCard.name -> {
                 _state.update {
                     it.copy(
                         cardName = event.name,

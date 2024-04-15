@@ -11,6 +11,7 @@ data class CardCreationState (
     var cardFields: MutableList<Field> = mutableListOf(),
     var cardName: String = "",
     var currentlySelectedField: Field? = null,
+    var mainContactField: Field.TextField? = null,
 
     var isLoading: Boolean = false,
     var showBottomSheet: Boolean = false,

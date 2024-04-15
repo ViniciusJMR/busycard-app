@@ -13,9 +13,11 @@ sealed class CardCreationEvent {
 
         object OnSaveCard: CardEvent()
 
-        data class OnChangeCard(
-            var name: String = ""
-        ): CardEvent()
+        sealed class OnChangeCard: CardEvent() {
+            data class name(val name: String = ""): OnChangeCard()
+            data class mainContact(val field: Field.TextField): OnChangeCard()
+        }
+
     }
 
     sealed class FieldEvent: CardCreationEvent() {
