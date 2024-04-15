@@ -93,7 +93,7 @@ fun MyCardsListing(
         ) { card ->
             MyCardItem(
                 name = card.name,
-                mainContact = "place@holder", // TODO: Change this when adding main Contact,
+                mainContact = card.mainContact,
                 imageUrl = "",
                 onClick = { onClickItemCard(card.id!!) }
             )
@@ -104,7 +104,7 @@ fun MyCardsListing(
 @Preview
 @Composable
 private fun MyCardsListingPreview() {
-    val a = List(30) { i -> Card(id = i.toString(), name = "Card #$i", owner = "", fields = emptyList()) }
+//    val a = List(30) { i -> Card(id = i.toString(), name = "Card #$i", owner = "", fields = emptyList()) }
     BusyCardAppTheme {
         //MyCardsListing(cards = a)
     }

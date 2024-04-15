@@ -52,6 +52,7 @@ fun SharedCardsScreen(
     }
 }
 
+// TODO: Extract to Component as MyCardsScreen does the same
 @Composable
 fun SharedCardsListing(
     modifier: Modifier = Modifier,
@@ -67,7 +68,7 @@ fun SharedCardsListing(
         ) {
             CardItem(
                 name = it.name,
-                mainContact = "place@holder", // TODO: Change this when adding main Contact,
+                mainContact = it.mainContact,
                 imageUrl = "",
             )
         }
@@ -77,9 +78,9 @@ fun SharedCardsListing(
 @Preview
 @Composable
 private fun SharedListingPreview() {
-    val a = List(30) { i -> Card(id = i.toString(), name = "Card #$i", owner = "", fields = emptyList()) }
+//    val a = List(30) { i -> Card(id = i.toString(), name = "Card #$i", owner = "", fields = emptyList()) }
     BusyCardAppTheme {
-        SharedCardsListing(cards = a)
+//        SharedCardsListing(cards = a)
     }
 }
 
