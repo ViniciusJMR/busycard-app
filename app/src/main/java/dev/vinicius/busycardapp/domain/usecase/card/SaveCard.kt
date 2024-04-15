@@ -11,6 +11,12 @@ class SaveCard @Inject constructor(
     private val repository: Repository<String, Card>
 ): UseCase.NoSource<Card>() {
     override suspend fun execute(param: Card) = flow {
+        // Validation
+
+        // Change owner to logged user
+
+        // Save
+        param.owner = "Vinicius"
         emit(repository.save(param))
     }
 }

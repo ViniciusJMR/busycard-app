@@ -50,7 +50,7 @@ class CardCreationViewModel @Inject constructor(
                     FieldType.TEXT -> {
                         Field.TextField(
                             name = "text field 1",
-                            value = "Pintao",
+                            value = "abcd",
                             offsetX = 200f,
                             offsetY = 200f,
                             textType = TextType.TEXT
@@ -68,7 +68,7 @@ class CardCreationViewModel @Inject constructor(
                     FieldType.EMAIL -> {
                         Field.TextField(
                             name = "email field 1",
-                            value = "place@holder",
+                            value = "place@holder.com",
                             offsetX = 200f,
                             offsetY = 200f,
                             textType = TextType.EMAIL
@@ -100,7 +100,6 @@ class CardCreationViewModel @Inject constructor(
                     name = _state.value.cardName,
                     fields = _state.value.cardFields,
                     mainContact = _state.value.mainContactField?.value ?: "",
-                    owner = "Vincius"
                 )
                 viewModelScope.launch {
                     saveCard(card)
