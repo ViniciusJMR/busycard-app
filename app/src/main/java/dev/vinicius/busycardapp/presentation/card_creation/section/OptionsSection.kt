@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
@@ -40,6 +41,8 @@ fun OptionsSection(
     onChangeField: (CardCreationEvent.FieldEvent) -> Unit,
     onDismissModalSheet: () -> Unit,
     onShowDialog: () -> Unit,
+    onMainContactChange: (Field.TextField) -> Unit,
+    mainContactField: Field?,
     currentlySelectedField: Field?,
     showBottomSheet: Boolean,
 ) {
@@ -54,6 +57,8 @@ fun OptionsSection(
                 FieldInfoMenu(
                     field = currentlySelectedField,
                     onChangeField = onChangeField,
+                    isMainContact = currentlySelectedField === mainContactField,
+                    onMainContactChange = { textField -> onMainContactChange(textField) },
                     onShowDialog = onShowDialog
                 )
             } else {
@@ -73,16 +78,30 @@ fun FieldInfoMenu(
     modifier: Modifier = Modifier,
     onChangeField: (CardCreationEvent.FieldEvent) -> Unit, // TODO: Mudar nome para onFieldChanged?,
     onShowDialog: () -> Unit,
+    isMainContact: Boolean,
+    onMainContactChange: (Field.TextField) -> Unit,
     field: Field,
 ) {
-    when (field) {
-        is Field.AddressField -> TODO()
-        is Field.ImageField -> TODO()
-        is Field.TextField -> TextFieldMenu(
-            onChangeText = onChangeField,
-            onChangeTextType = onShowDialog,
-            field = field
-        )
+    Column {
+        when (field) {
+            is Field.AddressField -> TODO()
+            is Field.ImageField -> TODO()
+            is Field.TextField -> {
+                TextButton(onClick = { onMainContactChange(field) }) {
+                    val text = if (!isMainContact)
+                        "Select as Main Contact"
+                    else
+                        "Unselect as Main Contact"
+                    Text(text)
+                }
+                Spacer(Modifier.padding(8.dp))
+                TextFieldMenu(
+                    onChangeText = onChangeField,
+                    onChangeTextType = onShowDialog,
+                    field = field
+                )
+            }
+        }
     }
 }
 
