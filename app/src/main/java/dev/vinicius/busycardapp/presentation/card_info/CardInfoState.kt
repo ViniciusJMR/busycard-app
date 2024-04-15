@@ -6,7 +6,7 @@ import dev.vinicius.busycardapp.domain.model.card.Field
 data class CardInfoState(
     val id: Long? = null,
     var name: String = "",
-    var owner: String = "",
+    var owner: String? = "",
     val fields: List<Field> = emptyList(),
     val text: String = "",
 
