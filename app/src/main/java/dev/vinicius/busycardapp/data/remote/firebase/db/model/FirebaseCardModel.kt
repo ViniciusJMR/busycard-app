@@ -1,4 +1,4 @@
-package dev.vinicius.busycardapp.data.remote.firebase.model
+package dev.vinicius.busycardapp.data.remote.firebase.db.model
 
 import androidx.annotation.Keep
 import com.google.firebase.database.IgnoreExtraProperties

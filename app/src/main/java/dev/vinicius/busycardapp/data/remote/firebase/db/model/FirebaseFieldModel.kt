@@ -1,6 +1,5 @@
-package dev.vinicius.busycardapp.data.remote.firebase.model
+package dev.vinicius.busycardapp.data.remote.firebase.db.model
 
-import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.domain.model.card.FieldType
 import dev.vinicius.busycardapp.domain.model.card.TextType
 

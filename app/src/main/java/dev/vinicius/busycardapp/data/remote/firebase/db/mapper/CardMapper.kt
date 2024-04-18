@@ -1,7 +1,7 @@
-package dev.vinicius.busycardapp.data.remote.firebase.mapper
+package dev.vinicius.busycardapp.data.remote.firebase.db.mapper
 
-import dev.vinicius.busycardapp.data.remote.firebase.model.FirebaseCardModel
-import dev.vinicius.busycardapp.data.remote.firebase.model.FirebaseFieldModel
+import dev.vinicius.busycardapp.data.remote.firebase.db.model.FirebaseCardModel
+import dev.vinicius.busycardapp.data.remote.firebase.db.model.FirebaseFieldModel
 import dev.vinicius.busycardapp.domain.model.card.Card
 import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.domain.model.card.TextType
