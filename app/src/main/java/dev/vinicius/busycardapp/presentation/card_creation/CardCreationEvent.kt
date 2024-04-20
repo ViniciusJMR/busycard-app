@@ -1,5 +1,6 @@
 package dev.vinicius.busycardapp.presentation.card_creation
 
+import android.net.Uri
 import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.domain.model.card.FieldType
 import dev.vinicius.busycardapp.domain.model.card.TextType
@@ -14,8 +15,12 @@ sealed class CardCreationEvent {
         object OnSaveCard: CardEvent()
 
         sealed class OnChangeCard: CardEvent() {
-            data class name(val name: String = ""): OnChangeCard()
-            data class mainContact(val field: Field.TextField): OnChangeCard()
+            data class Info(
+                val name: String = "",
+                val imagePath: Uri? = null,
+            ): OnChangeCard()
+
+            data class MainContact(val field: Field.TextField): OnChangeCard()
         }
 
     }

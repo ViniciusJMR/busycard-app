@@ -12,6 +12,7 @@ import dev.vinicius.busycardapp.domain.usecase.card.SaveCard
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -100,11 +101,21 @@ class CardCreationViewModel @Inject constructor(
                     name = _state.value.cardName,
                     fields = _state.value.cardFields,
                     mainContact = _state.value.mainContactField?.value ?: "",
-                )
+                ).apply {
+                    image.uri = _state.value.cardImageUri
+                }
                 viewModelScope.launch {
                     saveCard(card)
+                        .onStart {
+                            _state.update {
+                                it.copy(
+                                    isLoading = true
+                                )
+                            }
+                        }
                         .catch {
                             Log.d(TAG, "handleCardEvent: error: $it")
+                            it.printStackTrace()
                         }
                         .collect{
                             Log.d(TAG, "handleCardEvent: Salvo com sucesso")
@@ -120,7 +131,7 @@ class CardCreationViewModel @Inject constructor(
     
     private fun handleOnChangeCardValue(event: CardCreationEvent.CardEvent.OnChangeCard) {
         when (event) {
-            is CardCreationEvent.CardEvent.OnChangeCard.mainContact -> {
+            is CardCreationEvent.CardEvent.OnChangeCard.MainContact -> {
                 _state.update { cardState ->
                     Log.d(TAG, "mainContactField: ${cardState.mainContactField} ")
                     Log.d(TAG, "event field: ${event.field}")
@@ -132,10 +143,12 @@ class CardCreationViewModel @Inject constructor(
                     )
                 }
             }
-            is CardCreationEvent.CardEvent.OnChangeCard.name -> {
-                _state.update {
-                    it.copy(
+            is CardCreationEvent.CardEvent.OnChangeCard.Info -> {
+                _state.update { cardState ->
+                    Log.d(TAG, "handleOnChangeCardValue: event: $event")
+                    cardState.copy(
                         cardName = event.name,
+                        cardImageUri = event.imagePath,
                         showCardInfoDialog = false,
                     )
                 }
