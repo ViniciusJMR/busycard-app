@@ -10,12 +10,14 @@ import dev.vinicius.busycardapp.data.remote.firebase.db.mapper.mapToFirebaseMode
 import dev.vinicius.busycardapp.data.remote.firebase.db.model.FirebaseCardModel
 import dev.vinicius.busycardapp.domain.repository.Repository
 import dev.vinicius.busycardapp.domain.model.card.Card
+import dev.vinicius.busycardapp.domain.repository.Bucket
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class CardRepository @Inject constructor(
+    private val bucket: Bucket
 ): Repository<String, Card> {
 
     // TODO: move it to interface
@@ -67,6 +69,14 @@ class CardRepository @Inject constructor(
     override suspend fun save(item: Card) {
         val key = database.child("cards").push().key
         item.id = key
+
+        item.image.uri = item.image.uri?.let {
+            val ext = it.path!!.substring(it.path!!.lastIndexOf(".") + 1)
+            val bucketPath = "cards/$key/cardImage.${ext}"
+            bucket.uploadFile(it, bucketPath)
+        }
+
+        Log.d(TAG, "save: uri: ${item.image.uri} - ${item.image.uri?.path}")
 
         // Firebase saves 0 as Long and this will cause an exception when mapping back
         item.fields.forEach{
