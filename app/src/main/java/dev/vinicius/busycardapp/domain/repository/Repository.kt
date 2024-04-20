@@ -1,4 +1,4 @@
-package dev.vinicius.busycardapp.data.repository
+package dev.vinicius.busycardapp.domain.repository
 
 import kotlinx.coroutines.flow.Flow
 

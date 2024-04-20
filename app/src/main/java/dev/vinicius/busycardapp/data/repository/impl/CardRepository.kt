@@ -1,5 +1,6 @@
 package dev.vinicius.busycardapp.data.repository.impl
 
+import android.util.Log
 import com.google.firebase.database.getValue
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -7,7 +8,7 @@ import dev.vinicius.busycardapp.data.remote.firebase.db.mapper.mapDomainFieldsTo
 import dev.vinicius.busycardapp.data.remote.firebase.db.mapper.mapToDomainModel
 import dev.vinicius.busycardapp.data.remote.firebase.db.mapper.mapToFirebaseModel
 import dev.vinicius.busycardapp.data.remote.firebase.db.model.FirebaseCardModel
-import dev.vinicius.busycardapp.data.repository.Repository
+import dev.vinicius.busycardapp.domain.repository.Repository
 import dev.vinicius.busycardapp.domain.model.card.Card
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
