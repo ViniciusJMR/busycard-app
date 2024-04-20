@@ -3,6 +3,7 @@ package dev.vinicius.busycardapp.data.remote.firebase.db.mapper
 import dev.vinicius.busycardapp.data.remote.firebase.db.model.FirebaseCardModel
 import dev.vinicius.busycardapp.data.remote.firebase.db.model.FirebaseFieldModel
 import dev.vinicius.busycardapp.domain.model.card.Card
+import dev.vinicius.busycardapp.domain.model.card.CardImage
 import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.domain.model.card.TextType
 
@@ -11,6 +12,7 @@ fun Card.mapToFirebaseModel() =
         id,
         name,
         owner,
+        image.uri.toString(),
         mainContact,
     )
 
@@ -20,6 +22,7 @@ fun FirebaseCardModel.mapToDomainModel(fields: List<Map<String, Any>>) =
         name ?: "",
         owner ?: "",
         mainContact ?: "",
+        CardImage(path = image ?: ""),
         fields.map { mapFieldToDomainModel(it) }
     )
 
