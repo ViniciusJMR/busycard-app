@@ -74,10 +74,15 @@ fun CardSurface(
             fields.forEach { field ->
                 DraggableFieldComponent(
                     modifier = modifier,
-                    field = field,
-                    onDragField = onDragField,
+                    initialX = field.offsetX,
+                    initialY = field.offsetY,
+                    onDragField = { x, y ->
+                        field.offsetX = x
+                        field.offsetY = y
+                        onDragField(field)
+                    },
                     onTapField = {
-                        onClickField(it)
+                        onClickField(field)
                     }
                 ) {
                     when (field) {
