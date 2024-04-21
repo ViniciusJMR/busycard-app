@@ -247,7 +247,7 @@ fun ImageFieldMenu(
             onClick = {
                 onChangeImage(
                     CardCreationEvent.FieldEvent.OnImageFieldChange(
-                        size = size.toFloat(),
+                        size = size,
                         uri = imageUri.value,
                     )
                 )

@@ -82,8 +82,8 @@ fun CardRender(
                 Box (
                     Modifier.offset {
                         IntOffset(
-                            field.offsetX.roundToInt(),
-                            field.offsetY.roundToInt()
+                            field.offsetX,
+                            field.offsetY,
                         )
                     }
                 ){
@@ -133,8 +133,8 @@ fun CardInfoImageField(
 private fun CardRenderPreview() {
     val a = listOf(
         Field.TextField(value = "Print"),
-        Field.TextField(value = "Print", offsetX = 23.0F, offsetY = 100F),
-        Field.TextField(value = "Print", offsetX = 223.0F, offsetY = 400F),
+//        Field.TextField(value = "Print", offsetX = 23.0F, offsetY = 100F),
+//        Field.TextField(value = "Print", offsetX = 223.0F, offsetY = 400F),
     )
 
     BusyCardAppTheme {

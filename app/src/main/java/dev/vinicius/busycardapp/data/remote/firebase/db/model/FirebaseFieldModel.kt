@@ -7,32 +7,32 @@ import dev.vinicius.busycardapp.domain.model.card.TextType
 sealed class FirebaseFieldModel(
     open var type: FieldType? = null,
     open var name: String?  = null,
-    open var offsetX: Float? = null,
-    open var offsetY: Float? = null,
-    open var size: Float? = null,
+    open var offsetX: Int? = null,
+    open var offsetY: Int? = null,
+    open var size: Int? = null,
 ) {
     data class AddressField(
         override var name: String? = null,
-        override var offsetX: Float? = null,
-        override var offsetY: Float? = null,
-        override var size: Float? = null,
+        override var offsetX: Int? = null,
+        override var offsetY: Int? = null,
+        override var size: Int? = null,
         var localization: Pair<Long, Long>? = null,
         var textLocalization: String? = null,
     ): FirebaseFieldModel(FieldType.ADDRESS, name, offsetX, offsetY, size)
 
     data class ImageField(
         override var name: String? = null,
-        override var offsetX: Float? = null,
-        override var offsetY: Float? = null,
-        override var size: Float? = null,
+        override var offsetX: Int? = null,
+        override var offsetY: Int? = null,
+        override var size: Int? = null,
         var imageUrl: String? = null,
     ): FirebaseFieldModel(FieldType.IMAGE, name, offsetX, offsetY, size)
 
     data class TextField(
         override var name: String? = null,
-        override var offsetX: Float? = null,
-        override var offsetY: Float? = null,
-        override var size: Float? = null,
+        override var offsetX: Int? = null,
+        override var offsetY: Int? = null,
+        override var size: Int? = null,
         var textType: TextType? = null,
         var value: String? = null,
     ): FirebaseFieldModel(FieldType.TEXT, name, offsetX, offsetY, size)

@@ -90,11 +90,6 @@ class CardRepository @Inject constructor(
             }
 
 
-        // Firebase saves 0 as Long and this will cause an exception when mapping back
-        item.fields.forEach{
-            it.size = if (it.size == 0f ) 0.01f else it.size
-        }
-
         database
             .child("cards")
             .child(item.id.toString())

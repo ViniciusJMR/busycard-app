@@ -28,9 +28,9 @@ sealed class CardCreationEvent {
     sealed class FieldEvent: CardCreationEvent() {
         data class OnTextFieldChange(
             var name: String? = null,
-            var offsetX: Float? = null,
-            var offsetY: Float? = null,
-            var size: Float? = null,
+            var offsetX: Int? = null,
+            var offsetY: Int? = null,
+            var size: Int? = null,
             var textType: TextType? = null,
             var value: String? = null,
         ): FieldEvent()
@@ -38,9 +38,9 @@ sealed class CardCreationEvent {
 
         data class OnImageFieldChange(
             var name: String? = null,
-            var offsetX: Float? = null,
-            var offsetY: Float? = null,
-            var size: Float? = null,
+            var offsetX: Int? = null,
+            var offsetY: Int? = null,
+            var size: Int? = null,
             var uri: Uri? = null,
         ): FieldEvent()
     }

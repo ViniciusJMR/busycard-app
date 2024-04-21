@@ -52,8 +52,8 @@ class CardCreationViewModel @Inject constructor(
                         Field.TextField(
                             name = "text field 1",
                             value = "abcd",
-                            offsetX = 200f,
-                            offsetY = 200f,
+                            offsetX = 200,
+                            offsetY = 200,
                             textType = TextType.TEXT
                         )
                     }
@@ -61,8 +61,8 @@ class CardCreationViewModel @Inject constructor(
                         Field.TextField(
                             name = "Phone field 1",
                             value = "(99) 99999-9999",
-                            offsetX = 200f,
-                            offsetY = 200f,
+                            offsetX = 200,
+                            offsetY = 200,
                             textType = TextType.PHONE
                         )
                     }
@@ -70,8 +70,8 @@ class CardCreationViewModel @Inject constructor(
                         Field.TextField(
                             name = "email field 1",
                             value = "place@holder.com",
-                            offsetX = 200f,
-                            offsetY = 200f,
+                            offsetX = 200,
+                            offsetY = 200,
                             textType = TextType.EMAIL
                         )
                     }
@@ -79,8 +79,8 @@ class CardCreationViewModel @Inject constructor(
                     FieldType.IMAGE -> {
                         Field.ImageField(
                             name = "image field 1",
-                            offsetX = 200f,
-                            offsetY = 200f,
+                            offsetX = 200,
+                            offsetY = 200,
                         )
                     }
                 }

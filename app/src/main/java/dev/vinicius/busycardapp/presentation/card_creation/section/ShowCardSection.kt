@@ -85,7 +85,7 @@ fun CardSurface(
                         is Field.ImageField -> {
                             ImageFieldShow(
                                 uri = field.image.uri,
-                                size = field.size.toInt(),
+                                size = field.size,
                             )
                             Log.d(TAG, "field: $field")
                         }
