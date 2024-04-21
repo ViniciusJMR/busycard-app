@@ -20,7 +20,7 @@ sealed class Field(
         override var offsetX: Float = 0f,
         override var offsetY: Float = 0f,
         override var size: Float = 0f,
-        var imageUrl: String = "",
+        var image: CardImage = CardImage()
     ): Field(name, offsetX, offsetY, size)
 
     data class TextField(

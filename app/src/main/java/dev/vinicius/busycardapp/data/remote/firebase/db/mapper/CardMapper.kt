@@ -44,7 +44,7 @@ fun Field.mapToFirebaseModel(): Map<String, Any> =
             "offsetX" to offsetX,
             "offsetY" to offsetY,
             "size" to size,
-            "imageUrl" to imageUrl,
+            "imageUrl" to image.uri.toString(),
         )
         is Field.TextField -> mapOf(
             "type" to "TEXT",
@@ -76,7 +76,7 @@ fun mapDomainFieldsToFirebaseModel(items: List<Field>): List<Map<String, Any>> =
                     "offsetX" to offsetX.toDouble(),
                     "offsetY" to offsetY.toDouble(),
                     "size" to size,
-                    "imageUrl" to imageUrl,
+                    "imageUrl" to image.uri.toString(),
                 )
                 is Field.TextField -> mapOf(
                     "type" to "TEXT",
@@ -120,7 +120,7 @@ fun mapFieldToDomainModel(item: Map<String, Any>): Field {
             offsetXFloat,
             offsetYFloat,
             (item["size"] as Double).toFloat(),
-            item["imageUrl"] as String,
+            CardImage(path = item["imageUrl"] as String),
         )
         "TEXT" -> Field.TextField(
             item["name"] as String,
@@ -152,7 +152,7 @@ fun FirebaseFieldModel.mapToDomainModel() =
             offsetX ?: 0f,
             offsetY ?: 0f,
             size ?: 0f,
-            imageUrl ?: "",
+//            imageUrl ?: "",
         )
         is FirebaseFieldModel.TextField -> Field.TextField(
             name ?: "",
