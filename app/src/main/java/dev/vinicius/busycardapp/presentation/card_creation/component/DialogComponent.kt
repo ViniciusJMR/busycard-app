@@ -116,23 +116,43 @@ fun CardInfoDialog(
     cardImageUri: Uri?,
 ) {
     var newCardName by remember { mutableStateOf(cardName) }
-    var newImageUri by remember { mutableStateOf(cardImageUri) }
+    val imageUri = rememberSaveable {
+        mutableStateOf(cardImageUri)
+    }
+    val painter = rememberAsyncImagePainter(
+        imageUri.value?.toString() ?: R.drawable.outline_image_24
+    )
     FullScreenDialog(onDismissRequest = onDismiss) {
         Column {
-            CardImage(
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-                onImageChange = {
-                    newImageUri = it
-                },
-                newImageUri,
+            Image(
+                painter = painter,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .clip(CircleShape) // TODO: Change to param
+                    .size(150.dp)
             )
+            LauncherForActivityResultComponent(
+                onLauncherResult = {
+                    imageUri.value = it
+                }
+            ) { launcher ->
+                IconButton(onClick = { launcher.launch("image/*") }) {
+                    Icon(
+                        Icons.Outlined.PhotoCamera,
+                        contentDescription = null
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.padding(8.dp))
+
             OutlinedTextField(value = newCardName, onValueChange = { newCardName = it })
             Spacer(modifier = Modifier.padding(8.dp))
 
 
             Button(
                 onClick = {
-                    onConfirmation(newCardName, newImageUri)
+                    onConfirmation(newCardName, imageUri.value)
                 }
             ) {
                 Text(stringResource(R.string.txt_label_confirm))
@@ -141,42 +161,6 @@ fun CardInfoDialog(
     }
 }
 
-@Composable
-fun CardImage(
-    modifier: Modifier = Modifier,
-    onImageChange: (Uri?) -> Unit,
-    cardImageUri: Uri?
-) {
-    val TAG = "CardImage"
-    val imageUri = rememberSaveable { mutableStateOf(cardImageUri?.toString() ?: "") }
-    val painter = rememberAsyncImagePainter(
-        imageUri.value.ifEmpty { R.drawable.outline_image_24 }
-    )
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) {uri: Uri? ->
-        uri?.let {
-            imageUri.value = it.toString()
-            onImageChange(it)
-        }
-    }
-    Column (modifier = modifier) {
-        Image(
-            painter = painter,
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .clip(CircleShape) // TODO: Change to param
-                .size(150.dp)
-        )
-        IconButton(onClick = { launcher.launch("image/*") }) {
-            Icon(
-                Icons.Outlined.PhotoCamera,
-                contentDescription = null
-            )
-        }
-    }
-}
 
 @Preview
 @Composable
