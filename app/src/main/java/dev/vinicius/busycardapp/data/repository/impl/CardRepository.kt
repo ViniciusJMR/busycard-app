@@ -10,6 +10,7 @@ import dev.vinicius.busycardapp.data.remote.firebase.db.mapper.mapToFirebaseMode
 import dev.vinicius.busycardapp.data.remote.firebase.db.model.FirebaseCardModel
 import dev.vinicius.busycardapp.domain.repository.Repository
 import dev.vinicius.busycardapp.domain.model.card.Card
+import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.domain.repository.Bucket
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -75,8 +76,19 @@ class CardRepository @Inject constructor(
             val bucketPath = "cards/$key/cardImage.${ext}"
             bucket.uploadFile(it, bucketPath)
         }
-
         Log.d(TAG, "save: uri: ${item.image.uri} - ${item.image.uri?.path}")
+
+        item.fields
+            .filterIsInstance<Field.ImageField>()
+            .forEach {
+                val uri = it.image.uri!!
+                val ext = uri.path!!.substring(uri.path!!.lastIndexOf(".") + 1)
+                val imageId = uri.toString().substring(uri.toString().lastIndexOf("%") + 1)
+
+                val bucketPath = "fields/$key/$imageId.$ext"
+                it.image.uri = bucket.uploadFile(uri, bucketPath)
+            }
+
 
         // Firebase saves 0 as Long and this will cause an exception when mapping back
         item.fields.forEach{
