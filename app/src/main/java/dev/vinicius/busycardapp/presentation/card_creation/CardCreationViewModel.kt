@@ -81,6 +81,7 @@ class CardCreationViewModel @Inject constructor(
                             name = "image field 1",
                             offsetX = 200,
                             offsetY = 200,
+                            size = 50,
                         )
                     }
                 }

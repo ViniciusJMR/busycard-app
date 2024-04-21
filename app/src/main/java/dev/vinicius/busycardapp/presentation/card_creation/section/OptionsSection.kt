@@ -199,7 +199,7 @@ fun ImageFieldMenu(
     }
 
     var size by remember {
-        mutableIntStateOf(50)
+        mutableIntStateOf(field.size)
     }
 
     val painter = rememberAsyncImagePainter(
