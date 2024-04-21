@@ -60,9 +60,12 @@ fun CardCreationScreen(
 
     if (state.showCardInfoDialog) {
         CardInfoDialog(
-            onConfirmation = { event(CardCreationEvent.CardEvent.OnChangeCard.name(it)) },
+            onConfirmation = { name, uri ->
+                event(CardCreationEvent.CardEvent.OnChangeCard.Info(name, uri))
+            },
             onDismiss = { event(CardCreationEvent.DialogEvent.OnDismissCardInfoDialog) },
-            cardName = state.cardName
+            cardName = state.cardName,
+            cardImageUri = state.cardImageUri
         )
     }
 
@@ -118,7 +121,7 @@ fun CardCreationScreen(
                 onShowDialog = { event(CardCreationEvent.DialogEvent.OnShowTextTypeDialog) },
                 currentlySelectedField = state.currentlySelectedField,
                 mainContactField = state.mainContactField,
-                onMainContactChange = { event(CardCreationEvent.CardEvent.OnChangeCard.mainContact(it))},
+                onMainContactChange = { event(CardCreationEvent.CardEvent.OnChangeCard.MainContact(it))},
                 showBottomSheet = state.showBottomSheet
             )
         }

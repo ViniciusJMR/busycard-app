@@ -8,4 +8,7 @@
     <string name="label_bottomnav_mycards_screen">My Cards</string>
     <string name="txt_label_confirm">Confirm</string>
     <string name="txt_card_no_name">No Name</string>
+    <string name="txt_select_as_main_ctc">Select as Main Contact</string>
+    <string name="txt_unselect_as_main_contact">Unselect as Main Contact</string>
+    <string name="label_change_image_size">Image Size</string>
 </resources>

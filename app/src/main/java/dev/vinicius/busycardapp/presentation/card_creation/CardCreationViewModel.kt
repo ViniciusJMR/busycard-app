@@ -12,6 +12,7 @@ import dev.vinicius.busycardapp.domain.usecase.card.SaveCard
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -51,8 +52,8 @@ class CardCreationViewModel @Inject constructor(
                         Field.TextField(
                             name = "text field 1",
                             value = "abcd",
-                            offsetX = 200f,
-                            offsetY = 200f,
+                            offsetX = 200,
+                            offsetY = 200,
                             textType = TextType.TEXT
                         )
                     }
@@ -60,8 +61,8 @@ class CardCreationViewModel @Inject constructor(
                         Field.TextField(
                             name = "Phone field 1",
                             value = "(99) 99999-9999",
-                            offsetX = 200f,
-                            offsetY = 200f,
+                            offsetX = 200,
+                            offsetY = 200,
                             textType = TextType.PHONE
                         )
                     }
@@ -69,13 +70,20 @@ class CardCreationViewModel @Inject constructor(
                         Field.TextField(
                             name = "email field 1",
                             value = "place@holder.com",
-                            offsetX = 200f,
-                            offsetY = 200f,
+                            offsetX = 200,
+                            offsetY = 200,
                             textType = TextType.EMAIL
                         )
                     }
                     FieldType.ADDRESS -> TODO()
-                    FieldType.IMAGE -> TODO()
+                    FieldType.IMAGE -> {
+                        Field.ImageField(
+                            name = "image field 1",
+                            offsetX = 200,
+                            offsetY = 200,
+                            size = 50,
+                        )
+                    }
                 }
                 // Check if this doesn't make the entire CardSurface component to recompose
                 val list = _state.value.cardFields.toMutableList()
@@ -86,6 +94,7 @@ class CardCreationViewModel @Inject constructor(
                         currentlySelectedField = field
                     )
                 }
+                Log.d(TAG, "handleCardEvent: available fields ${_state.value.cardFields}")
             }
             is CardCreationEvent.CardEvent.OnDeleteField -> {}
             is CardCreationEvent.CardEvent.OnSelectField -> {
@@ -100,11 +109,21 @@ class CardCreationViewModel @Inject constructor(
                     name = _state.value.cardName,
                     fields = _state.value.cardFields,
                     mainContact = _state.value.mainContactField?.value ?: "",
-                )
+                ).apply {
+                    image.uri = _state.value.cardImageUri
+                }
                 viewModelScope.launch {
                     saveCard(card)
+                        .onStart {
+                            _state.update {
+                                it.copy(
+                                    isLoading = true
+                                )
+                            }
+                        }
                         .catch {
                             Log.d(TAG, "handleCardEvent: error: $it")
+                            it.printStackTrace()
                         }
                         .collect{
                             Log.d(TAG, "handleCardEvent: Salvo com sucesso")
@@ -120,7 +139,7 @@ class CardCreationViewModel @Inject constructor(
     
     private fun handleOnChangeCardValue(event: CardCreationEvent.CardEvent.OnChangeCard) {
         when (event) {
-            is CardCreationEvent.CardEvent.OnChangeCard.mainContact -> {
+            is CardCreationEvent.CardEvent.OnChangeCard.MainContact -> {
                 _state.update { cardState ->
                     Log.d(TAG, "mainContactField: ${cardState.mainContactField} ")
                     Log.d(TAG, "event field: ${event.field}")
@@ -132,10 +151,12 @@ class CardCreationViewModel @Inject constructor(
                     )
                 }
             }
-            is CardCreationEvent.CardEvent.OnChangeCard.name -> {
-                _state.update {
-                    it.copy(
+            is CardCreationEvent.CardEvent.OnChangeCard.Info -> {
+                _state.update { cardState ->
+                    Log.d(TAG, "handleOnChangeCardValue: event: $event")
+                    cardState.copy(
                         cardName = event.name,
+                        cardImageUri = event.imagePath,
                         showCardInfoDialog = false,
                     )
                 }
@@ -184,6 +205,31 @@ class CardCreationViewModel @Inject constructor(
                                    textType = event.textType
                             },
                         showTextTypeDialog = false
+                    )
+                }
+            }
+
+            is CardCreationEvent.FieldEvent.OnImageFieldChange -> {
+                _state.update {
+                    it.copy(
+                        currentlySelectedField =
+                        ( it.currentlySelectedField as Field.ImageField)
+                            .apply {
+                                event.name?.let {
+                                    name = it
+                                }
+                                event.offsetX?.let {
+                                    offsetX = it
+                                }
+                                event.offsetY?.let {
+                                    offsetY = it
+                                }
+                                event.size?.let {
+                                    size = it
+                                }
+                                image.uri = event.uri
+                            },
+                        showBottomSheet = false
                     )
                 }
             }

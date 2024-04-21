@@ -1,8 +1,9 @@
-package dev.vinicius.busycardapp.data.remote.firebase.mapper
+package dev.vinicius.busycardapp.data.remote.firebase.db.mapper
 
-import dev.vinicius.busycardapp.data.remote.firebase.model.FirebaseCardModel
-import dev.vinicius.busycardapp.data.remote.firebase.model.FirebaseFieldModel
+import dev.vinicius.busycardapp.data.remote.firebase.db.model.FirebaseCardModel
+import dev.vinicius.busycardapp.data.remote.firebase.db.model.FirebaseFieldModel
 import dev.vinicius.busycardapp.domain.model.card.Card
+import dev.vinicius.busycardapp.domain.model.card.CardImage
 import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.domain.model.card.TextType
 
@@ -11,6 +12,7 @@ fun Card.mapToFirebaseModel() =
         id,
         name,
         owner,
+        image.uri.toString(),
         mainContact,
     )
 
@@ -20,6 +22,7 @@ fun FirebaseCardModel.mapToDomainModel(fields: List<Map<String, Any>>) =
         name ?: "",
         owner ?: "",
         mainContact ?: "",
+        CardImage(path = image ?: ""),
         fields.map { mapFieldToDomainModel(it) }
     )
 
@@ -41,7 +44,7 @@ fun Field.mapToFirebaseModel(): Map<String, Any> =
             "offsetX" to offsetX,
             "offsetY" to offsetY,
             "size" to size,
-            "imageUrl" to imageUrl,
+            "imageUrl" to image.uri.toString(),
         )
         is Field.TextField -> mapOf(
             "type" to "TEXT",
@@ -73,7 +76,7 @@ fun mapDomainFieldsToFirebaseModel(items: List<Field>): List<Map<String, Any>> =
                     "offsetX" to offsetX.toDouble(),
                     "offsetY" to offsetY.toDouble(),
                     "size" to size,
-                    "imageUrl" to imageUrl,
+                    "imageUrl" to image.uri.toString(),
                 )
                 is Field.TextField -> mapOf(
                     "type" to "TEXT",
@@ -90,22 +93,21 @@ fun mapDomainFieldsToFirebaseModel(items: List<Field>): List<Map<String, Any>> =
 
 
 fun mapFieldToDomainModel(item: Map<String, Any>): Field {
-    val offsetXDouble = item["offsetX"] as? Double
-    val offsetXLong = item["offsetX"] as? Long
-
-    val offsetXFloat = offsetXDouble?.toFloat() ?: offsetXLong!!.toFloat()
-    val offsetYDouble = item["offsetY"] as? Double
-    val offsetYLong = item["offsetY"] as? Long
-
-    val offsetYFloat = offsetYDouble?.toFloat() ?: offsetYLong!!.toFloat()
+    val offsetXLong = item["offsetX"] as Long
+    val offsetYLong = item["offsetY"] as Long
+    val offsetX = offsetXLong.toInt() 
+    val offsetY = offsetYLong.toInt()
+    
+    val sizeLong = item["size"] as Long 
+    val size = sizeLong.toInt()
 
 
     return when(item["type"] as String) {
         "ADDRESS" -> Field.AddressField(
             item["name"] as String,
-            offsetXFloat,
-            offsetYFloat,
-            (item["size"] as Double).toFloat(),
+            offsetX,
+            offsetY,
+            size,
             Pair(
                 (item["localization"] as Map<String, Long>)["x"],
                 (item["localization"] as Map<String, Long>)["y"] //Really ugly solution. Do better in future
@@ -114,16 +116,16 @@ fun mapFieldToDomainModel(item: Map<String, Any>): Field {
         )
         "IMAGE" -> Field.ImageField(
             item["name"] as String,
-            offsetXFloat,
-            offsetYFloat,
-            (item["size"] as Double).toFloat(),
-            item["imageUrl"] as String,
+            offsetX,
+            offsetY,
+            size,
+            CardImage(path = item["imageUrl"] as String),
         )
         "TEXT" -> Field.TextField(
             item["name"] as String,
-            offsetXFloat,
-            offsetYFloat,
-            (item["size"] as Double).toFloat(),
+            offsetX,
+            offsetY,
+            size,
             TextType.valueOf(item["textType"] as String),
             item["value"] as String,
         )
@@ -138,24 +140,24 @@ fun FirebaseFieldModel.mapToDomainModel() =
     when(this) {
         is FirebaseFieldModel.AddressField -> Field.AddressField(
             name ?: "",
-            offsetX ?: 0f,
-            offsetY ?: 0f,
-            size ?: 0f,
+            offsetX ?: 0,
+            offsetY ?: 0,
+            size ?: 0,
             localization ?: Pair(0,0),
             textLocalization ?: "",
         )
         is FirebaseFieldModel.ImageField -> Field.ImageField(
             name ?: "",
-            offsetX ?: 0f,
-            offsetY ?: 0f,
-            size ?: 0f,
-            imageUrl ?: "",
+            offsetX ?: 0,
+            offsetY ?: 0,
+            size ?: 0,
+//            imageUrl ?: "",
         )
         is FirebaseFieldModel.TextField -> Field.TextField(
             name ?: "",
-            offsetX ?: 0f,
-            offsetY ?: 0f,
-            size ?: 0f,
+            offsetX ?: 0,
+            offsetY ?: 0,
+            size ?: 0,
             textType ?: TextType.TEXT,
             value ?: "",
         )

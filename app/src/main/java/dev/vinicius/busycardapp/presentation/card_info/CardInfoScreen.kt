@@ -9,6 +9,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,11 +19,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import dev.vinicius.busycardapp.domain.model.card.Field
@@ -76,14 +82,14 @@ fun CardRender(
                 Box (
                     Modifier.offset {
                         IntOffset(
-                            field.offsetX.roundToInt(),
-                            field.offsetY.roundToInt()
+                            field.offsetX,
+                            field.offsetY,
                         )
                     }
                 ){
                     when (field) {
                         is Field.AddressField -> TODO()
-                        is Field.ImageField -> TODO()
+                        is Field.ImageField -> CardInfoImageField(field = field)
                         is Field.TextField -> CardInfoTextField(field = field)
                     }
                 }
@@ -101,13 +107,34 @@ fun CardInfoTextField(
     // TODO: Different onClick depending on TextType
 }
 
+@Composable
+fun CardInfoImageField(
+    modifier: Modifier = Modifier,
+    field: Field.ImageField,
+) {
+    Box( contentAlignment = Alignment.Center ) {
+        // Only used to signalize to the user there's a image there
+        // TODO: Use onState from AsyncImage
+        CircularProgressIndicator()
+        AsyncImage(
+            model = field.image.path,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = modifier
+                .clip(CircleShape) // TODO: Change to param
+                .size(field.size.dp)
+        )
+    }
+}
+
+
 @Preview
 @Composable
 private fun CardRenderPreview() {
     val a = listOf(
         Field.TextField(value = "Print"),
-        Field.TextField(value = "Print", offsetX = 23.0F, offsetY = 100F),
-        Field.TextField(value = "Print", offsetX = 223.0F, offsetY = 400F),
+//        Field.TextField(value = "Print", offsetX = 23.0F, offsetY = 100F),
+//        Field.TextField(value = "Print", offsetX = 223.0F, offsetY = 400F),
     )
 
     BusyCardAppTheme {

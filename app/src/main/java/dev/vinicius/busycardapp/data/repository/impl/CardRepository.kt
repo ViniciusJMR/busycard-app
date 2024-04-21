@@ -1,20 +1,24 @@
 package dev.vinicius.busycardapp.data.repository.impl
 
+import android.util.Log
 import com.google.firebase.database.getValue
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import dev.vinicius.busycardapp.data.remote.firebase.mapper.mapDomainFieldsToFirebaseModel
-import dev.vinicius.busycardapp.data.remote.firebase.mapper.mapToDomainModel
-import dev.vinicius.busycardapp.data.remote.firebase.mapper.mapToFirebaseModel
-import dev.vinicius.busycardapp.data.remote.firebase.model.FirebaseCardModel
-import dev.vinicius.busycardapp.data.repository.Repository
+import dev.vinicius.busycardapp.data.remote.firebase.db.mapper.mapDomainFieldsToFirebaseModel
+import dev.vinicius.busycardapp.data.remote.firebase.db.mapper.mapToDomainModel
+import dev.vinicius.busycardapp.data.remote.firebase.db.mapper.mapToFirebaseModel
+import dev.vinicius.busycardapp.data.remote.firebase.db.model.FirebaseCardModel
+import dev.vinicius.busycardapp.domain.repository.Repository
 import dev.vinicius.busycardapp.domain.model.card.Card
+import dev.vinicius.busycardapp.domain.model.card.Field
+import dev.vinicius.busycardapp.domain.repository.Bucket
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class CardRepository @Inject constructor(
+    private val bucket: Bucket
 ): Repository<String, Card> {
 
     // TODO: move it to interface
@@ -67,10 +71,24 @@ class CardRepository @Inject constructor(
         val key = database.child("cards").push().key
         item.id = key
 
-        // Firebase saves 0 as Long and this will cause an exception when mapping back
-        item.fields.forEach{
-            it.size = if (it.size == 0f ) 0.01f else it.size
+        item.image.uri = item.image.uri?.let {
+            val ext = it.path!!.substring(it.path!!.lastIndexOf(".") + 1)
+            val bucketPath = "cards/$key/cardImage.${ext}"
+            bucket.uploadFile(it, bucketPath)
         }
+        Log.d(TAG, "save: uri: ${item.image.uri} - ${item.image.uri?.path}")
+
+        item.fields
+            .filterIsInstance<Field.ImageField>()
+            .forEach {
+                val uri = it.image.uri!!
+                val ext = uri.path!!.substring(uri.path!!.lastIndexOf(".") + 1)
+                val imageId = uri.toString().substring(uri.toString().lastIndexOf("%") + 1)
+
+                val bucketPath = "fields/$key/$imageId.$ext"
+                it.image.uri = bucket.uploadFile(uri, bucketPath)
+            }
+
 
         database
             .child("cards")
