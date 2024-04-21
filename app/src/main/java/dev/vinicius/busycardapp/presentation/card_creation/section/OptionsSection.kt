@@ -1,5 +1,6 @@
 package dev.vinicius.busycardapp.presentation.card_creation.section
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -7,9 +8,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ChevronLeft
+import androidx.compose.material.icons.outlined.ChevronRight
+import androidx.compose.material.icons.outlined.Upload
 import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -17,19 +24,25 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import dev.vinicius.busycardapp.R
 import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.domain.model.card.FieldType
 import dev.vinicius.busycardapp.domain.model.card.TextType
 import dev.vinicius.busycardapp.presentation.card_creation.CardCreationEvent
 import dev.vinicius.busycardapp.presentation.card_creation.component.DefaultDialog
+import dev.vinicius.busycardapp.presentation.card_creation.component.LauncherForActivityResultComponent
 import dev.vinicius.busycardapp.presentation.card_creation.component.RadioOptions
 import dev.vinicius.busycardapp.presentation.card_creation.component.SelectableOption
 
@@ -85,7 +98,9 @@ fun FieldInfoMenu(
     Column {
         when (field) {
             is Field.AddressField -> TODO()
-            is Field.ImageField -> TODO()
+            is Field.ImageField -> {
+                ImageFieldMenu(onChangeImage = onChangeField, field = field)
+            }
             is Field.TextField -> {
                 TextButton(onClick = { onMainContactChange(field) }) {
                     val text = if (!isMainContact)
@@ -163,6 +178,77 @@ fun TextFieldMenu(
                     CardCreationEvent.FieldEvent.OnTextFieldChange(
                         value = fieldValue,
                         textType = fieldType,
+                    )
+                )
+            },
+        ) {
+            Text("Confirm")
+        }
+    }
+}
+
+@Composable
+fun ImageFieldMenu(
+    modifier: Modifier = Modifier,
+    onChangeImage: (CardCreationEvent.FieldEvent) -> Unit,
+    field: Field.ImageField,
+) {
+
+    val imageUri = rememberSaveable {
+        mutableStateOf(field.image.uri)
+    }
+
+    var size by remember {
+        mutableIntStateOf(50)
+    }
+
+    val painter = rememberAsyncImagePainter(
+        imageUri.value?.toString() ?: R.drawable.outline_image_24
+    )
+
+    Column {
+        Image(
+            painter = painter,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .clip(CircleShape) // TODO: Change to param
+                .size(size.dp)
+        )
+        LauncherForActivityResultComponent(
+            onLauncherResult = {
+                imageUri.value = it
+            }
+        ) { launcher ->
+            IconButton(onClick = { launcher.launch("image/*") }) {
+                Icon(
+                    Icons.Outlined.Upload,
+                    contentDescription = null
+                )
+            }
+        }
+        Spacer(modifier = Modifier.padding(4.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = { size-- }) {
+                Icon(Icons.Outlined.ChevronLeft, contentDescription = null)
+            }
+            Text(text = stringResource(R.string.label_change_image_size))
+            IconButton(onClick = { size++ }) {
+                Icon(Icons.Outlined.ChevronRight, contentDescription = null)
+            }
+        }
+        Spacer(modifier = Modifier.padding(4.dp))
+        Button(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 8.dp, end = 8.dp),
+            onClick = {
+                onChangeImage(
+                    CardCreationEvent.FieldEvent.OnImageFieldChange(
+                        size = size.toFloat(),
+                        uri = imageUri.value,
                     )
                 )
             },
