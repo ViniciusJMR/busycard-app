@@ -89,9 +89,9 @@ fun FieldInfoMenu(
             is Field.TextField -> {
                 TextButton(onClick = { onMainContactChange(field) }) {
                     val text = if (!isMainContact)
-                        "Select as Main Contact"
+                        stringResource(R.string.txt_select_as_main_ctc)
                     else
-                        "Unselect as Main Contact"
+                        stringResource(R.string.txt_unselect_as_main_contact)
                     Text(text)
                 }
                 Spacer(Modifier.padding(8.dp))
