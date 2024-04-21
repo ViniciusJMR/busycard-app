@@ -76,7 +76,13 @@ class CardCreationViewModel @Inject constructor(
                         )
                     }
                     FieldType.ADDRESS -> TODO()
-                    FieldType.IMAGE -> TODO()
+                    FieldType.IMAGE -> {
+                        Field.ImageField(
+                            name = "image field 1",
+                            offsetX = 200f,
+                            offsetY = 200f,
+                        )
+                    }
                 }
                 // Check if this doesn't make the entire CardSurface component to recompose
                 val list = _state.value.cardFields.toMutableList()
@@ -87,6 +93,7 @@ class CardCreationViewModel @Inject constructor(
                         currentlySelectedField = field
                     )
                 }
+                Log.d(TAG, "handleCardEvent: available fields ${_state.value.cardFields}")
             }
             is CardCreationEvent.CardEvent.OnDeleteField -> {}
             is CardCreationEvent.CardEvent.OnSelectField -> {
@@ -197,6 +204,31 @@ class CardCreationViewModel @Inject constructor(
                                    textType = event.textType
                             },
                         showTextTypeDialog = false
+                    )
+                }
+            }
+
+            is CardCreationEvent.FieldEvent.OnImageFieldChange -> {
+                _state.update {
+                    it.copy(
+                        currentlySelectedField =
+                        ( it.currentlySelectedField as Field.ImageField)
+                            .apply {
+                                event.name?.let {
+                                    name = it
+                                }
+                                event.offsetX?.let {
+                                    offsetX = it
+                                }
+                                event.offsetY?.let {
+                                    offsetY = it
+                                }
+                                event.size?.let {
+                                    size = it
+                                }
+                                image.uri = event.uri
+                            },
+                        showBottomSheet = false
                     )
                 }
             }

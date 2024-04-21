@@ -35,6 +35,14 @@ sealed class CardCreationEvent {
             var value: String? = null,
         ): FieldEvent()
         data class OnTextFieldTypeChange(val textType: TextType): FieldEvent()
+
+        data class OnImageFieldChange(
+            var name: String? = null,
+            var offsetX: Float? = null,
+            var offsetY: Float? = null,
+            var size: Float? = null,
+            var uri: Uri? = null,
+        ): FieldEvent()
     }
 
     sealed class ModalEvent: CardCreationEvent() {
