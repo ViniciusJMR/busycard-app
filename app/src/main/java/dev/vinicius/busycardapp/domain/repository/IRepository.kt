@@ -2,7 +2,7 @@ package dev.vinicius.busycardapp.domain.repository
 
 import kotlinx.coroutines.flow.Flow
 
-interface Repository<K, T> {
+interface IRepository<K, T> {
 
     suspend fun getAll(): Flow<List<T>>
 
