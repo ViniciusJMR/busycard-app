@@ -4,10 +4,14 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dev.vinicius.busycardapp.data.repository.impl.AuthRepository
 import dev.vinicius.busycardapp.data.repository.impl.BucketRepository
-import dev.vinicius.busycardapp.domain.repository.Repository
+import dev.vinicius.busycardapp.domain.repository.IRepository
 import dev.vinicius.busycardapp.data.repository.impl.CardRepository
+import dev.vinicius.busycardapp.data.repository.impl.UserRepository
 import dev.vinicius.busycardapp.domain.model.card.Card
+import dev.vinicius.busycardapp.domain.model.user.User
+import dev.vinicius.busycardapp.domain.repository.Auth
 import dev.vinicius.busycardapp.domain.repository.Bucket
 import javax.inject.Singleton
 
@@ -19,7 +23,13 @@ abstract class RepositoryModule {
     @Singleton
     abstract fun bindCardRepository(
         cardRepository: CardRepository
-    ): Repository<String, Card>
+    ): IRepository<String, Card>
+
+    @Binds
+    @Singleton
+    abstract fun bindUserRepository(
+        userRepository: UserRepository
+    ): IRepository<String, User>
 
     @Binds
     @Singleton
@@ -27,4 +37,9 @@ abstract class RepositoryModule {
         bucket: BucketRepository
     ): Bucket
 
+    @Binds
+    @Singleton
+    abstract fun bindAuthRepository(
+        auth: AuthRepository
+    ): Auth
 }

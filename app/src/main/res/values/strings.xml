@@ -11,4 +11,11 @@
     <string name="txt_select_as_main_ctc">Select as Main Contact</string>
     <string name="txt_unselect_as_main_contact">Unselect as Main Contact</string>
     <string name="label_change_image_size">Image Size</string>
+    <string name="label_email">Email</string>
+    <string name="txt_login">Login</string>
+    <string name="label_password">Password</string>
+    <string name="label_password2">Rewrite password</string>
+    <string name="label_name">Name</string>
+    <string name="label_surname">Surname</string>
+    <string name="label_username">Username</string>
 </resources>

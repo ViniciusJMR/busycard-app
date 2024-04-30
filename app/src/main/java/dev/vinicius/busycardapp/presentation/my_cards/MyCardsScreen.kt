@@ -130,8 +130,7 @@ fun MyCardItem(
             .height(45.dp),
         onClick = onClick
     ){
-        Row (
-        ){
+        Row {
             Box( contentAlignment = Alignment.Center ) {
                 // Only used to signalize to the user there's a image there
                 // TODO: Use onState from AsyncImage

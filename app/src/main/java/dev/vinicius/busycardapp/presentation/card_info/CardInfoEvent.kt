@@ -1,4 +1,3 @@
 package dev.vinicius.busycardapp.presentation.card_info
 
-sealed class CardInfoEvent {
-}
+sealed class CardInfoEvent

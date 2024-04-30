@@ -94,8 +94,7 @@ fun CardItem(
     Surface (
         modifier = modifier.fillMaxWidth().height(45.dp)
     ){
-        Row (
-        ){
+        Row {
             Icon(
                 modifier = Modifier.fillMaxHeight(),
                 imageVector = Icons.Default.AccountCircle,

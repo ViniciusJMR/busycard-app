@@ -9,7 +9,4 @@ data class Card(
     var mainContact: String = "",
     var image: CardImage = CardImage(),
     val fields: List<Field>,
-) {
-
-
-}
+)

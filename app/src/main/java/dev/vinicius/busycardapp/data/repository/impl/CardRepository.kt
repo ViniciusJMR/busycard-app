@@ -8,7 +8,7 @@ import dev.vinicius.busycardapp.data.remote.firebase.db.mapper.mapDomainFieldsTo
 import dev.vinicius.busycardapp.data.remote.firebase.db.mapper.mapToDomainModel
 import dev.vinicius.busycardapp.data.remote.firebase.db.mapper.mapToFirebaseModel
 import dev.vinicius.busycardapp.data.remote.firebase.db.model.FirebaseCardModel
-import dev.vinicius.busycardapp.domain.repository.Repository
+import dev.vinicius.busycardapp.domain.repository.IRepository
 import dev.vinicius.busycardapp.domain.model.card.Card
 import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.domain.repository.Bucket
@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 class CardRepository @Inject constructor(
     private val bucket: Bucket
-): Repository<String, Card> {
+): IRepository<String, Card> {
 
     // TODO: move it to interface
     private val database = Firebase.database.reference
