@@ -29,15 +29,21 @@ import com.ramcosta.composedestinations.navigation.navigate
 import com.ramcosta.composedestinations.navigation.popUpTo
 import com.ramcosta.composedestinations.spec.DirectionDestinationSpec
 import dagger.hilt.android.AndroidEntryPoint
+import dev.vinicius.busycardapp.domain.repository.Auth
 import dev.vinicius.busycardapp.presentation.NavGraphs
 import dev.vinicius.busycardapp.presentation.appCurrentDestinationAsState
+import dev.vinicius.busycardapp.presentation.destinations.LoginScreenDestination
 import dev.vinicius.busycardapp.presentation.destinations.MyCardsScreenDestination
 import dev.vinicius.busycardapp.presentation.destinations.SharedCardsScreenDestination
 import dev.vinicius.busycardapp.presentation.startAppDestination
 import dev.vinicius.busycardapp.ui.theme.BusyCardAppTheme
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity: ComponentActivity() {
+
+    @Inject
+    lateinit var auth: Auth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -45,6 +51,11 @@ class MainActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 val navController = rememberNavController()
                 val appState = rememberAppState(navController)
+                val startRoute = if(auth.isLogged())
+                    SharedCardsScreenDestination
+                else
+                    LoginScreenDestination
+
                 Scaffold(
                     bottomBar = {
                         if (appState.shouldShowBottomBar)
@@ -57,9 +68,11 @@ class MainActivity : ComponentActivity() {
                             .padding(it),
                         color = MaterialTheme.colorScheme.background
                     ) {
+
                         DestinationsNavHost(
                             navGraph = NavGraphs.root,
-                            navController = navController
+                            navController = navController,
+                            startRoute = startRoute
                         )
                     }
                 }
