@@ -93,13 +93,9 @@ fun mapDomainFieldsToFirebaseModel(items: List<Field>): List<Map<String, Any>> =
 
 
 fun mapFieldToDomainModel(item: Map<String, Any>): Field {
-    val offsetXLong = item["offsetX"] as Long
-    val offsetYLong = item["offsetY"] as Long
-    val offsetX = offsetXLong.toInt() 
-    val offsetY = offsetYLong.toInt()
-    
-    val sizeLong = item["size"] as Long 
-    val size = sizeLong.toInt()
+    val offsetX = item["offsetX"].toString().toDouble().toInt()
+    val offsetY = item["offsetY"].toString().toDouble().toInt()
+    val size = item["size"].toString().toDouble().toInt()
 
 
     return when(item["type"] as String) {
