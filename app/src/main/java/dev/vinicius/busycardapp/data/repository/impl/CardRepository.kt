@@ -1,15 +1,12 @@
 package dev.vinicius.busycardapp.data.repository.impl
 
 import android.util.Log
-import com.google.firebase.database.getValue
-import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import dev.vinicius.busycardapp.data.remote.firebase.db.mapper.mapDomainFieldsToFirebaseModel
 import dev.vinicius.busycardapp.data.remote.firebase.db.mapper.mapToDomainModel
 import dev.vinicius.busycardapp.data.remote.firebase.db.mapper.mapToFirebaseModel
 import dev.vinicius.busycardapp.data.remote.firebase.db.model.FirebaseCardModel
-import dev.vinicius.busycardapp.data.remote.firebase.db.model.FirebaseFieldModel
 import dev.vinicius.busycardapp.domain.repository.IRepository
 import dev.vinicius.busycardapp.domain.model.card.Card
 import dev.vinicius.busycardapp.domain.model.card.Field
@@ -29,6 +26,15 @@ class CardRepository @Inject constructor(
 
     companion object {
         val TAG = "CardRepository"
+    }
+
+    override suspend fun getByIds(ids: List<String>): Flow<List<Card>> = flow{
+        emit(database.collection("cards")
+            .whereIn("id", ids)
+            .get()
+            .await()
+            .map { it.toObject(FirebaseCardModel::class.java).mapToDomainModel(emptyList()) }
+        )
     }
 
     override suspend fun getAll(): Flow<List<Card>> = flow {
@@ -68,7 +74,7 @@ class CardRepository @Inject constructor(
         }
     }
 
-    override suspend fun save(item: Card) {
+    override suspend fun save(item: Card): String {
         database.collection("cards")
         val key = UUID.randomUUID().toString()
         item.id = key
@@ -102,6 +108,8 @@ class CardRepository @Inject constructor(
             .collection("fields")
             .document(item.id.toString())
             .set(mapOf("list" to mapDomainFieldsToFirebaseModel(item.fields)))
+
+        return key
     }
 
 }

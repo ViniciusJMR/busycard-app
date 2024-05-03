@@ -8,5 +8,7 @@ interface IRepository<K, T> {
 
     suspend fun getById(id: K): Flow<T>
 
-    suspend fun save(item: T)
+    suspend fun getByIds(ids: List<K>): Flow<List<T>>
+
+    suspend fun save(item: T): K
 }

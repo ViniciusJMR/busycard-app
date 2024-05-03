@@ -2,6 +2,7 @@ package dev.vinicius.busycardapp.data.repository.impl
 
 import com.google.firebase.database.getValue
 import com.google.firebase.database.ktx.database
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import dev.vinicius.busycardapp.domain.model.user.User
@@ -39,8 +40,10 @@ class UserRepository @Inject constructor(
         return myCards
     }
 
-    override suspend fun save(item: User) {
+
+    override suspend fun save(item: User): String {
         database.collection("users").document(item.id).set(item).await()
+        return item.id
     }
 
     override suspend fun getById(id: String): Flow<User> = flow {
@@ -54,5 +57,14 @@ class UserRepository @Inject constructor(
             }
             task.isCanceled -> TODO()
         }
+    }
+
+    // Should Not be used
+    override suspend fun getAll(): Flow<List<User>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getByIds(ids: List<String>): Flow<List<User>> {
+        TODO("Not yet implemented")
     }
 }
