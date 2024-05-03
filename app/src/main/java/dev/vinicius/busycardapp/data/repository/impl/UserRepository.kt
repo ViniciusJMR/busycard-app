@@ -2,6 +2,7 @@ package dev.vinicius.busycardapp.data.repository.impl
 
 import com.google.firebase.database.getValue
 import com.google.firebase.database.ktx.database
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import dev.vinicius.busycardapp.domain.model.user.User
@@ -16,20 +17,33 @@ class UserRepository @Inject constructor(
 ): IUserRepository<String, User> {
     private val database = Firebase.firestore
 
-    override fun saveMyCardId(userId: String, cardId: String) {
-//        database.child("users")
-//            .child(userId)
-//            .child("myCards")
-//            .child(cardId)
-//            .setValue(true) // Suggested form to save a list by firebase
+    override suspend fun saveMyCardId(userId: String, cardId: String) {
+        database.collection("users")
+            .document(userId)
+            .update("myCards", FieldValue.arrayUnion(cardId))
     }
 
-    override suspend fun getAll(): Flow<List<User>> {
-        TODO("Not yet implemented")
+    override suspend fun getMyCardsId(userId: String): List<String> {
+        var myCards: List<String> = emptyList()
+
+        val task = database.collection("users")
+            .document(userId)
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    myCards = documentSnapshot.get("myCards") as List<String>
+                }
+            }
+
+        task.await()
+
+        return myCards
     }
 
-    override suspend fun save(item: User) {
+
+    override suspend fun save(item: User): String {
         database.collection("users").document(item.id).set(item).await()
+        return item.id
     }
 
     override suspend fun getById(id: String): Flow<User> = flow {
@@ -43,5 +57,14 @@ class UserRepository @Inject constructor(
             }
             task.isCanceled -> TODO()
         }
+    }
+
+    // Should Not be used
+    override suspend fun getAll(): Flow<List<User>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getByIds(ids: List<String>): Flow<List<User>> {
+        TODO("Not yet implemented")
     }
 }

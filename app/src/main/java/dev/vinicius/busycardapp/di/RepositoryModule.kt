@@ -13,6 +13,7 @@ import dev.vinicius.busycardapp.domain.model.card.Card
 import dev.vinicius.busycardapp.domain.model.user.User
 import dev.vinicius.busycardapp.domain.repository.Auth
 import dev.vinicius.busycardapp.domain.repository.Bucket
+import dev.vinicius.busycardapp.domain.repository.IUserRepository
 import javax.inject.Singleton
 
 @Module
@@ -29,7 +30,7 @@ abstract class RepositoryModule {
     @Singleton
     abstract fun bindUserRepository(
         userRepository: UserRepository
-    ): IRepository<String, User>
+    ): IUserRepository<String, User>
 
     @Binds
     @Singleton

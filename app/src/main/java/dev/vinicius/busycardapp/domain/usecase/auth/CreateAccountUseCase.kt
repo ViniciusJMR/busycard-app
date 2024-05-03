@@ -6,14 +6,14 @@ import dev.vinicius.busycardapp.core.UseCase
 import dev.vinicius.busycardapp.domain.model.auth.CreateAccount
 import dev.vinicius.busycardapp.domain.model.user.User
 import dev.vinicius.busycardapp.domain.repository.Auth
-import dev.vinicius.busycardapp.domain.repository.IRepository
+import dev.vinicius.busycardapp.domain.repository.IUserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class CreateAccountUseCase @Inject constructor(
     private val auth: Auth,
-    private val repository: IRepository<String, User>
+    private val repository: IUserRepository<String, User>
 ): UseCase.NoSource<CreateAccount>() {
     override suspend fun execute(param: CreateAccount): Flow<Unit> = flow {
         auth.signIn(param.email, param.password)

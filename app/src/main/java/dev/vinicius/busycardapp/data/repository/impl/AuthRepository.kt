@@ -18,6 +18,8 @@ class AuthRepository @Inject constructor(
 
     var currentUser: FirebaseUser? = auth.currentUser
 
+    override fun getCurrentUserId(): String = currentUser?.uid ?: ""
+
     override fun isLogged() = currentUser != null
 
     override suspend fun logIn(email: String, password: String) {
