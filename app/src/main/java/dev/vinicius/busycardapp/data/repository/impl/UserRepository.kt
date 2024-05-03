@@ -16,16 +16,27 @@ class UserRepository @Inject constructor(
 ): IUserRepository<String, User> {
     private val database = Firebase.firestore
 
-    override fun saveMyCardId(userId: String, cardId: String) {
-//        database.child("users")
-//            .child(userId)
-//            .child("myCards")
-//            .child(cardId)
-//            .setValue(true) // Suggested form to save a list by firebase
+    override suspend fun saveMyCardId(userId: String, cardId: String) {
+        database.collection("users")
+            .document(userId)
+            .update("myCards", FieldValue.arrayUnion(cardId))
     }
 
-    override suspend fun getAll(): Flow<List<User>> {
-        TODO("Not yet implemented")
+    override suspend fun getMyCardsId(userId: String): List<String> {
+        var myCards: List<String> = emptyList()
+
+        val task = database.collection("users")
+            .document(userId)
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    myCards = documentSnapshot.get("myCards") as List<String>
+                }
+            }
+
+        task.await()
+
+        return myCards
     }
 
     override suspend fun save(item: User) {
