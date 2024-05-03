@@ -5,4 +5,6 @@ interface Auth {
     suspend fun logIn(email: String, password: String)
     fun logOut()
     suspend fun signIn(email: String, password: String)
+
+    fun getCurrentUserId(): String
 }
