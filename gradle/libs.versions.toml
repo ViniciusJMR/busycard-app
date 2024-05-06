@@ -20,6 +20,8 @@ coil = "2.6.0"
 hilt = "2.51"
 hiltCompiler = "1.2.0"
 hiltNavigationCompose = "1.2.0"
+googleMaps = "4.4.2"
+playServicesLocation = "21.2.0"
 
 [libraries]
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
@@ -27,6 +29,7 @@ firebase-storage =  { group = "com.google.firebase", name="firebase-storage" }
 firebase-database = { group = "com.google.firebase", name="firebase-database-ktx"}
 firebase-firestore = {group = "com.google.firebase", name="firebase-firestore-ktx"}
 firebase-auth = { group = "com.google.firebase", name="firebase-auth-ktx"}
+google-maps = { module = "com.google.maps.android:maps-compose", version.ref = "googleMaps" }
 accompanist-flowlayout = { module = "com.google.accompanist:accompanist-flowlayout", version.ref = "accompanistFlowlayout" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -52,6 +55,7 @@ dagger-hilt-android = { module = "com.google.dagger:hilt-android", version.ref =
 dagger-hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt"}
 androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltCompiler"}
 androidx-hilt-navgation-compose= { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose"}
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
