@@ -1,5 +1,6 @@
 package dev.vinicius.busycardapp.data.remote.firebase.db.mapper
 
+import com.google.android.gms.maps.model.LatLng
 import dev.vinicius.busycardapp.data.remote.firebase.db.model.FirebaseCardModel
 import dev.vinicius.busycardapp.data.remote.firebase.db.model.FirebaseFieldModel
 import dev.vinicius.busycardapp.domain.model.card.Card
@@ -35,7 +36,7 @@ fun Field.mapToFirebaseModel(): Map<String, Any> =
             "offsetX" to offsetX,
             "offsetY" to offsetY,
             "size" to size,
-            "localization" to mapOf("x" to localization.first, "y" to localization.second),
+//            "localization" to mapOf("x" to localization.first, "y" to localization.second),
             "textLocalization" to textLocalization,
         )
         is Field.ImageField -> mapOf(
@@ -67,7 +68,7 @@ fun mapDomainFieldsToFirebaseModel(items: List<Field>): List<Map<String, Any>> =
                     "offsetX" to offsetX.toDouble(),
                     "offsetY" to offsetY.toDouble(),
                     "size" to size,
-                    "localization" to mapOf("x" to localization.first, "y" to localization.second),
+                    "localization" to mapOf("lat" to localization?.latitude, "lng" to localization?.longitude),
                     "textLocalization" to textLocalization,
                 )
                 is Field.ImageField -> mapOf(
@@ -104,10 +105,10 @@ fun mapFieldToDomainModel(item: Map<String, Any>): Field {
             offsetX,
             offsetY,
             size,
-            Pair(
-                (item["localization"] as Map<String, Long>)["x"],
-                (item["localization"] as Map<String, Long>)["y"] //Really ugly solution. Do better in future
-            ) as Pair<Long, Long>,
+            LatLng(
+                (item["localization"] as Map<String, Double>)["lat"]!!,
+                (item["localization"] as Map<String, Double>)["lng"]!!
+            ),
             item["textLocalization"] as String,
         )
         "IMAGE" -> Field.ImageField(
@@ -139,8 +140,8 @@ fun FirebaseFieldModel.mapToDomainModel() =
             offsetX ?: 0,
             offsetY ?: 0,
             size ?: 0,
-            localization ?: Pair(0,0),
-            textLocalization ?: "",
+//            localization ?: Pair(0,0),
+//            textLocalization ?: "",
         )
         is FirebaseFieldModel.ImageField -> Field.ImageField(
             name ?: "",
