@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.vinicius.busycardapp.core.getCurrentLocation
 import dev.vinicius.busycardapp.domain.model.card.Card
 import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.domain.model.card.FieldType
@@ -75,7 +76,13 @@ class CardCreationViewModel @Inject constructor(
                             textType = TextType.EMAIL
                         )
                     }
-                    FieldType.ADDRESS -> TODO()
+                    FieldType.ADDRESS -> {
+                        Field.AddressField(
+                            name = "address field 1",
+                            offsetX = 200,
+                            offsetY = 200,
+                        )
+                    }
                     FieldType.IMAGE -> {
                         Field.ImageField(
                             name = "image field 1",
@@ -98,6 +105,7 @@ class CardCreationViewModel @Inject constructor(
             }
             is CardCreationEvent.CardEvent.OnDeleteField -> {}
             is CardCreationEvent.CardEvent.OnSelectField -> {
+                Log.d(TAG, "handleCardEvent: selected field: ${event.field}")
                 _state.update {
                     it.copy(
                         currentlySelectedField = event.field
@@ -112,6 +120,7 @@ class CardCreationViewModel @Inject constructor(
                 ).apply {
                     image.uri = _state.value.cardImageUri
                 }
+                Log.d(TAG, "handleCardEvent: card: $card")
                 viewModelScope.launch {
                     saveCard(card)
                         .onStart {
@@ -232,6 +241,35 @@ class CardCreationViewModel @Inject constructor(
                         showBottomSheet = false
                     )
                 }
+            }
+
+            is CardCreationEvent.FieldEvent.OnAddressFieldChange -> {
+                _state.update {
+                    it.copy(
+                        currentlySelectedField =
+                        ( it.currentlySelectedField as Field.AddressField)
+                            .apply {
+                                event.name?.let {
+                                    name = it
+                                }
+                                event.offsetX?.let {
+                                    offsetX = it
+                                }
+                                event.offsetY?.let {
+                                    offsetY = it
+                                }
+                                event.textLocalization?.let {
+                                    textLocalization = it
+                                }
+                                event.localization?.let {
+                                    localization = it
+                                }
+                            },
+                        showBottomSheet = false
+                    )
+                }
+                Log.d(TAG, "handleOnChangeFieldValue: currently: ${_state.value.currentlySelectedField}")
+                Log.d(TAG, "handleOnChangeFieldValue: it: ${event.localization}")
             }
         }
     }
