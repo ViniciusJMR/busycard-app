@@ -1,5 +1,8 @@
 package dev.vinicius.busycardapp.domain.model.card
 
+import com.google.android.gms.maps.model.LatLng
+
+
 sealed class Field(
     open var name: String = "",
     open var offsetX: Int= 0,
@@ -11,7 +14,7 @@ sealed class Field(
         override var offsetX: Int= 0,
         override var offsetY: Int= 0,
         override var size: Int= 0,
-        var localization: Pair<Long, Long>,
+        var localization: LatLng? = null,
         var textLocalization: String = "",
     ): Field(name, offsetX, offsetY, size)
 

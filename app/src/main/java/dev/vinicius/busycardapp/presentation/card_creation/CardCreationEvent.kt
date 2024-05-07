@@ -1,6 +1,7 @@
 package dev.vinicius.busycardapp.presentation.card_creation
 
 import android.net.Uri
+import com.google.android.gms.maps.model.LatLng
 import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.domain.model.card.FieldType
 import dev.vinicius.busycardapp.domain.model.card.TextType
@@ -42,6 +43,15 @@ sealed class CardCreationEvent {
             var offsetY: Int? = null,
             var size: Int? = null,
             var uri: Uri? = null,
+        ): FieldEvent()
+
+        data class OnAddressFieldChange(
+            var name: String? = null,
+            var offsetX: Int? = null,
+            var offsetY: Int? = null,
+            var size: Int? = null,
+            var textLocalization: String? = null,
+            var localization: LatLng? = null,
         ): FieldEvent()
     }
 

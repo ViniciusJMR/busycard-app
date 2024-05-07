@@ -4,13 +4,18 @@ import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,10 +23,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
@@ -30,6 +37,7 @@ import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.presentation.card_creation.CardCreationEvent
 import dev.vinicius.busycardapp.presentation.card_creation.CardCreationState
 import dev.vinicius.busycardapp.presentation.card_creation.component.DraggableFieldComponent
+import dev.vinicius.busycardapp.ui.theme.BusyCardAppTheme
 import kotlin.math.log
 
 // TODO: Refatorar para não precisar receber o evento
@@ -86,13 +94,14 @@ fun CardSurface(
                     }
                 ) {
                     when (field) {
-                        is Field.AddressField -> TODO()
+                        is Field.AddressField ->  {
+                            AddressFieldShow(addressText = field.textLocalization)
+                        }
                         is Field.ImageField -> {
                             ImageFieldShow(
                                 uri = field.image.uri,
                                 size = field.size,
                             )
-                            Log.d(TAG, "field: $field")
                         }
                         is Field.TextField -> {
                             Text(
@@ -133,4 +142,31 @@ fun ImageFieldShow(
             .clip(CircleShape) // TODO: Change to param
             .size(size.dp)
     )
+}
+
+@Composable
+fun AddressFieldShow(
+    modifier: Modifier = Modifier,
+    addressText: String,
+) {
+    val TAG = "AddressFieldShow"
+
+    Row (
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(imageVector = Icons.Outlined.LocationOn, contentDescription = "")
+        Text(text = addressText)
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AddressFieldShowPreview() {
+    BusyCardAppTheme {
+        AddressFieldShow(
+            modifier = Modifier.padding(8.dp),
+            addressText = "Rua do Amor, 123"
+        )
+    }
 }

@@ -1,5 +1,10 @@
 package dev.vinicius.busycardapp.presentation.card_creation.section
 
+import android.Manifest
+import android.content.Context
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -33,15 +38,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.vinicius.busycardapp.R
+import dev.vinicius.busycardapp.core.checkForPermission
+import dev.vinicius.busycardapp.core.getCurrentLocation
 import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.domain.model.card.FieldType
 import dev.vinicius.busycardapp.domain.model.card.TextType
 import dev.vinicius.busycardapp.presentation.card_creation.CardCreationEvent
 import dev.vinicius.busycardapp.presentation.card_creation.component.DefaultDialog
+import dev.vinicius.busycardapp.presentation.card_creation.component.FullScreenDialog
+import dev.vinicius.busycardapp.presentation.card_creation.component.GoogleMapComponent
 import dev.vinicius.busycardapp.presentation.card_creation.component.LauncherForActivityResultComponent
 import dev.vinicius.busycardapp.presentation.card_creation.component.RadioOptions
 import dev.vinicius.busycardapp.presentation.card_creation.component.SelectableOption
@@ -97,7 +108,12 @@ fun FieldInfoMenu(
 ) {
     Column {
         when (field) {
-            is Field.AddressField -> TODO()
+            is Field.AddressField -> {
+                AddressFieldMenu(
+                    onChangeAddress = onChangeField,
+                    field = field
+                )
+            }
             is Field.ImageField -> {
                 ImageFieldMenu(onChangeImage = onChangeField, field = field)
             }
@@ -182,7 +198,7 @@ fun TextFieldMenu(
                 )
             },
         ) {
-            Text("Confirm")
+            Text(stringResource(R.string.txt_label_confirm))
         }
     }
 }
@@ -253,7 +269,94 @@ fun ImageFieldMenu(
                 )
             },
         ) {
-            Text("Confirm")
+            Text(stringResource(R.string.txt_label_confirm))
+        }
+    }
+}
+
+@Composable
+fun AddressFieldMenu(
+    modifier: Modifier = Modifier,
+    onChangeAddress: (CardCreationEvent.FieldEvent) -> Unit,
+    field: Field.AddressField,
+) {
+    val TAG = "AddressFieldMenu"
+    val context = LocalContext.current
+
+    var textLocalization by remember { mutableStateOf(field.textLocalization) }
+    var localization by remember { mutableStateOf(field.localization) }
+    var showMap by remember { mutableStateOf(false) }
+
+    val locationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions(),
+    ) { permissions ->
+        permissions.entries.forEach {
+            if (!it.value) {
+                return@forEach
+            }
+            showMap = true
+        }
+    }
+
+    if (showMap) {
+        FullScreenDialog(onDismissRequest = { showMap = false }) {
+            GoogleMapComponent(
+                onMapClick = { latLng ->
+                    localization = latLng
+                    Log.d("AddressFieldMenu", "localization: $localization")
+                },
+                onConfirm = {
+                    showMap = false
+                },
+                onClearMarkers = {
+                    localization = null
+                },
+                latLng = localization
+            )
+        }
+    }
+
+    Column {
+        OutlinedTextField(
+            modifier = modifier
+                .fillMaxWidth(),
+            value = textLocalization,
+            onValueChange = {
+                textLocalization = it
+            }
+        )
+        Spacer(modifier = Modifier.padding(4.dp))
+        TextButton(onClick = {
+            if (!checkForPermission(context)) {
+                locationPermissionLauncher.launch(
+                    arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    )
+                )
+            } else {
+                showMap = true
+            }
+        }) {
+            Text(stringResource(R.string.txt_label_address_localization))
+        }
+        Spacer(modifier = Modifier.padding(8.dp))
+
+        Button(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 8.dp, end = 8.dp),
+            onClick = {
+                Log.d(TAG, "AddressFieldMenu: Button clicked - localization: $localization")
+                onChangeAddress(
+                    CardCreationEvent.FieldEvent.OnAddressFieldChange(
+                        textLocalization = textLocalization,
+                        localization = localization,
+                    )
+                )
+            }
+        ) {
+            Text(stringResource(R.string.txt_label_confirm))
         }
     }
 }
@@ -314,3 +417,4 @@ fun SelectFieldMenu(
         }
     }
 }
+

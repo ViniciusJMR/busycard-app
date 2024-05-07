@@ -18,4 +18,7 @@
     <string name="label_name">Name</string>
     <string name="label_surname">Surname</string>
     <string name="label_username">Username</string>
+    <string name="txt_label_address_localization">Select localization in map (requires location)</string>
+    <string name="txt_ok">Ok</string>
+    <string name="txt_clear_position">Clear Position</string>
 </resources>
