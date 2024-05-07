@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -11,7 +12,10 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -88,7 +92,7 @@ fun CardRender(
                     }
                 ){
                     when (field) {
-                        is Field.AddressField -> TODO()
+                        is Field.AddressField -> CardInfoAddressField(field = field)
                         is Field.ImageField -> CardInfoImageField(field = field)
                         is Field.TextField -> CardInfoTextField(field = field)
                     }
@@ -124,6 +128,19 @@ fun CardInfoImageField(
                 .clip(CircleShape) // TODO: Change to param
                 .size(field.size.dp)
         )
+    }
+}
+
+@Composable
+fun CardInfoAddressField(
+    modifier: Modifier = Modifier,
+    field: Field.AddressField,
+) {
+    val TAG = "CardInfoAddressField"
+    Log.d(TAG, "field: ${field.localization}")
+    Row {
+        Icon(imageVector = Icons.Outlined.LocationOn, contentDescription = null)
+        Text(text = field.textLocalization)
     }
 }
 
