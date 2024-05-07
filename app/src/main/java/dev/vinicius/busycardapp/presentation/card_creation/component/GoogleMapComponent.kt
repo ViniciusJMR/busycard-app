@@ -50,7 +50,7 @@ fun GoogleMapComponent(
     // Currently, it's in Brasília, Brazil
     var location: LatLng = LatLng(-15.793889, -47.882778)
 
-    var updateCameraPosition by remember { mutableStateOf(false) }
+    var shouldFetchLocation by remember { mutableStateOf(true) }
 
     val latLangList = remember {
         mutableStateListOf<LatLng>()
@@ -82,15 +82,19 @@ fun GoogleMapComponent(
     if (latLng != null) {
         location = latLng
         latLangList.add(location)
+        shouldFetchLocation = false
         Log.d(TAG, "GoogleMapComponent: Passando no != null")
     } else {
         getCurrentLocation(context,
             onLocationFetched = {
-                location = it
-                latLangList.add(location)
-                onMapClick(location)
-                cameraPositionState.position = CameraPosition.fromLatLngZoom(location, 15f)
-                Log.d(TAG, "GoogleMapComponent: Fetchou")
+                if (shouldFetchLocation) {
+                    location = it
+                    latLangList.add(location)
+                    onMapClick(location)
+                    cameraPositionState.position = CameraPosition.fromLatLngZoom(location, 15f)
+                    Log.d(TAG, "GoogleMapComponent: Fetchou")
+                    shouldFetchLocation = false
+                }
             },
             onLocationError = {
                 Log.d(TAG, "GoogleMapComponent: Error getting location")

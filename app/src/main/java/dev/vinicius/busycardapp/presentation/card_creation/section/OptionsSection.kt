@@ -317,7 +317,6 @@ fun AddressFieldMenu(
     }
 
     Column {
-        Text(localization.toString())
         OutlinedTextField(
             modifier = modifier
                 .fillMaxWidth(),
