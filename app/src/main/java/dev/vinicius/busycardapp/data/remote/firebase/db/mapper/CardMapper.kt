@@ -98,6 +98,15 @@ fun mapFieldToDomainModel(item: Map<String, Any>): Field {
     val offsetY = item["offsetY"].toString().toDouble().toInt()
     val size = item["size"].toString().toDouble().toInt()
 
+    var latLng: LatLng? = null
+    (item["localization"] as? Map<String, Double>)?.let {
+        val lat = it["lat"]
+        val lng = it["lng"]
+
+        if (lat != null && lng != null) {
+            latLng = LatLng(lat, lng)
+        }
+    }
 
     return when(item["type"] as String) {
         "ADDRESS" -> Field.AddressField(
@@ -105,10 +114,7 @@ fun mapFieldToDomainModel(item: Map<String, Any>): Field {
             offsetX,
             offsetY,
             size,
-            LatLng(
-                (item["localization"] as Map<String, Double>)["lat"]!!,
-                (item["localization"] as Map<String, Double>)["lng"]!!
-            ),
+            latLng,
             item["textLocalization"] as String,
         )
         "IMAGE" -> Field.ImageField(
