@@ -1,9 +1,8 @@
-package dev.vinicius.busycardapp.presentation.card_info
+package dev.vinicius.busycardapp.presentation.card_detail
 
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,9 +34,6 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.ui.theme.BusyCardAppTheme
-import kotlinx.coroutines.flow.collect
-import kotlin.math.log
-import kotlin.math.roundToInt
 
 
 @RootNavGraph
@@ -45,7 +41,7 @@ import kotlin.math.roundToInt
 @Composable
 fun CardInfoScreen(
     modifier: Modifier = Modifier,
-    viewModel: CardInfoViewModel = hiltViewModel(),
+    viewModel: CardDetailViewModel = hiltViewModel(),
     id: String,
 ) {
     val state by viewModel.state.collectAsState()
