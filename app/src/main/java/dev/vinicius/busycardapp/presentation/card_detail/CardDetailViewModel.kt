@@ -1,4 +1,4 @@
-package dev.vinicius.busycardapp.presentation.card_info
+package dev.vinicius.busycardapp.presentation.card_detail
 
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
@@ -15,11 +15,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CardInfoViewModel @Inject constructor(
+class CardDetailViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val getCardById: GetCardById
 ): ViewModel() {
-    private val _state = MutableStateFlow(CardInfoState())
+    private val _state = MutableStateFlow(CardDetailState())
     val state = _state.asStateFlow()
 
     companion object {

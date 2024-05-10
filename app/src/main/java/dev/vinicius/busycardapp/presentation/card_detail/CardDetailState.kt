@@ -1,9 +1,8 @@
-package dev.vinicius.busycardapp.presentation.card_info
+package dev.vinicius.busycardapp.presentation.card_detail
 
-import dev.vinicius.busycardapp.domain.model.card.Card
 import dev.vinicius.busycardapp.domain.model.card.Field
 
-data class CardInfoState(
+data class CardDetailState(
     val id: Long? = null,
     var name: String = "",
     var owner: String? = "",

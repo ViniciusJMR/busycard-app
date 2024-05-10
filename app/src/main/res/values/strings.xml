@@ -21,4 +21,9 @@
     <string name="txt_label_address_localization">Select localization in map (requires location)</string>
     <string name="txt_ok">Ok</string>
     <string name="txt_clear_position">Clear Position</string>
+    <string name="txt_dial_number">Dial Number</string>
+    <string name="txt_send_email_to">Send email to</string>
+    <string name="txt_close">Close</string>
+    <string name="txt_copy">Copy</string>
+    <string name="txt_copied">Copied!</string>
 </resources>
