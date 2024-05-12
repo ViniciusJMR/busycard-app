@@ -22,6 +22,7 @@ hiltCompiler = "1.2.0"
 hiltNavigationCompose = "1.2.0"
 googleMaps = "4.4.2"
 playServicesLocation = "21.2.0"
+zxingAndroidEmbedded = "4.3.0"
 
 [libraries]
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
@@ -56,6 +57,7 @@ dagger-hilt-android-compiler = { module = "com.google.dagger:hilt-android-compil
 androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltCompiler"}
 androidx-hilt-navgation-compose= { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose"}
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+zxing-android-embedded = { module = "com.journeyapps:zxing-android-embedded", version.ref = "zxingAndroidEmbedded" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
