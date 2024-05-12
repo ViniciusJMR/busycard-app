@@ -10,4 +10,6 @@ data class CardDetailState(
     val text: String = "",
 
     val isLoading: Boolean = false,
+    val showBottomSheet: Boolean = false,
+    val showShareDialog: Boolean = false,
 )

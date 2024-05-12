@@ -22,6 +22,9 @@ class CardDetailViewModel @Inject constructor(
     private val _state = MutableStateFlow(CardDetailState())
     val state = _state.asStateFlow()
 
+    private val _effect = MutableStateFlow<CardDetailEffect?>(null)
+    val effect = _effect.asStateFlow()
+
     companion object {
         val TAG = "CardInfoViewModel"
     }
@@ -58,7 +61,29 @@ class CardDetailViewModel @Inject constructor(
 
     fun onEvent(event: CardInfoEvent){
         when(event){
-            else -> {}
+            is CardInfoEvent.DialogEvent -> handleDialogEvent(event)
         }
+    }
+
+    private fun handleDialogEvent(event: CardInfoEvent.DialogEvent) {
+        when (event) {
+            CardInfoEvent.DialogEvent.OnShowShareDialog -> {
+                _state.update {
+                    it.copy(
+                        showShareDialog = true
+                    )
+                }
+            }
+            CardInfoEvent.DialogEvent.OnDismissShareDialog -> {
+                _state.update {
+                    it.copy(
+                        showShareDialog = false
+                    )
+                }
+            }
+        }
+    }
+    fun resetEffect() {
+        _effect.update { null }
     }
 }
