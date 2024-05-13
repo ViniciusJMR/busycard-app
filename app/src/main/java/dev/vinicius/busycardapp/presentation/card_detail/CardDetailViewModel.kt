@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.vinicius.busycardapp.domain.model.card.CardState
 import dev.vinicius.busycardapp.domain.usecase.card.GetCardById
 import dev.vinicius.busycardapp.domain.usecase.card.GetMyCards
 import dev.vinicius.busycardapp.domain.usecase.card.GetSharedCards
@@ -64,29 +65,10 @@ class CardDetailViewModel @Inject constructor(
                         it.copy(
                             isScreenLoading = false,
                             id = card.id ?: "",
+                            cardState = card.cardState,
                             name = card.name,
                             owner = card.owner,
                             fields = card.fields
-                        )
-                    }
-                }
-
-            getMyCards()
-                .collect { myCards ->
-                    Log.d(TAG, "MyCards:  $myCards")
-                    _state.update {
-                        it.copy(
-                            isMyCard = if (myCards.isNotEmpty()) myCards.any { it.id == id } else false,
-                        )
-                    }
-                }
-
-            getSharedCards()
-                .collect { sharedCards ->
-                    Log.d(TAG, "SharedCards:  $sharedCards")
-                    _state.update {
-                        it.copy(
-                            isSharedCard = if (sharedCards.isNotEmpty()) sharedCards.any { it.id == id } else false
                         )
                     }
                 }
@@ -123,7 +105,7 @@ class CardDetailViewModel @Inject constructor(
                         .collect {
                             _state.update {
                                 it.copy(
-                                    isSharedCard = true,
+                                    cardState = CardState.SHARED,
                                     isBottomSheetLoading = false
                                 )
                             }
@@ -150,7 +132,7 @@ class CardDetailViewModel @Inject constructor(
                         .collect {
                             _state.update {
                                 it.copy(
-                                    isSharedCard = false,
+                                    cardState = CardState.NOT_SHARED,
                                     isBottomSheetLoading = false
                                 )
                             }

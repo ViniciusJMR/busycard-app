@@ -66,6 +66,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.vinicius.busycardapp.R
+import dev.vinicius.busycardapp.domain.model.card.CardState
 import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.domain.model.card.TextType
 import dev.vinicius.busycardapp.presentation.card_detail.component.DialogComponent
@@ -110,8 +111,7 @@ fun CardInfoScreen(
 
     if (state.showBottomSheet) {
         CardInfoBottomSheet(
-            isSharedCard = state.isSharedCard,
-            isMyCard = state.isMyCard,
+            cardState = state.cardState,
             isBottomSheetLoading = state.isBottomSheetLoading,
             onAddToSharedCards = { event(CardInfoEvent.CardEvent.OnSaveToSharedCard) },
             onDeleteFromSharedCards = { event(CardInfoEvent.CardEvent.OnDeleteFromSharedCard) },
@@ -420,8 +420,7 @@ fun CardInfoBottomSheet(
     onAddToSharedCards: () -> Unit,
     onDeleteFromSharedCards: () -> Unit,
     onDismissModalSheet: () -> Unit,
-    isSharedCard: Boolean,
-    isMyCard: Boolean,
+    cardState: CardState,
     isBottomSheetLoading: Boolean,
 ) {
     val sheetState = rememberModalBottomSheetState()
@@ -429,18 +428,18 @@ fun CardInfoBottomSheet(
         onDismissRequest = onDismissModalSheet,
         sheetState = sheetState,
     ) {
-        if (!isMyCard) {
+        if (cardState != CardState.MINE) {
             Row (
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 TextButton(onClick = {
-                    if (!isSharedCard) {
+                    if (cardState != CardState.SHARED) {
                         onAddToSharedCards()
                     } else {
                         onDeleteFromSharedCards()
                     }
                 }) {
-                    if (!isSharedCard) {
+                    if (cardState != CardState.SHARED) {
                         Text("Add to Shared Cards")
                     } else {
                         Text("Delete from Shared Cards")
