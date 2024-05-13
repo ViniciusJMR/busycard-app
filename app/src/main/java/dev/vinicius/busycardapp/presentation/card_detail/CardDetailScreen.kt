@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ArrowBackIosNew
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Link
 import androidx.compose.material.icons.outlined.LocationOn
@@ -27,10 +28,13 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -104,9 +108,34 @@ fun CardInfoScreen(
         )
     }
 
+    if (state.showBottomSheet) {
+        CardInfoBottomSheet(
+            isSharedCard = state.isSharedCard,
+            isMyCard = state.isMyCard,
+            isBottomSheetLoading = state.isBottomSheetLoading,
+            onAddToSharedCards = { event(CardInfoEvent.CardEvent.OnSaveToSharedCard) },
+            onDeleteFromSharedCards = { event(CardInfoEvent.CardEvent.OnDeleteFromSharedCard) },
+            onDismissModalSheet = { event(CardInfoEvent.ModalEvent.OnDismissModalSheet) },
+        )
+    }
+
 
     Scaffold(
         Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(text = state.name) 
+                },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        navigator.navigateUp()
+                    }) {
+                        Icon(Icons.Outlined.ArrowBackIosNew, contentDescription = "")
+                    }
+                },
+            )
+        },
         floatingActionButton = {
             Column {
                 FloatingActionButton(
@@ -119,7 +148,7 @@ fun CardInfoScreen(
                 Spacer(modifier = Modifier.height(8.dp))
                 FloatingActionButton(
                     onClick = {
-
+                        event( CardInfoEvent.ModalEvent.OnShowBottomSheet )
                     }
                 ) {
                     Icon(Icons.Outlined.Info, contentDescription = "")
@@ -133,7 +162,7 @@ fun CardInfoScreen(
                 .padding(it),
             contentAlignment = Alignment.Center
         ) {
-            if (!state.isLoading) {
+            if (!state.isScreenLoading) {
                 Log.d(TAG, "CardInfoScreen: fields: ${state.fields}")
                 CardRender(fields = state.fields, size = 200)
             } else {
@@ -301,7 +330,6 @@ fun CardInfoTextField(
         },
         text = field.value
     )
-    // TODO: Different onClick depending on TextType
 }
 
 @Composable
@@ -391,6 +419,50 @@ fun CardInfoAddressField(
     ) {
         Icon(imageVector = Icons.Outlined.LocationOn, contentDescription = null)
         Text(text = field.textLocalization)
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CardInfoBottomSheet(
+    modifier: Modifier = Modifier,
+    onAddToSharedCards: () -> Unit,
+    onDeleteFromSharedCards: () -> Unit,
+    onDismissModalSheet: () -> Unit,
+    isSharedCard: Boolean,
+    isMyCard: Boolean,
+    isBottomSheetLoading: Boolean,
+) {
+    val sheetState = rememberModalBottomSheetState()
+    ModalBottomSheet(
+        onDismissRequest = onDismissModalSheet,
+        sheetState = sheetState,
+    ) {
+        if (!isMyCard) {
+            Row (
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                TextButton(onClick = {
+                    if (!isSharedCard) {
+                        onAddToSharedCards()
+                    } else {
+                        onDeleteFromSharedCards()
+                    }
+                }) {
+                    if (!isSharedCard) {
+                        Text("Add to Shared Cards")
+                    } else {
+                        Text("Delete from Shared Cards")
+                    }
+                }
+                if(isBottomSheetLoading){
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(25.dp)
+                    )
+                }
+            }
+        }
+        Spacer(Modifier.size(48.dp))
     }
 }
 
