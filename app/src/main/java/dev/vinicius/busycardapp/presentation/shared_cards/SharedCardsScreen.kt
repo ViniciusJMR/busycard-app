@@ -1,33 +1,28 @@
 package dev.vinicius.busycardapp.presentation.shared_cards
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultLauncher
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.QrCodeScanner
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.journeyapps.barcodescanner.ScanContract
+import com.journeyapps.barcodescanner.ScanOptions
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import dev.vinicius.busycardapp.domain.model.card.Card
-import dev.vinicius.busycardapp.ui.theme.BusyCardAppTheme
+import dev.vinicius.busycardapp.core.presentation.CardsListing
+import dev.vinicius.busycardapp.presentation.destinations.CardInfoScreenDestination
 
 
 // Currently being used to check every card
@@ -40,89 +35,45 @@ fun SharedCardsScreen(
 ) {
     val state by viewModel.state.collectAsState()
 
+    val context = LocalContext.current
+
+    val barcodeLauncher: ActivityResultLauncher<ScanOptions> = rememberLauncherForActivityResult(
+        ScanContract()
+    ) { result ->
+        result.contents?.let {
+            navigator.navigate(CardInfoScreenDestination(id = it))
+        }
+    }
+
     // TODO: Change to Scarfold
-    Box (
-        modifier = Modifier.fillMaxSize()
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    barcodeLauncher.launch(
+                        ScanOptions().apply {
+                            setBeepEnabled(false)
+                            setDesiredBarcodeFormats(ScanOptions.QR_CODE)
+                            setOrientationLocked(false)
+                        }
+                    )
+                }
+            ) {
+                Icon(Icons.Filled.QrCodeScanner, contentDescription = "")
+            }
+        }
     ){
         if (!state.isLoading) {
-            SharedCardsListing(cards = state.cards)
+            CardsListing(
+                modifier = Modifier.padding(it),
+                onClickItemCard = { id ->
+                    navigator.navigate(CardInfoScreenDestination(id = id))
+                },
+                cards = state.cards
+            )
         } else {
             Text("Loading")
         }
-    }
-}
-
-// TODO: Extract to Component as MyCardsScreen does the same
-@Composable
-fun SharedCardsListing(
-    modifier: Modifier = Modifier,
-    cards: List<Card>
-) {
-
-    LazyColumn (
-        modifier = modifier
-    ) {
-        items(
-            items = cards,
-            key = { card -> card.id!! }
-        ) {
-            CardItem(
-                name = it.name,
-                mainContact = it.mainContact,
-                imageUrl = "",
-            )
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun SharedListingPreview() {
-//    val a = List(30) { i -> Card(id = i.toString(), name = "Card #$i", owner = "", fields = emptyList()) }
-    BusyCardAppTheme {
-//        SharedCardsListing(cards = a)
-    }
-}
-
-@Composable
-fun CardItem(
-    modifier: Modifier = Modifier,
-    name: String,
-    mainContact: String,
-    imageUrl: String,
-) {
-    Surface (
-        modifier = modifier.fillMaxWidth().height(45.dp)
-    ){
-        Row {
-            Icon(
-                modifier = Modifier.fillMaxHeight(),
-                imageVector = Icons.Default.AccountCircle,
-                contentDescription = null
-            )
-            Column {
-                Text(
-                    text = name,
-                )
-                Text(
-                    text = mainContact,
-                    style = TextStyle(
-                        fontWeight = FontWeight.Light
-                    )
-                )
-            }
-        }
-    }
-}
-
-@Preview (showBackground = true)
-@Composable
-private fun CardItemPreview() {
-    BusyCardAppTheme {
-        CardItem(
-            name = "Cartão do joão",
-            mainContact = "place@holder.com",
-            imageUrl = "",
-        )
     }
 }

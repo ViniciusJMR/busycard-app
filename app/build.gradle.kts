@@ -119,5 +119,7 @@ dependencies {
     ksp(libs.androidx.hilt.compiler)
     implementation(libs.androidx.hilt.navgation.compose)
 
+    // ZXing
+    implementation(libs.zxing.android.embedded)
 
 }

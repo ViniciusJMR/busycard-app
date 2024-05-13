@@ -11,18 +11,18 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class GetMyCards @Inject constructor(
+class GetSharedCards @Inject constructor(
     private val auth: Auth,
     private val userRepository: IUserRepository<String, User>,
     private val cardRepository: IRepository<String, Card>
 ): UseCase.NoParam<List<Card>>() {
     companion object{
-        val TAG = "GetMyCards"
+        val TAG = "GetSharedCards"
     }
 
     override suspend fun execute(): Flow<List<Card>> = flow {
         val userId = auth.getCurrentUserId()
-        val cardsId = userRepository.getMyCardsId(userId)
+        val cardsId = userRepository.getSharedCardsId(userId)
         Log.d(TAG, "execute: cardsId = $cardsId")
         if (cardsId.isEmpty()){
             emit(emptyList())

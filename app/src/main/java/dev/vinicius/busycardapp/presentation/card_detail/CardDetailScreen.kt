@@ -3,9 +3,10 @@ package dev.vinicius.busycardapp.presentation.card_detail
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
-import androidx.annotation.StringRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,13 +19,25 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ArrowBackIosNew
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Link
 import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -35,6 +48,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
@@ -46,41 +60,167 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.google.zxing.BarcodeFormat
+import com.journeyapps.barcodescanner.BarcodeEncoder
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.vinicius.busycardapp.R
+import dev.vinicius.busycardapp.domain.model.card.CardState
 import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.domain.model.card.TextType
 import dev.vinicius.busycardapp.presentation.card_detail.component.DialogComponent
 import dev.vinicius.busycardapp.ui.theme.BusyCardAppTheme
-import kotlin.properties.Delegates
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @RootNavGraph
 @Destination
 @Composable
 fun CardInfoScreen(
     modifier: Modifier = Modifier,
     viewModel: CardDetailViewModel = hiltViewModel(),
+    navigator: DestinationsNavigator,
     id: String,
 ) {
     val state by viewModel.state.collectAsState()
+    val effect by viewModel.effect.collectAsState()
+    val event = viewModel::onEvent
     val TAG = "CardInfoScreen"
 
-    Log.d(TAG, "CardInfoScreen: isLoading: ${state.isLoading}")
-    Box (
-        Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        if (!state.isLoading) {
-            Log.d(TAG, "CardInfoScreen: fields: ${state.fields}")
-            CardRender(fields = state.fields, size = 200)
-        } else {
-            Text(text = "Loading")
-        }
+    val sheetState = rememberModalBottomSheetState()
 
+    LaunchedEffect(effect) {
+        effect?.let {
+            when(it) {
+                CardDetailEffect.ClosePage -> {
+                    navigator.navigateUp()
+                }
+            }
+            viewModel.resetEffect()
+        }
+    }
+
+    if (state.showShareDialog) {
+        CardDetailShareDialog(
+            onConfirm = { event(CardInfoEvent.DialogEvent.OnDismissShareDialog) },
+            onDismiss = { event(CardInfoEvent.DialogEvent.OnDismissShareDialog) },
+            id = id,
+        )
+    }
+
+    if (state.showBottomSheet) {
+        CardInfoBottomSheet(
+            cardState = state.cardState,
+            isBottomSheetLoading = state.isBottomSheetLoading,
+            onAddToSharedCards = { event(CardInfoEvent.CardEvent.OnSaveToSharedCard) },
+            onDeleteFromSharedCards = { event(CardInfoEvent.CardEvent.OnDeleteFromSharedCard) },
+            onDismissModalSheet = { event(CardInfoEvent.ModalEvent.OnDismissModalSheet) },
+        )
+    }
+
+
+    Scaffold(
+        Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(text = state.name) 
+                },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        navigator.navigateUp()
+                    }) {
+                        Icon(Icons.Outlined.ArrowBackIosNew, contentDescription = "")
+                    }
+                },
+            )
+        },
+        floatingActionButton = {
+            Column {
+                FloatingActionButton(
+                    onClick = {
+                        event( CardInfoEvent.DialogEvent.OnShowShareDialog )
+                    }
+                ) {
+                    Icon(Icons.Outlined.Share, contentDescription = "")
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                FloatingActionButton(
+                    onClick = {
+                        event( CardInfoEvent.ModalEvent.OnShowBottomSheet )
+                    }
+                ) {
+                    Icon(Icons.Outlined.Info, contentDescription = "")
+                }
+            }
+        }
+    ) {
+        Box (
+            Modifier
+                .fillMaxSize()
+                .padding(it),
+            contentAlignment = Alignment.Center
+        ) {
+            if (!state.isScreenLoading) {
+                Log.d(TAG, "CardInfoScreen: fields: ${state.fields}")
+                CardRender(fields = state.fields, size = 200)
+            } else {
+                Text(text = "Loading")
+            }
+        }
     }
 }
+
+@Composable
+fun CardDetailShareDialog(
+    modifier: Modifier = Modifier,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+    id: String,
+) {
+
+    val TAG = "CardDetailShareDialog"
+
+    DialogComponent(
+        onConfirm= onConfirm,
+        onDismiss = onDismiss,
+        confirmText = R.string.txt_close,
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                modifier = Modifier.size(300.dp),
+                bitmap = BarcodeEncoder()
+                    .run {
+                        encodeBitmap(
+                            id,
+                            BarcodeFormat.QR_CODE,
+                            400,
+                            400
+                        ).asImageBitmap()
+                    },
+                contentDescription = null
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun CardDetailShareDialogPreview() {
+    BusyCardAppTheme {
+        CardDetailShareDialog(
+            onConfirm = {},
+            onDismiss = {},
+            id = "123456789"
+        )
+    }
+}
+
 
 @Composable
 fun CardRender(
@@ -181,7 +321,6 @@ fun CardInfoTextField(
         },
         text = field.value
     )
-    // TODO: Different onClick depending on TextType
 }
 
 @Composable
@@ -271,6 +410,49 @@ fun CardInfoAddressField(
     ) {
         Icon(imageVector = Icons.Outlined.LocationOn, contentDescription = null)
         Text(text = field.textLocalization)
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CardInfoBottomSheet(
+    modifier: Modifier = Modifier,
+    onAddToSharedCards: () -> Unit,
+    onDeleteFromSharedCards: () -> Unit,
+    onDismissModalSheet: () -> Unit,
+    cardState: CardState,
+    isBottomSheetLoading: Boolean,
+) {
+    val sheetState = rememberModalBottomSheetState()
+    ModalBottomSheet(
+        onDismissRequest = onDismissModalSheet,
+        sheetState = sheetState,
+    ) {
+        if (cardState != CardState.MINE) {
+            Row (
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                TextButton(onClick = {
+                    if (cardState != CardState.SHARED) {
+                        onAddToSharedCards()
+                    } else {
+                        onDeleteFromSharedCards()
+                    }
+                }) {
+                    if (cardState != CardState.SHARED) {
+                        Text("Add to Shared Cards")
+                    } else {
+                        Text("Delete from Shared Cards")
+                    }
+                }
+                if(isBottomSheetLoading){
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(25.dp)
+                    )
+                }
+            }
+        }
+        Spacer(Modifier.size(48.dp))
     }
 }
 

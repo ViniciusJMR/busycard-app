@@ -9,4 +9,5 @@ data class Card(
     var mainContact: String = "",
     var image: CardImage = CardImage(),
     val fields: List<Field>,
+    var cardState: CardState = CardState.NOT_SHARED,
 )

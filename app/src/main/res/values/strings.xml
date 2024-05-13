@@ -26,4 +26,5 @@
     <string name="txt_close">Close</string>
     <string name="txt_copy">Copy</string>
     <string name="txt_copied">Copied!</string>
+    <string name="txt_share_as_link">Share as Link</string>
 </resources>

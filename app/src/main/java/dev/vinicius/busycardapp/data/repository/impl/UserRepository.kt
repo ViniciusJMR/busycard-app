@@ -40,6 +40,49 @@ class UserRepository @Inject constructor(
         return myCards
     }
 
+    override suspend fun saveSharedCardId(userId: String, cardId: String) {
+        database.collection("users")
+            .document(userId)
+            .update("sharedCards", FieldValue.arrayUnion(cardId))
+            .await()
+    }
+
+    override suspend fun removeSharedCardId(userId: String, cardId: String) {
+        database.collection("users")
+            .document(userId)
+            .update("sharedCards", FieldValue.arrayRemove(cardId))
+            .await()
+    }
+
+    override suspend fun getSharedCardsId(userId: String): List<String> {
+        var sharedCards: List<String> = emptyList()
+
+        val task = database.collection("users")
+            .document(userId)
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    sharedCards = documentSnapshot.get("sharedCards") as? List<String> ?: emptyList()
+                }
+            }
+
+        task.await()
+
+        return sharedCards
+    }
+
+    override suspend fun getUser(userId: String): User {
+        var user: User? = null
+        val task = database.collection("users")
+            .document(userId)
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                user = documentSnapshot.toObject(User::class.java)
+            }
+        task.await()
+
+        return user!!
+    }
 
     override suspend fun save(item: User): String {
         database.collection("users").document(item.id).set(item).await()

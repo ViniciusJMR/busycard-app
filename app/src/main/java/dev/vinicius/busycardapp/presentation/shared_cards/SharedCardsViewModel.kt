@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.vinicius.busycardapp.domain.usecase.card.GetAll
+import dev.vinicius.busycardapp.domain.usecase.card.GetSharedCards
 import dev.vinicius.busycardapp.presentation.my_cards.MyCardsState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,14 +15,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SharedCardsViewModel @Inject constructor(
-    getAll: GetAll
+    private val getSharedCards: GetSharedCards
 ): ViewModel() {
     private val _state = MutableStateFlow(MyCardsState())
     val state = _state.asStateFlow()
 
     init {
         viewModelScope.launch {
-            getAll()
+            getSharedCards()
                 .onStart {
                     _state.update {
                         it.copy(
