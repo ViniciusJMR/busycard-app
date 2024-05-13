@@ -11,8 +11,8 @@ import javax.inject.Inject
 class GetUserUseCase @Inject constructor(
     private val auth: Auth,
     private val repository: IUserRepository<String, User>
-): UseCase<String, User>() {
-    override suspend fun execute(param: String): Flow<User> = flow {
+): UseCase.NoParam<User>() {
+    override suspend fun execute(): Flow<User> = flow {
         val userId = auth.getCurrentUserId()
         val user = repository.getUser(userId)
         emit(user)
