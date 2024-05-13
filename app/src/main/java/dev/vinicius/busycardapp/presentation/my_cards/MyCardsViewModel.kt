@@ -16,7 +16,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MyCardsViewModel @Inject constructor(
-    private val auth: Auth,
     getMyCards: GetMyCards
 ): ViewModel() {
     private val _state = MutableStateFlow(MyCardsState())
@@ -24,7 +23,7 @@ class MyCardsViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            getMyCards(auth.getCurrentUserId())
+            getMyCards()
                 .onStart {
                     _state.update {
                         it.copy(
