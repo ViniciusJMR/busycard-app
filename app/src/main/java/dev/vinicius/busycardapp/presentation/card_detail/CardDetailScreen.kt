@@ -21,7 +21,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBackIosNew
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.Link
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.CircularProgressIndicator
@@ -166,7 +165,7 @@ fun CardInfoScreen(
                 Log.d(TAG, "CardInfoScreen: fields: ${state.fields}")
                 CardRender(fields = state.fields, size = 200)
             } else {
-                Text(text = "Loading")
+                Text(text = stringResource(R.string.txt_loading))
             }
         }
     }
@@ -373,7 +372,7 @@ fun CardInfoAddressField(
                         onCallIntent("geo:0,0?q=${Uri.encode(field.textLocalization)}")
                     }
                 ) {
-                    Text("Search text on map")
+                    Text(stringResource(R.string.txt_search_text_map))
                 }
                 Spacer(modifier = Modifier.height(2.dp))
                 TextButton(
@@ -384,7 +383,12 @@ fun CardInfoAddressField(
                     },
                     enabled = field.localization != null
                 ) {
-                    Text(if (field.localization != null) "Search location on map" else "No location available")
+                    Text(
+                        if (field.localization != null)
+                            stringResource(R.string.txt_search_location_map)
+                        else
+                            stringResource(R.string.txt_no_location_available)
+                    )
                 }
                 Spacer(modifier = Modifier.height(2.dp))
                 TextButton(
@@ -440,9 +444,9 @@ fun CardInfoBottomSheet(
                     }
                 }) {
                     if (cardState != CardState.SHARED) {
-                        Text("Add to Shared Cards")
+                        Text(stringResource(R.string.txt_add_shared_cards))
                     } else {
-                        Text("Delete from Shared Cards")
+                        Text(stringResource(R.string.txt_delete_shared_cards))
                     }
                 }
                 if(isBottomSheetLoading){
