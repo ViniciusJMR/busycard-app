@@ -1,11 +1,8 @@
 package dev.vinicius.busycardapp.presentation.card_detail
 
-import android.content.Intent
-import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,11 +14,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBackIosNew
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -39,26 +34,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.startActivity
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.AsyncImage
 import com.google.zxing.BarcodeFormat
 import com.journeyapps.barcodescanner.BarcodeEncoder
 import com.ramcosta.composedestinations.annotation.Destination
@@ -67,7 +51,9 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.vinicius.busycardapp.R
 import dev.vinicius.busycardapp.domain.model.card.CardState
 import dev.vinicius.busycardapp.domain.model.card.Field
-import dev.vinicius.busycardapp.domain.model.card.TextType
+import dev.vinicius.busycardapp.presentation.card_detail.component.CardInfoAddressField
+import dev.vinicius.busycardapp.presentation.card_detail.component.CardInfoImageField
+import dev.vinicius.busycardapp.presentation.card_detail.component.CardInfoTextField
 import dev.vinicius.busycardapp.presentation.card_detail.component.DialogComponent
 import dev.vinicius.busycardapp.ui.theme.BusyCardAppTheme
 
@@ -257,165 +243,8 @@ fun CardRender(
     }
 }
 
-@Composable
-fun CardInfoTextField(
-    modifier: Modifier = Modifier,
-    field: Field.TextField,
-) {
-    val TAG = "CardInfoTextField"
-    var text by remember { mutableIntStateOf(R.string.txt_dial_number) }
-    val context = LocalContext.current
-    val clipboard = LocalClipboardManager.current
 
-    val onCallIntent : Intent? by remember { mutableStateOf(
-        when (field.textType) {
-            TextType.PHONE -> {
-                text = R.string.txt_dial_number
-                Intent(Intent.ACTION_DIAL, Uri.parse("tel:${field.value}"))
-            }
-            TextType.EMAIL -> {
-                text = R.string.txt_send_email_to
-                Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:${field.value}"))
-            }
-            else -> { null }
-        }
-    )}
 
-    var showDialog by remember { mutableStateOf(false) }
-    var copied by remember { mutableStateOf(false) }
-
-    if (showDialog) {
-        DialogComponent(
-            onDismiss = { showDialog = false },
-            onConfirm = { showDialog = false },
-            confirmText = R.string.txt_close,
-        ) {
-            Column {
-                onCallIntent?.let {
-                    TextButton(
-                        onClick = { startActivity(context, it, null) }
-                    ) {
-                        Text(text = stringResource(text))
-                    }
-                    Spacer(modifier = Modifier.height(2.dp))
-                }
-                TextButton(
-                    onClick = {
-                        clipboard.setText(AnnotatedString(field.value))
-                        copied = true
-                    }
-                ) {
-                    Text(
-                        stringResource(
-                            if (!copied) R.string.txt_copy else R.string.txt_copied
-                        )
-                    )
-                }
-            }
-        }
-    }
-    Text(
-        modifier = Modifier.clickable {
-            showDialog = true
-        },
-        text = field.value
-    )
-}
-
-@Composable
-fun CardInfoImageField(
-    modifier: Modifier = Modifier,
-    field: Field.ImageField,
-) {
-    Box( contentAlignment = Alignment.Center ) {
-        // Only used to signalize to the user there's a image there
-        // TODO: Use onState from AsyncImage
-        CircularProgressIndicator()
-        AsyncImage(
-            model = field.image.path,
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = modifier
-                .clip(CircleShape) // TODO: Change to param
-                .size(field.size.dp)
-        )
-    }
-}
-
-@Composable
-fun CardInfoAddressField(
-    modifier: Modifier = Modifier,
-    field: Field.AddressField,
-) {
-    val TAG = "CardInfoAddressField"
-    Log.d(TAG, "field: ${field.localization}")
-    val context = LocalContext.current
-    val clipboard = LocalClipboardManager.current
-
-    val onCallIntent: (String) -> Unit = { uri ->
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
-        startActivity(context, intent, null)
-    }
-
-    var showDialog by remember { mutableStateOf(false) }
-    var copied by remember { mutableStateOf(false) }
-
-    if (showDialog) {
-        DialogComponent(
-            onDismiss = { showDialog = false },
-            onConfirm = { showDialog = false },
-            confirmText = R.string.txt_close,
-        ) {
-            Column {
-                TextButton(
-                    onClick = {
-                        onCallIntent("geo:0,0?q=${Uri.encode(field.textLocalization)}")
-                    }
-                ) {
-                    Text(stringResource(R.string.txt_search_text_map))
-                }
-                Spacer(modifier = Modifier.height(2.dp))
-                TextButton(
-                    onClick = {
-                        field.localization?.let {
-                            onCallIntent("geo:${it.latitude},${it.longitude}")
-                        }
-                    },
-                    enabled = field.localization != null
-                ) {
-                    Text(
-                        if (field.localization != null)
-                            stringResource(R.string.txt_search_location_map)
-                        else
-                            stringResource(R.string.txt_no_location_available)
-                    )
-                }
-                Spacer(modifier = Modifier.height(2.dp))
-                TextButton(
-                    onClick = {
-                        clipboard.setText(AnnotatedString(field.textLocalization))
-                        copied = true
-                    }
-                ) {
-                    Text(
-                        stringResource(
-                            if (!copied) R.string.txt_copy else R.string.txt_copied
-                        )
-                    )
-                }
-            }
-        }
-    }
-
-    Row (
-        modifier = Modifier.clickable {
-            showDialog = true
-        }
-    ) {
-        Icon(imageVector = Icons.Outlined.LocationOn, contentDescription = null)
-        Text(text = field.textLocalization)
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
