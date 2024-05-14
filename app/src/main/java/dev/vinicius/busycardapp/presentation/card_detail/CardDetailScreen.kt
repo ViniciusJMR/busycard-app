@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBackIosNew
 import androidx.compose.material.icons.outlined.Info
@@ -21,6 +23,7 @@ import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
@@ -54,6 +57,8 @@ import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.presentation.card_detail.component.CardInfoAddressField
 import dev.vinicius.busycardapp.presentation.card_detail.component.CardInfoImageField
 import dev.vinicius.busycardapp.presentation.card_detail.component.CardInfoTextField
+import dev.vinicius.busycardapp.presentation.card_detail.component.CompactAddressFieldComponent
+import dev.vinicius.busycardapp.presentation.card_detail.component.CompactTextFieldComponent
 import dev.vinicius.busycardapp.presentation.card_detail.component.DialogComponent
 import dev.vinicius.busycardapp.ui.theme.BusyCardAppTheme
 
@@ -101,6 +106,7 @@ fun CardInfoScreen(
             onAddToSharedCards = { event(CardInfoEvent.CardEvent.OnSaveToSharedCard) },
             onDeleteFromSharedCards = { event(CardInfoEvent.CardEvent.OnDeleteFromSharedCard) },
             onDismissModalSheet = { event(CardInfoEvent.ModalEvent.OnDismissModalSheet) },
+            fields = state.fields,
         )
     }
 
@@ -255,6 +261,7 @@ fun CardInfoBottomSheet(
     onDismissModalSheet: () -> Unit,
     cardState: CardState,
     isBottomSheetLoading: Boolean,
+    fields: List<Field>,
 ) {
     val sheetState = rememberModalBottomSheetState()
     ModalBottomSheet(
@@ -285,6 +292,27 @@ fun CardInfoBottomSheet(
                 }
             }
         }
+
+        LazyColumn {
+            items(fields) {
+                Row (
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    when (it) {
+                        is Field.AddressField -> CompactAddressFieldComponent(
+                            textLocalization = it.textLocalization,
+                            localization = it.localization,
+                        )
+                        is Field.TextField -> CompactTextFieldComponent(
+                            fieldText = it.value,
+                            textType = it.textType,
+                        )
+                        else -> {}
+                    }
+                }
+            }
+        }
+
         Spacer(Modifier.size(48.dp))
     }
 }
