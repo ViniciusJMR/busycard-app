@@ -6,9 +6,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.Phone
+import androidx.compose.material.icons.outlined.TextFormat
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -86,5 +91,74 @@ fun CardInfoTextField(
             showDialog = true
         },
         text = field.value
+    )
+}
+
+@Composable
+fun CompactTextFieldComponent(
+    modifier: Modifier = Modifier,
+    fieldText: String,
+    textType: TextType,
+) {
+    var text by remember { mutableIntStateOf(R.string.txt_text) }
+    var icon by remember { mutableStateOf(Icons.Outlined.TextFormat)}
+    val context = LocalContext.current
+    val clipboard = LocalClipboardManager.current
+
+    val onCallIntent : Intent? by remember { mutableStateOf(
+        when (textType) {
+            TextType.PHONE -> {
+                text = R.string.txt_dial_number
+                icon = Icons.Outlined.Phone
+                Intent(Intent.ACTION_DIAL, Uri.parse("tel:${fieldText}"))
+            }
+            TextType.EMAIL -> {
+                text = R.string.txt_send_email_to
+                icon = Icons.Outlined.Email
+                Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:${fieldText}"))
+            }
+            else -> { null }
+        }
+    )}
+
+    var showDialog by remember { mutableStateOf(false) }
+    var copied by remember { mutableStateOf(false) }
+
+    if (showDialog) {
+        DialogComponent(
+            onDismiss = { showDialog = false },
+            onConfirm = { showDialog = false },
+            confirmText = R.string.txt_close,
+        ) {
+            Column {
+                onCallIntent?.let {
+                    TextButton(
+                        onClick = { context.startActivity(it) }
+                    ) {
+                        Text(text = stringResource(text))
+                    }
+                    Spacer(modifier = Modifier.height(2.dp))
+                }
+                TextButton(
+                    onClick = {
+                        clipboard.setText(AnnotatedString(fieldText))
+                        copied = true
+                    }
+                ) {
+                    Text(
+                        stringResource( if (!copied) R.string.txt_copy else R.string.txt_copied )
+                    )
+                }
+            }
+        }
+    }
+
+    CompactFieldComponent(
+        onClick = {
+            showDialog = true
+        },
+        imageVector = icon,
+        title = text,
+        text = fieldText,
     )
 }
