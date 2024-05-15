@@ -1,5 +1,6 @@
 package dev.vinicius.busycardapp.data.remote.firebase.db.mapper
 
+import android.net.Uri
 import com.google.android.gms.maps.model.LatLng
 import dev.vinicius.busycardapp.data.remote.firebase.db.model.FirebaseCardModel
 import dev.vinicius.busycardapp.data.remote.firebase.db.model.FirebaseFieldModel
@@ -23,7 +24,10 @@ fun FirebaseCardModel.mapToDomainModel(fields: List<Map<String, Any>>) =
         name ?: "",
         owner ?: "",
         mainContact ?: "",
-        CardImage(path = image ?: ""),
+        CardImage(
+            uri = Uri.parse(image ?: ""),
+            path = image ?: ""
+        ),
         fields.map { mapFieldToDomainModel(it) }
     )
 
@@ -122,7 +126,10 @@ fun mapFieldToDomainModel(item: Map<String, Any>): Field {
             offsetX,
             offsetY,
             size,
-            CardImage(path = item["imageUrl"] as String),
+            CardImage(
+                uri = Uri.parse(item["imageUrl"] as String),
+                path = item["imageUrl"] as String
+            ),
         )
         "TEXT" -> Field.TextField(
             item["name"] as String,
