@@ -105,6 +105,13 @@ fun CardDetailScreen(
         )
     }
 
+    if (state.showDeleteDialog) {
+        CardDetailDeleteDialog(
+            onConfirm = { event(CardInfoEvent.CardEvent.OnDeleteCard) },
+            onDismiss = { event(CardInfoEvent.DialogEvent.OnDismissDeleteDialog) },
+        )
+    }
+
     if (state.showBottomSheet) {
         CardInfoBottomSheet(
             cardState = state.cardState,
@@ -139,7 +146,9 @@ fun CardDetailScreen(
                         ) {
                             Icon(Icons.Outlined.Edit, contentDescription = "")
                         }
-                        IconButton(onClick = {}) {
+                        IconButton(
+                            onClick = { event(CardInfoEvent.DialogEvent.OnShowDeleteDialog) }
+                        ) {
                             Icon(Icons.Outlined.Delete, contentDescription = "")
                         }
                     }
@@ -179,6 +188,17 @@ fun CardDetailScreen(
                 Text(text = stringResource(R.string.txt_loading))
             }
         }
+    }
+}
+
+@Composable
+fun CardDetailDeleteDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
+    DialogComponent(
+        onConfirm = onConfirm,
+        onDismiss = onDismiss,
+        confirmText = R.string.txt_delete,
+    ) {
+        Text(text = stringResource(R.string.txt_confirm_delete))
     }
 }
 

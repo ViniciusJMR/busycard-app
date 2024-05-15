@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.vinicius.busycardapp.domain.model.card.CardState
+import dev.vinicius.busycardapp.domain.usecase.card.DeleteCardById
 import dev.vinicius.busycardapp.domain.usecase.card.GetCardById
 import dev.vinicius.busycardapp.domain.usecase.card.GetMyCards
 import dev.vinicius.busycardapp.domain.usecase.card.GetSharedCards
@@ -25,8 +26,7 @@ class CardDetailViewModel @Inject constructor(
     private val getCardById: GetCardById,
     private val saveSharedCard: SaveSharedCard,
     private val removeSharedCard: RemoveSharedCard,
-    private val getSharedCards: GetSharedCards,
-    private val getMyCards: GetMyCards,
+    private val deleteCardById: DeleteCardById,
 ): ViewModel() {
 
     companion object {
@@ -140,6 +140,35 @@ class CardDetailViewModel @Inject constructor(
                         }
                 }
             }
+            CardInfoEvent.CardEvent.OnDeleteCard -> {
+                viewModelScope.launch {
+                    deleteCardById(_state.value.id)
+                        .onStart {
+                            _state.update {
+                                it.copy(
+                                    isScreenLoading = true
+                                )
+                            }
+                        }
+                        .catch {
+                            _state.update {
+                                it.copy(
+                                    isScreenLoading = false
+                                )
+                            }
+                        }
+                        .collect {
+                            _state.update {
+                                it.copy(
+                                    isScreenLoading = false
+                                )
+                            }
+
+                            _effect.update { CardDetailEffect.ClosePage }
+                        }
+                    }
+
+            }
         }
     }
 
@@ -159,6 +188,21 @@ class CardDetailViewModel @Inject constructor(
                     )
                 }
             }
+
+            CardInfoEvent.DialogEvent.OnDismissDeleteDialog ->
+                _state.update {
+                    it.copy(
+                        showDeleteDialog = false
+                    )
+                }
+
+            CardInfoEvent.DialogEvent.OnShowDeleteDialog ->
+                _state.update {
+                    it.copy(
+                        showDeleteDialog = true
+                    )
+                }
+
         }
     }
 

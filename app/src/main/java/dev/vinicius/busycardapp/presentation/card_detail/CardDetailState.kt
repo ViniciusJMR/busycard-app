@@ -16,4 +16,5 @@ data class CardDetailState(
     val showBottomSheet: Boolean = false,
     val isBottomSheetLoading: Boolean = false,
     val showShareDialog: Boolean = false,
+    val showDeleteDialog: Boolean = false,
 )
