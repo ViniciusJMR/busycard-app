@@ -1,9 +1,9 @@
-package dev.vinicius.busycardapp.presentation.card_creation
+package dev.vinicius.busycardapp.presentation.card_editing
 
 import android.net.Uri
 import dev.vinicius.busycardapp.domain.model.card.Field
 
-data class CardCreationState (
+data class CardEditingState (
     var cardFields: MutableList<Field> = mutableListOf(),
     var cardName: String = "",
     var cardImageUri: Uri? = null,

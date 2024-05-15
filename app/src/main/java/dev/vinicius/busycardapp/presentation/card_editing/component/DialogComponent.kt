@@ -1,4 +1,4 @@
-package dev.vinicius.busycardapp.presentation.card_creation.component
+package dev.vinicius.busycardapp.presentation.card_editing.component
 
 import android.net.Uri
 import androidx.compose.foundation.Image

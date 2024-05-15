@@ -22,7 +22,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.vinicius.busycardapp.core.presentation.CardsListing
-import dev.vinicius.busycardapp.presentation.destinations.CardInfoScreenDestination
+import dev.vinicius.busycardapp.presentation.destinations.CardDetailScreenDestination
 
 
 // Currently being used to check every card
@@ -41,7 +41,7 @@ fun SharedCardsScreen(
         ScanContract()
     ) { result ->
         result.contents?.let {
-            navigator.navigate(CardInfoScreenDestination(id = it))
+            navigator.navigate(CardDetailScreenDestination(id = it))
         }
     }
 
@@ -68,7 +68,7 @@ fun SharedCardsScreen(
             CardsListing(
                 modifier = Modifier.padding(it),
                 onClickItemCard = { id ->
-                    navigator.navigate(CardInfoScreenDestination(id = id))
+                    navigator.navigate(CardDetailScreenDestination(id = id))
                 },
                 cards = state.cards
             )

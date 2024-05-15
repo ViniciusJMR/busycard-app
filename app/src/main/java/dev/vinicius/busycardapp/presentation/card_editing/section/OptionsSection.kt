@@ -1,7 +1,6 @@
-package dev.vinicius.busycardapp.presentation.card_creation.section
+package dev.vinicius.busycardapp.presentation.card_editing.section
 
 import android.Manifest
-import android.content.Context
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -42,27 +41,25 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.vinicius.busycardapp.R
 import dev.vinicius.busycardapp.core.checkForPermission
-import dev.vinicius.busycardapp.core.getCurrentLocation
 import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.domain.model.card.FieldType
 import dev.vinicius.busycardapp.domain.model.card.TextType
-import dev.vinicius.busycardapp.presentation.card_creation.CardCreationEvent
-import dev.vinicius.busycardapp.presentation.card_creation.component.DefaultDialog
-import dev.vinicius.busycardapp.presentation.card_creation.component.FullScreenDialog
-import dev.vinicius.busycardapp.presentation.card_creation.component.GoogleMapComponent
-import dev.vinicius.busycardapp.presentation.card_creation.component.LauncherForActivityResultComponent
-import dev.vinicius.busycardapp.presentation.card_creation.component.RadioOptions
-import dev.vinicius.busycardapp.presentation.card_creation.component.SelectableOption
+import dev.vinicius.busycardapp.presentation.card_editing.CardEditingEvent
+import dev.vinicius.busycardapp.presentation.card_editing.component.DefaultDialog
+import dev.vinicius.busycardapp.presentation.card_editing.component.FullScreenDialog
+import dev.vinicius.busycardapp.presentation.card_editing.component.GoogleMapComponent
+import dev.vinicius.busycardapp.presentation.card_editing.component.LauncherForActivityResultComponent
+import dev.vinicius.busycardapp.presentation.card_editing.component.RadioOptions
+import dev.vinicius.busycardapp.presentation.card_editing.component.SelectableOption
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OptionsSection(
     modifier: Modifier = Modifier,
     onAddField: (FieldType) -> Unit,
-    onChangeField: (CardCreationEvent.FieldEvent) -> Unit,
+    onChangeField: (CardEditingEvent.FieldEvent) -> Unit,
     onDismissModalSheet: () -> Unit,
     onShowDialog: () -> Unit,
     onMainContactChange: (Field.TextField) -> Unit,
@@ -100,7 +97,7 @@ fun OptionsSection(
 @Composable
 fun FieldInfoMenu(
     modifier: Modifier = Modifier,
-    onChangeField: (CardCreationEvent.FieldEvent) -> Unit, // TODO: Mudar nome para onFieldChanged?,
+    onChangeField: (CardEditingEvent.FieldEvent) -> Unit, // TODO: Mudar nome para onFieldChanged?,
     onShowDialog: () -> Unit,
     isMainContact: Boolean,
     onMainContactChange: (Field.TextField) -> Unit,
@@ -139,7 +136,7 @@ fun FieldInfoMenu(
 @Composable
 fun TextFieldMenu(
     modifier: Modifier = Modifier,
-    onChangeText: (CardCreationEvent.FieldEvent) -> Unit,
+    onChangeText: (CardEditingEvent.FieldEvent) -> Unit,
     onChangeTextType: () -> Unit,
     field: Field.TextField,
 ) {
@@ -191,7 +188,7 @@ fun TextFieldMenu(
                 .padding(start = 8.dp, end = 8.dp),
             onClick = {
                 onChangeText(
-                    CardCreationEvent.FieldEvent.OnTextFieldChange(
+                    CardEditingEvent.FieldEvent.OnTextFieldChange(
                         value = fieldValue,
                         textType = fieldType,
                     )
@@ -206,7 +203,7 @@ fun TextFieldMenu(
 @Composable
 fun ImageFieldMenu(
     modifier: Modifier = Modifier,
-    onChangeImage: (CardCreationEvent.FieldEvent) -> Unit,
+    onChangeImage: (CardEditingEvent.FieldEvent) -> Unit,
     field: Field.ImageField,
 ) {
 
@@ -262,7 +259,7 @@ fun ImageFieldMenu(
                 .padding(start = 8.dp, end = 8.dp),
             onClick = {
                 onChangeImage(
-                    CardCreationEvent.FieldEvent.OnImageFieldChange(
+                    CardEditingEvent.FieldEvent.OnImageFieldChange(
                         size = size,
                         uri = imageUri.value,
                     )
@@ -277,7 +274,7 @@ fun ImageFieldMenu(
 @Composable
 fun AddressFieldMenu(
     modifier: Modifier = Modifier,
-    onChangeAddress: (CardCreationEvent.FieldEvent) -> Unit,
+    onChangeAddress: (CardEditingEvent.FieldEvent) -> Unit,
     field: Field.AddressField,
 ) {
     val TAG = "AddressFieldMenu"
@@ -349,7 +346,7 @@ fun AddressFieldMenu(
             onClick = {
                 Log.d(TAG, "AddressFieldMenu: Button clicked - localization: $localization")
                 onChangeAddress(
-                    CardCreationEvent.FieldEvent.OnAddressFieldChange(
+                    CardEditingEvent.FieldEvent.OnAddressFieldChange(
                         textLocalization = textLocalization,
                         localization = localization,
                     )

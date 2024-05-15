@@ -1,6 +1,5 @@
 package dev.vinicius.busycardapp.presentation.card_detail
 
-import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -71,7 +70,7 @@ import dev.vinicius.busycardapp.ui.theme.BusyCardAppTheme
 @RootNavGraph
 @Destination
 @Composable
-fun CardInfoScreen(
+fun CardDetailScreen(
     modifier: Modifier = Modifier,
     viewModel: CardDetailViewModel = hiltViewModel(),
     navigator: DestinationsNavigator,

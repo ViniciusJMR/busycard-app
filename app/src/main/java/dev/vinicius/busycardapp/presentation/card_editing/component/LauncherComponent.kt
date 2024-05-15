@@ -1,11 +1,10 @@
-package dev.vinicius.busycardapp.presentation.card_creation.component
+package dev.vinicius.busycardapp.presentation.card_editing.component
 
 import android.net.Uri
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 
 @Composable
 fun LauncherForActivityResultComponent(

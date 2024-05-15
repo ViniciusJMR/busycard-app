@@ -1,4 +1,4 @@
-package dev.vinicius.busycardapp.presentation.card_creation
+package dev.vinicius.busycardapp.presentation.card_editing
 
 import android.net.Uri
 import com.google.android.gms.maps.model.LatLng
@@ -6,8 +6,8 @@ import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.domain.model.card.FieldType
 import dev.vinicius.busycardapp.domain.model.card.TextType
 
-sealed class CardCreationEvent {
-    sealed class CardEvent: CardCreationEvent() {
+sealed class CardEditingEvent {
+    sealed class CardEvent: CardEditingEvent() {
         data class OnAddField(val fieldType: FieldType): CardEvent()
         data class OnDeleteField(val field: Field): CardEvent()
         data class OnSelectField(val field: Field?): CardEvent()
@@ -26,7 +26,7 @@ sealed class CardCreationEvent {
 
     }
 
-    sealed class FieldEvent: CardCreationEvent() {
+    sealed class FieldEvent: CardEditingEvent() {
         data class OnTextFieldChange(
             var name: String? = null,
             var offsetX: Int? = null,
@@ -55,12 +55,12 @@ sealed class CardCreationEvent {
         ): FieldEvent()
     }
 
-    sealed class ModalEvent: CardCreationEvent() {
+    sealed class ModalEvent: CardEditingEvent() {
         object OnDismissModalSheet: ModalEvent()
         data class OnShowBottomSheet(val field: Field? = null): ModalEvent()
     }
 
-    sealed class DialogEvent: CardCreationEvent() {
+    sealed class DialogEvent: CardEditingEvent() {
         object OnShowTextTypeDialog: DialogEvent()
         object OnDismissTextTypeDialog: DialogEvent()
 

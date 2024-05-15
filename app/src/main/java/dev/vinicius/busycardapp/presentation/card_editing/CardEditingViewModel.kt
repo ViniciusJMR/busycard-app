@@ -1,10 +1,9 @@
-package dev.vinicius.busycardapp.presentation.card_creation
+package dev.vinicius.busycardapp.presentation.card_editing
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.vinicius.busycardapp.core.getCurrentLocation
 import dev.vinicius.busycardapp.domain.model.card.Card
 import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.domain.model.card.FieldType
@@ -19,13 +18,13 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CardCreationViewModel @Inject constructor(
+class CardEditingViewModel @Inject constructor(
     private val saveCard: SaveCard,
 ): ViewModel(){
-    private val _state = MutableStateFlow(CardCreationState())
+    private val _state = MutableStateFlow(CardEditingState())
     val state = _state.asStateFlow()
 
-    private val _effect: MutableStateFlow<CardCreationEffect?> = MutableStateFlow(null)
+    private val _effect: MutableStateFlow<CardEditingEffect?> = MutableStateFlow(null)
     val effect = _effect.asStateFlow()
 
     fun resetEffect() {
@@ -36,18 +35,18 @@ class CardCreationViewModel @Inject constructor(
         val TAG = "CardCreationViewModel"
     }
 
-    fun onEvent(event: CardCreationEvent) {
+    fun onEvent(event: CardEditingEvent) {
         when (event) {
-            is CardCreationEvent.CardEvent -> handleCardEvent(event)
-            is CardCreationEvent.FieldEvent -> handleOnChangeFieldValue(event)
-            is CardCreationEvent.ModalEvent -> handleOnModalEvent(event)
-            is CardCreationEvent.DialogEvent -> handleOnDialogEvent(event)
+            is CardEditingEvent.CardEvent -> handleCardEvent(event)
+            is CardEditingEvent.FieldEvent -> handleOnChangeFieldValue(event)
+            is CardEditingEvent.ModalEvent -> handleOnModalEvent(event)
+            is CardEditingEvent.DialogEvent -> handleOnDialogEvent(event)
         }
     }
 
-    private fun handleCardEvent(event: CardCreationEvent.CardEvent) {
+    private fun handleCardEvent(event: CardEditingEvent.CardEvent) {
         when (event) {
-            is CardCreationEvent.CardEvent.OnAddField -> {
+            is CardEditingEvent.CardEvent.OnAddField -> {
                 val field: Field = when(event.fieldType) {
                     FieldType.TEXT -> {
                         Field.TextField(
@@ -103,8 +102,8 @@ class CardCreationViewModel @Inject constructor(
                 }
                 Log.d(TAG, "handleCardEvent: available fields ${_state.value.cardFields}")
             }
-            is CardCreationEvent.CardEvent.OnDeleteField -> {}
-            is CardCreationEvent.CardEvent.OnSelectField -> {
+            is CardEditingEvent.CardEvent.OnDeleteField -> {}
+            is CardEditingEvent.CardEvent.OnSelectField -> {
                 Log.d(TAG, "handleCardEvent: selected field: ${event.field}")
                 _state.update {
                     it.copy(
@@ -112,7 +111,7 @@ class CardCreationViewModel @Inject constructor(
                     )
                 }
             }
-            CardCreationEvent.CardEvent.OnSaveCard -> {
+            CardEditingEvent.CardEvent.OnSaveCard -> {
                 val card = Card(
                     name = _state.value.cardName,
                     fields = _state.value.cardFields,
@@ -136,19 +135,19 @@ class CardCreationViewModel @Inject constructor(
                         }
                         .collect{
                             Log.d(TAG, "handleCardEvent: Salvo com sucesso")
-                            _effect.update { CardCreationEffect.ClosePage }
+                            _effect.update { CardEditingEffect.ClosePage }
                         }
                 }
 
             }
 
-            is CardCreationEvent.CardEvent.OnChangeCard -> handleOnChangeCardValue(event)
+            is CardEditingEvent.CardEvent.OnChangeCard -> handleOnChangeCardValue(event)
         }
     }
     
-    private fun handleOnChangeCardValue(event: CardCreationEvent.CardEvent.OnChangeCard) {
+    private fun handleOnChangeCardValue(event: CardEditingEvent.CardEvent.OnChangeCard) {
         when (event) {
-            is CardCreationEvent.CardEvent.OnChangeCard.MainContact -> {
+            is CardEditingEvent.CardEvent.OnChangeCard.MainContact -> {
                 _state.update { cardState ->
                     Log.d(TAG, "mainContactField: ${cardState.mainContactField} ")
                     Log.d(TAG, "event field: ${event.field}")
@@ -160,7 +159,7 @@ class CardCreationViewModel @Inject constructor(
                     )
                 }
             }
-            is CardCreationEvent.CardEvent.OnChangeCard.Info -> {
+            is CardEditingEvent.CardEvent.OnChangeCard.Info -> {
                 _state.update { cardState ->
                     Log.d(TAG, "handleOnChangeCardValue: event: $event")
                     cardState.copy(
@@ -173,9 +172,9 @@ class CardCreationViewModel @Inject constructor(
         }
     }
 
-    private fun handleOnChangeFieldValue(event: CardCreationEvent.FieldEvent) {
+    private fun handleOnChangeFieldValue(event: CardEditingEvent.FieldEvent) {
         when(event) {
-            is CardCreationEvent.FieldEvent.OnTextFieldChange -> {
+            is CardEditingEvent.FieldEvent.OnTextFieldChange -> {
                 _state.update {
                     it.copy(
                         currentlySelectedField =
@@ -205,7 +204,7 @@ class CardCreationViewModel @Inject constructor(
                 }
             }
 
-            is CardCreationEvent.FieldEvent.OnTextFieldTypeChange -> {
+            is CardEditingEvent.FieldEvent.OnTextFieldTypeChange -> {
                 _state.update {
                     it.copy(
                         currentlySelectedField =
@@ -218,7 +217,7 @@ class CardCreationViewModel @Inject constructor(
                 }
             }
 
-            is CardCreationEvent.FieldEvent.OnImageFieldChange -> {
+            is CardEditingEvent.FieldEvent.OnImageFieldChange -> {
                 _state.update {
                     it.copy(
                         currentlySelectedField =
@@ -243,7 +242,7 @@ class CardCreationViewModel @Inject constructor(
                 }
             }
 
-            is CardCreationEvent.FieldEvent.OnAddressFieldChange -> {
+            is CardEditingEvent.FieldEvent.OnAddressFieldChange -> {
                 _state.update {
                     it.copy(
                         currentlySelectedField =
@@ -275,9 +274,9 @@ class CardCreationViewModel @Inject constructor(
     }
 
     // Analisar eficacia de utilizar classe Effect para assumir eventos na tela
-    private fun handleOnModalEvent(event: CardCreationEvent.ModalEvent) {
+    private fun handleOnModalEvent(event: CardEditingEvent.ModalEvent) {
         when(event) {
-            CardCreationEvent.ModalEvent.OnDismissModalSheet -> {
+            CardEditingEvent.ModalEvent.OnDismissModalSheet -> {
                 _state.update {
                     it.copy(
                         currentlySelectedField = null,
@@ -285,7 +284,7 @@ class CardCreationViewModel @Inject constructor(
                     )
                 }
             }
-            is CardCreationEvent.ModalEvent.OnShowBottomSheet -> {
+            is CardEditingEvent.ModalEvent.OnShowBottomSheet -> {
                 _state.update {
                     it.copy(
                         currentlySelectedField = event.field,
@@ -296,16 +295,16 @@ class CardCreationViewModel @Inject constructor(
         }
     }
 
-    private fun handleOnDialogEvent(event: CardCreationEvent.DialogEvent) {
+    private fun handleOnDialogEvent(event: CardEditingEvent.DialogEvent) {
         when (event) {
-            CardCreationEvent.DialogEvent.OnShowTextTypeDialog -> {
+            CardEditingEvent.DialogEvent.OnShowTextTypeDialog -> {
                 _state.update {
                     it.copy(
                         showTextTypeDialog = true
                     )
                 }
             }
-            CardCreationEvent.DialogEvent.OnDismissTextTypeDialog -> {
+            CardEditingEvent.DialogEvent.OnDismissTextTypeDialog -> {
                 _state.update {
                     it.copy(
                         showTextTypeDialog = false
@@ -313,7 +312,7 @@ class CardCreationViewModel @Inject constructor(
                 }
             }
 
-            CardCreationEvent.DialogEvent.OnDismissCardInfoDialog -> {
+            CardEditingEvent.DialogEvent.OnDismissCardInfoDialog -> {
                 _state.update {
                     it.copy(
                         showCardInfoDialog = false
@@ -321,7 +320,7 @@ class CardCreationViewModel @Inject constructor(
                 }
             }
 
-            CardCreationEvent.DialogEvent.OnShowCardInfoDialog -> {
+            CardEditingEvent.DialogEvent.OnShowCardInfoDialog -> {
                 _state.update {
                     it.copy(
                         showCardInfoDialog = true

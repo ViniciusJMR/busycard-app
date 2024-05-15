@@ -1,4 +1,4 @@
-package dev.vinicius.busycardapp.presentation.card_creation.component
+package dev.vinicius.busycardapp.presentation.card_editing.component
 
 
 import androidx.compose.foundation.layout.Column
@@ -22,7 +22,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import dev.vinicius.busycardapp.R
-import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.domain.model.card.TextType
 
 @Composable

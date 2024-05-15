@@ -1,4 +1,4 @@
-package dev.vinicius.busycardapp.presentation.card_creation
+package dev.vinicius.busycardapp.presentation.card_editing
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,17 +29,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.vinicius.busycardapp.R
-import dev.vinicius.busycardapp.presentation.card_creation.component.CardInfoDialog
-import dev.vinicius.busycardapp.presentation.card_creation.section.OptionsSection
-import dev.vinicius.busycardapp.presentation.card_creation.section.ShowCardSection
+import dev.vinicius.busycardapp.presentation.card_editing.component.CardInfoDialog
+import dev.vinicius.busycardapp.presentation.card_editing.section.OptionsSection
+import dev.vinicius.busycardapp.presentation.card_editing.section.ShowCardSection
 import dev.vinicius.busycardapp.ui.theme.BusyCardAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination
 @Composable
-fun CardCreationScreen(
+fun CardEditingScreen(
     navigator: DestinationsNavigator,
-    viewModel: CardCreationViewModel = hiltViewModel()
+    viewModel: CardEditingViewModel = hiltViewModel()
 ) {
 
     val state by viewModel.state.collectAsState()
@@ -48,7 +48,7 @@ fun CardCreationScreen(
     LaunchedEffect(effect) {
         effect?.let {
             when(it) {
-                CardCreationEffect.ClosePage -> {
+                CardEditingEffect.ClosePage -> {
                     navigator.navigateUp()
                 }
             }
@@ -61,9 +61,9 @@ fun CardCreationScreen(
     if (state.showCardInfoDialog) {
         CardInfoDialog(
             onConfirmation = { name, uri ->
-                event(CardCreationEvent.CardEvent.OnChangeCard.Info(name, uri))
+                event(CardEditingEvent.CardEvent.OnChangeCard.Info(name, uri))
             },
-            onDismiss = { event(CardCreationEvent.DialogEvent.OnDismissCardInfoDialog) },
+            onDismiss = { event(CardEditingEvent.DialogEvent.OnDismissCardInfoDialog) },
             cardName = state.cardName,
             cardImageUri = state.cardImageUri
         )
@@ -80,7 +80,7 @@ fun CardCreationScreen(
         bottomBar = {
             BottomAppBar(
                 actions = {
-                    IconButton(onClick = { event(CardCreationEvent.CardEvent.OnSaveCard) }) {
+                    IconButton(onClick = { event(CardEditingEvent.CardEvent.OnSaveCard) }) {
                         Icon(
                             imageVector = Icons.Filled.Save,
                             contentDescription = stringResource(R.string.desc_save_current_card)
@@ -89,13 +89,13 @@ fun CardCreationScreen(
                     IconButton(onClick = { /*TODO*/ }) {
                         Icon(Icons.Outlined.Layers, contentDescription = "")
                     }
-                    IconButton(onClick = { event(CardCreationEvent.DialogEvent.OnShowCardInfoDialog)}) {
+                    IconButton(onClick = { event(CardEditingEvent.DialogEvent.OnShowCardInfoDialog)}) {
                         Icon(Icons.Outlined.Settings, contentDescription = "")
                     }
                 },
                 floatingActionButton = {
                     FloatingActionButton(
-                        onClick = { event(CardCreationEvent.ModalEvent.OnShowBottomSheet()) },
+                        onClick = { event(CardEditingEvent.ModalEvent.OnShowBottomSheet()) },
                         elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(),
                     ) {
                         Icon(Icons.Filled.Add, contentDescription = "")
@@ -115,13 +115,13 @@ fun CardCreationScreen(
                 state = state
             )
             OptionsSection(
-                onAddField = { fieldType -> event(CardCreationEvent.CardEvent.OnAddField(fieldType)) },
+                onAddField = { fieldType -> event(CardEditingEvent.CardEvent.OnAddField(fieldType)) },
                 onChangeField = { fieldEvent -> event(fieldEvent) },
-                onDismissModalSheet = { event(CardCreationEvent.ModalEvent.OnDismissModalSheet) },
-                onShowDialog = { event(CardCreationEvent.DialogEvent.OnShowTextTypeDialog) },
+                onDismissModalSheet = { event(CardEditingEvent.ModalEvent.OnDismissModalSheet) },
+                onShowDialog = { event(CardEditingEvent.DialogEvent.OnShowTextTypeDialog) },
                 currentlySelectedField = state.currentlySelectedField,
                 mainContactField = state.mainContactField,
-                onMainContactChange = { event(CardCreationEvent.CardEvent.OnChangeCard.MainContact(it))},
+                onMainContactChange = { event(CardEditingEvent.CardEvent.OnChangeCard.MainContact(it))},
                 showBottomSheet = state.showBottomSheet
             )
         }
@@ -131,7 +131,7 @@ fun CardCreationScreen(
 @Preview
 @Composable
 private fun ScreenPreview() {
-    val state = CardCreationState()
+    val state = CardEditingState()
     BusyCardAppTheme {
         //CardCreationScreen()
     }
