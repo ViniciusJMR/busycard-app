@@ -76,12 +76,23 @@ class CardRepository @Inject constructor(
 
     override suspend fun save(item: Card): String {
         database.collection("cards")
-        val key = UUID.randomUUID().toString()
-        item.id = key
+        Log.d(TAG, "save: A PORRA OD ITEM COM NULO: $item")
+
+        val key: String
+        if (item.id != null) {
+            key = item.id!!
+        } else {
+            key = UUID.randomUUID().toString()
+            item.id = key
+        }
 
         item.image.uri = item.image.uri?.let {
-            val ext = it.path!!.substring(it.path!!.lastIndexOf(".") + 1)
-            val bucketPath = "cards/$key/cardImage.${ext}"
+            val bucketPath = "cards/$key/cardImage"
+            val subs = it.toString().substring(0, 4)
+            Log.d(TAG, "save: substring ${subs}")
+            if (subs.contains("http")) {
+                return@let it
+            }
             bucket.uploadFile(it, bucketPath)
         }
         Log.d(TAG, "save: uri: ${item.image.uri} - ${item.image.uri?.path}")
@@ -90,10 +101,13 @@ class CardRepository @Inject constructor(
             .filterIsInstance<Field.ImageField>()
             .forEach {
                 val uri = it.image.uri!!
-                val ext = uri.path!!.substring(uri.path!!.lastIndexOf(".") + 1)
-                val imageId = uri.toString().substring(uri.toString().lastIndexOf("%") + 1)
+                val imageId = uri.toString().substring(uri.toString().lastIndexOf("/") + 1)
 
-                val bucketPath = "fields/$key/$imageId.$ext"
+                if (uri.toString().substring(0, 4).contains("http")) {
+                    return@forEach
+                }
+
+                val bucketPath = "fields/$key/$imageId"
                 it.image.uri = bucket.uploadFile(uri, bucketPath)
             }
 
