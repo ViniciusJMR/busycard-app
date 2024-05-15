@@ -63,7 +63,10 @@ class CardEditingViewModel @Inject constructor(
                             cardId = card.id,
                             cardImageUri = card.image.uri,
                             cardName = card.name,
-                            cardFields = card.fields.toMutableList()
+                            cardFields = card.fields.toMutableList(),
+                            mainContactField = card.fields
+                                .filterIsInstance<Field.TextField>()
+                                .find { it.value == card.mainContact },
                         )
                     }
                 }
