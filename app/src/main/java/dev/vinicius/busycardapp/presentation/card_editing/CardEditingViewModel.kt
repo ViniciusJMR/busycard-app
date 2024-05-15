@@ -1,6 +1,7 @@
 package dev.vinicius.busycardapp.presentation.card_editing
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -8,7 +9,9 @@ import dev.vinicius.busycardapp.domain.model.card.Card
 import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.domain.model.card.FieldType
 import dev.vinicius.busycardapp.domain.model.card.TextType
+import dev.vinicius.busycardapp.domain.usecase.card.GetCardById
 import dev.vinicius.busycardapp.domain.usecase.card.SaveCard
+import dev.vinicius.busycardapp.presentation.card_detail.CardDetailViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
@@ -19,6 +22,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CardEditingViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
+    private val getCardById: GetCardById,
     private val saveCard: SaveCard,
 ): ViewModel(){
     private val _state = MutableStateFlow(CardEditingState())
@@ -33,6 +38,37 @@ class CardEditingViewModel @Inject constructor(
 
     companion object {
         val TAG = "CardCreationViewModel"
+    }
+
+    init {
+        viewModelScope.launch {
+            val id = savedStateHandle.get<String>("id") ?: return@launch
+
+            getCardById(id)
+                .onStart {
+                    Log.d(CardDetailViewModel.TAG, "Started")
+                    _state.update {
+                        it.copy(
+                            isScreenLoading = true,
+                        )
+                    }
+                }
+                .catch {
+                    Log.e(CardDetailViewModel.TAG, "Error: ${it.message}")
+                }
+                .collect{ card ->
+                    Log.d(CardDetailViewModel.TAG, "Collected:  $card")
+                    _state.update {
+                        it.copy(
+                            cardId = card.id,
+                            cardImageUri = card.image.uri,
+                            cardName = card.name,
+                            cardFields = card.fields.toMutableList()
+                        )
+                    }
+                }
+
+        }
     }
 
     fun onEvent(event: CardEditingEvent) {
@@ -113,6 +149,7 @@ class CardEditingViewModel @Inject constructor(
             }
             CardEditingEvent.CardEvent.OnSaveCard -> {
                 val card = Card(
+                    id = _state.value.cardId,
                     name = _state.value.cardName,
                     fields = _state.value.cardFields,
                     mainContact = _state.value.mainContactField?.value ?: "",
@@ -125,7 +162,7 @@ class CardEditingViewModel @Inject constructor(
                         .onStart {
                             _state.update {
                                 it.copy(
-                                    isLoading = true
+                                    isScreenLoading = true
                                 )
                             }
                         }
