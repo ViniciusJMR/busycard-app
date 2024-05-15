@@ -23,7 +23,9 @@ class GetCardById @Inject constructor(
                         val myCards = user.myCards
                         val sharedCards = user.sharedCards
                         card.cardState = if (myCards.any { it== param }) CardState.MINE else CardState.NOT_SHARED
-                        card.cardState = if (sharedCards.any { it == param }) CardState.SHARED else CardState.NOT_SHARED
+                        if (card.cardState != CardState.MINE) {
+                            card.cardState = if (sharedCards.any { it == param }) CardState.SHARED else CardState.NOT_SHARED
+                        }
                     }
                 emit(card)
             }
