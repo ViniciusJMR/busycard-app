@@ -54,6 +54,10 @@ class CardRepository @Inject constructor(
         }
     }
 
+    override suspend fun deleteById(id: String) {
+        database.collection("cards").document(id).delete().await()
+    }
+
     override suspend fun getById(id: String): Flow<Card> = flow {
         val cardsSnapshot = database.collection("cards").document(id).get()
         val fieldsSnapshot = database.collection("fields").document(id).get()

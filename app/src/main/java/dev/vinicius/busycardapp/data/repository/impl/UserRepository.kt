@@ -107,6 +107,10 @@ class UserRepository @Inject constructor(
         TODO("Not yet implemented")
     }
 
+    override suspend fun deleteById(id: String) {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun getByIds(ids: List<String>): Flow<List<User>> {
         TODO("Not yet implemented")
     }
