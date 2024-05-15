@@ -19,6 +19,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBackIosNew
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.CircularProgressIndicator
@@ -63,6 +65,7 @@ import dev.vinicius.busycardapp.presentation.card_detail.component.CardInfoTextF
 import dev.vinicius.busycardapp.presentation.card_detail.component.CompactAddressFieldComponent
 import dev.vinicius.busycardapp.presentation.card_detail.component.CompactTextFieldComponent
 import dev.vinicius.busycardapp.presentation.card_detail.component.DialogComponent
+import dev.vinicius.busycardapp.presentation.destinations.CardEditingScreenDestination
 import dev.vinicius.busycardapp.ui.theme.BusyCardAppTheme
 
 
@@ -129,6 +132,18 @@ fun CardDetailScreen(
                         Icon(Icons.Outlined.ArrowBackIosNew, contentDescription = "")
                     }
                 },
+                actions = {
+                    if (state.cardState == CardState.MINE) {
+                        IconButton(
+                            onClick = { navigator.navigate(CardEditingScreenDestination(id = id)) }
+                        ) {
+                            Icon(Icons.Outlined.Edit, contentDescription = "")
+                        }
+                        IconButton(onClick = {}) {
+                            Icon(Icons.Outlined.Delete, contentDescription = "")
+                        }
+                    }
+                }
             )
         },
         floatingActionButton = {

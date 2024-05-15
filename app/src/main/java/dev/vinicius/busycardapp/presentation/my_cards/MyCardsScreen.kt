@@ -36,7 +36,7 @@ fun MyCardsScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    navigator.navigate(CardEditingScreenDestination)
+                    navigator.navigate(CardEditingScreenDestination(id = null))
                 }
             ) {
                 Icon(Icons.Filled.AddCard, contentDescription = "")
