@@ -1,5 +1,6 @@
 package dev.vinicius.busycardapp.presentation.card_detail
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBackIosNew
 import androidx.compose.material.icons.outlined.Info
@@ -23,7 +25,6 @@ import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
@@ -39,13 +40,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.rememberAsyncImagePainter
 import com.google.zxing.BarcodeFormat
 import com.journeyapps.barcodescanner.BarcodeEncoder
 import com.ramcosta.composedestinations.annotation.Destination
@@ -106,6 +110,7 @@ fun CardInfoScreen(
             onAddToSharedCards = { event(CardInfoEvent.CardEvent.OnSaveToSharedCard) },
             onDeleteFromSharedCards = { event(CardInfoEvent.CardEvent.OnDeleteFromSharedCard) },
             onDismissModalSheet = { event(CardInfoEvent.ModalEvent.OnDismissModalSheet) },
+            imagePath = state.imagePath,
             fields = state.fields,
         )
     }
@@ -261,6 +266,7 @@ fun CardInfoBottomSheet(
     onDismissModalSheet: () -> Unit,
     cardState: CardState,
     isBottomSheetLoading: Boolean,
+    imagePath: String,
     fields: List<Field>,
 ) {
     val sheetState = rememberModalBottomSheetState()
@@ -268,8 +274,35 @@ fun CardInfoBottomSheet(
         onDismissRequest = onDismissModalSheet,
         sheetState = sheetState,
     ) {
+        if (imagePath.isNotBlank()) {
+            val painter = rememberAsyncImagePainter(
+                imagePath
+            )
+            Box (
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally),
+                contentAlignment = Alignment.Center
+            ){
+                CircularProgressIndicator()
+                Image(
+                    painter = painter,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .clip(CircleShape) // TODO: Change to param
+                        .size(150.dp)
+                )
+            }
+        } else {
+            Text(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                text = "No Image Available"
+            )
+        }
+
         if (cardState != CardState.MINE) {
             Row (
+                modifier = Modifier.align(Alignment.CenterHorizontally),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 TextButton(onClick = {
