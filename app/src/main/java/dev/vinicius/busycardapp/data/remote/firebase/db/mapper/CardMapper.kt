@@ -11,24 +11,26 @@ import dev.vinicius.busycardapp.domain.model.card.TextType
 
 fun Card.mapToFirebaseModel() =
     FirebaseCardModel(
-        id,
-        name,
-        owner,
-        image.uri.toString(),
-        mainContact,
+        id = id,
+        name = name,
+        owner = owner,
+        image = image.uri.toString(),
+        mainContact = mainContact,
+        isDraft = isDraft,
     )
 
 fun FirebaseCardModel.mapToDomainModel(fields: List<Map<String, Any>>) =
     Card(
-        id,
-        name ?: "",
-        owner ?: "",
-        mainContact ?: "",
-        CardImage(
+        id = id,
+        name =name ?: "",
+        owner = owner ?: "",
+        mainContact = mainContact ?: "",
+        image = CardImage(
             uri = Uri.parse(image ?: ""),
             path = image ?: ""
         ),
-        fields.map { mapFieldToDomainModel(it) }
+        fields = fields.map { mapFieldToDomainModel(it) },
+        isDraft = isDraft ?: false,
     )
 
 

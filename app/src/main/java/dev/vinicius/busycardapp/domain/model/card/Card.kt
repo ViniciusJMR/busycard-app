@@ -10,4 +10,5 @@ data class Card(
     var image: CardImage = CardImage(),
     val fields: List<Field>,
     var cardState: CardState = CardState.NOT_SHARED,
+    var isDraft: Boolean = false,
 )
