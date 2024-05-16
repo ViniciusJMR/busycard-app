@@ -31,7 +31,7 @@ class UserRepository @Inject constructor(
             .get()
             .addOnSuccessListener { documentSnapshot ->
                 if (documentSnapshot.exists()) {
-                    myCards = documentSnapshot.get("myCards") as List<String>
+                    myCards = documentSnapshot.get("myCards") as? List<String> ?: emptyList()
                 }
             }
 
@@ -100,6 +100,37 @@ class UserRepository @Inject constructor(
             }
             task.isCanceled -> TODO()
         }
+    }
+
+    override suspend fun saveDraftCardId(userId: String, cardId: String) {
+        database.collection("users")
+            .document(userId)
+            .update("draftCards", FieldValue.arrayUnion(cardId))
+            .await()
+    }
+
+    override suspend fun getDraftCardsId(userId: String): List<String> {
+        var draftCards: List<String> = emptyList()
+
+        val task = database.collection("users")
+            .document(userId)
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    draftCards = documentSnapshot.get("draftCards") as? List<String> ?: emptyList()
+                }
+            }
+
+        task.await()
+
+        return draftCards
+    }
+
+    override suspend fun removeDraftCardId(userId: String, cardId: String) {
+        database.collection("users")
+            .document(userId)
+            .update("sharedCards", FieldValue.arrayRemove(cardId))
+            .await()
     }
 
     // Should Not be used
