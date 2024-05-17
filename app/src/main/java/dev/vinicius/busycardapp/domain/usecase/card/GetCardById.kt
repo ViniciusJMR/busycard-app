@@ -10,8 +10,6 @@ import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class GetCardById @Inject constructor(
-    private val getSharedCards: GetSharedCards,
-    private val getMyCards: GetMyCards,
     private val getUserUseCase: GetUserUseCase,
     private val repository: IRepository<String, Card>
 ): UseCase<String, Card>() {

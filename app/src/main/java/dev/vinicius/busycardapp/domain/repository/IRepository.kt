@@ -15,4 +15,6 @@ interface IRepository<K, T> {
     suspend fun save(item: T): K
 
     suspend fun deleteById(id: K)
+
+    suspend fun delete(item: T)
 }

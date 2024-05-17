@@ -144,6 +144,10 @@ class UserRepository @Inject constructor(
         TODO("Not yet implemented")
     }
 
+    override suspend fun delete(item: User) {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun get(item: User): Flow<User> {
         TODO("Not yet implemented")
     }

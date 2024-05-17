@@ -71,6 +71,23 @@ class CardRepository @Inject constructor(
 
     override suspend fun deleteById(id: String) {
         database.collection("cards").document(id).delete().await()
+        database.collection("fields").document(id).delete().await()
+    }
+
+    override suspend fun delete(item: Card) {
+        val docCard: String
+        val docFields: String
+
+        if (!item.isDraft) {
+            docCard = "cards"
+            docFields = "fields"
+        } else {
+            docCard = "draftCards"
+            docFields = "draftFields"
+        }
+
+        database.collection(docCard).document(item.id!!).delete().await()
+        database.collection(docFields).document(item.id!!).delete().await()
     }
 
     override suspend fun getById(id: String): Flow<Card> = flow {
