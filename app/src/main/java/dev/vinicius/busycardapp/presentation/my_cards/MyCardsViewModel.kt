@@ -3,10 +3,8 @@ package dev.vinicius.busycardapp.presentation.my_cards
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.vinicius.busycardapp.domain.repository.Auth
-import dev.vinicius.busycardapp.domain.usecase.card.GetAll
+import dev.vinicius.busycardapp.domain.usecase.card.GetDraftCards
 import dev.vinicius.busycardapp.domain.usecase.card.GetMyCards
-import dev.vinicius.busycardapp.presentation.my_cards.MyCardsState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.onStart
@@ -16,7 +14,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MyCardsViewModel @Inject constructor(
-    getMyCards: GetMyCards
+    getMyCards: GetMyCards,
+    getDraftCards: GetDraftCards
 ): ViewModel() {
     private val _state = MutableStateFlow(MyCardsState())
     val state = _state.asStateFlow()
@@ -27,15 +26,32 @@ class MyCardsViewModel @Inject constructor(
                 .onStart {
                     _state.update {
                         it.copy(
-                            isLoading = true
+                            isMyCardsLoading = true
                         )
                     }
                 }
                 .collect{ cards ->
                     _state.update {
                         it.copy(
-                            cards = cards,
-                            isLoading = false
+                            myCards = cards,
+                            isMyCardsLoading = false
+                        )
+                    }
+                }
+
+            getDraftCards()
+                .onStart {
+                    _state.update {
+                        it.copy(
+                            isDraftCardsLoading = true
+                        )
+                    }
+                }
+                .collect{ cards ->
+                    _state.update {
+                        it.copy(
+                            draftCards = cards,
+                            isDraftCardsLoading = false
                         )
                     }
                 }

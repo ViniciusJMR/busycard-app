@@ -1,17 +1,22 @@
 package dev.vinicius.busycardapp.presentation.my_cards
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCard
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
@@ -43,16 +48,46 @@ fun MyCardsScreen(
             }
         }
     ){
-        if (!state.isLoading) {
-            CardsListing(
-                modifier = Modifier.padding(it),
-                onClickItemCard = { id ->
-                    navigator.navigate(CardDetailScreenDestination(id = id))
-                },
-                cards = state.cards
+        Column(
+            modifier = Modifier.padding(it)
+        ) {
+            Text(
+                text = "My Cards",
+                style = MaterialTheme.typography.headlineSmall
             )
-        } else {
-            Text("Loading")
+            Spacer(modifier = Modifier.height(16.dp))
+
+            if (!state.isMyCardsLoading) {
+                CardsListing(
+                    modifier = Modifier.padding(it),
+                    onClickItemCard = { id ->
+                        navigator.navigate(CardDetailScreenDestination(id = id))
+                    },
+                    cards = state.myCards
+                )
+            } else {
+                Text("Loading")
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Text(
+                text = "Draft Cards",
+                style = MaterialTheme.typography.headlineSmall
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            if (!state.isDraftCardsLoading) {
+                CardsListing(
+                    modifier = Modifier.padding(it),
+                    onClickItemCard = { id ->
+                        navigator.navigate(CardDetailScreenDestination(id = id))
+                    },
+                    cards = state.draftCards
+                )
+            } else {
+                Text("Loading")
+            }
         }
     }
 }

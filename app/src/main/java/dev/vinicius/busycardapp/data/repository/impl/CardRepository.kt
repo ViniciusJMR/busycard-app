@@ -11,6 +11,7 @@ import dev.vinicius.busycardapp.domain.repository.IRepository
 import dev.vinicius.busycardapp.domain.model.card.Card
 import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.domain.repository.Bucket
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
@@ -79,8 +80,16 @@ class CardRepository @Inject constructor(
     }
 
     override suspend fun save(item: Card): String {
-        database.collection("cards")
-        Log.d(TAG, "save: A PORRA OD ITEM COM NULO: $item")
+        val docCard: String
+        val docFields: String
+
+        if (!item.isDraft) {
+            docCard = "cards"
+            docFields = "fields"
+        } else {
+            docCard = "draftCards"
+            docFields = "draftFields"
+        }
 
         val key: String
         if (item.id != null) {
@@ -117,13 +126,13 @@ class CardRepository @Inject constructor(
 
 
         database
-            .collection("cards")
+            .collection(docCard)
             .document(item.id.toString())
             .set(item.mapToFirebaseModel())
 
 
         database
-            .collection("fields")
+            .collection(docFields)
             .document(item.id.toString())
             .set(mapOf("list" to mapDomainFieldsToFirebaseModel(item.fields)))
 
