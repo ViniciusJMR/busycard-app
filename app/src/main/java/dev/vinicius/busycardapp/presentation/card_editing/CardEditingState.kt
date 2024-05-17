@@ -10,10 +10,12 @@ data class CardEditingState (
     var cardImageUri: Uri? = null,
     var currentlySelectedField: Field? = null,
     var mainContactField: Field.TextField? = null,
+    var isDraft: Boolean = false,
 
     var isScreenLoading: Boolean = false,
     var showBottomSheet: Boolean = false,
     var showTextTypeDialog: Boolean = false,
     var showCardInfoDialog: Boolean = false,
+    val showSaveDialog: Boolean = false,
     var error: String? = null,
 )

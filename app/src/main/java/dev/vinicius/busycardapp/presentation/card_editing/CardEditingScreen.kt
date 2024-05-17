@@ -1,7 +1,10 @@
 package dev.vinicius.busycardapp.presentation.card_editing
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -16,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,10 +29,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.vinicius.busycardapp.R
+import dev.vinicius.busycardapp.presentation.card_detail.CardInfoEvent
+import dev.vinicius.busycardapp.presentation.card_detail.component.DialogComponent
 import dev.vinicius.busycardapp.presentation.card_editing.component.CardInfoDialog
 import dev.vinicius.busycardapp.presentation.card_editing.section.OptionsSection
 import dev.vinicius.busycardapp.presentation.card_editing.section.ShowCardSection
@@ -59,6 +66,17 @@ fun CardEditingScreen(
 
     val event = viewModel::onEvent
 
+    if (state.showSaveDialog) {
+        CardDetailSaveDialog(
+            onConfirm = { event(CardEditingEvent.DialogEvent.OnDismissSaveDialog) },
+            onDismiss = { event(CardEditingEvent.DialogEvent.OnDismissSaveDialog) },
+            onClickSave = { event(CardEditingEvent.CardEvent.OnSaveEvent.OnSaveCard) },
+            onClickSaveAsDraft = {
+                event(CardEditingEvent.CardEvent.OnSaveEvent.OnSaveCardAsDraft)
+            },
+        )
+    }
+
     if (state.showCardInfoDialog) {
         CardInfoDialog(
             onConfirmation = { name, uri ->
@@ -81,7 +99,7 @@ fun CardEditingScreen(
         bottomBar = {
             BottomAppBar(
                 actions = {
-                    IconButton(onClick = { event(CardEditingEvent.CardEvent.OnSaveCard) }) {
+                    IconButton(onClick = { event(CardEditingEvent.DialogEvent.OnShowSaveDialog) }) {
                         Icon(
                             imageVector = Icons.Filled.Save,
                             contentDescription = stringResource(R.string.desc_save_current_card)
@@ -125,6 +143,30 @@ fun CardEditingScreen(
                 onMainContactChange = { event(CardEditingEvent.CardEvent.OnChangeCard.MainContact(it))},
                 showBottomSheet = state.showBottomSheet
             )
+        }
+    }
+}
+
+@Composable
+fun CardDetailSaveDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+    onClickSave: () -> Unit,
+    onClickSaveAsDraft: () -> Unit
+) {
+    DialogComponent(
+        onConfirm = onConfirm,
+        onDismiss = onDismiss,
+        confirmText = R.string.txt_close,
+    ) {
+        Column {
+            TextButton( onClick = onClickSaveAsDraft ) {
+                Text( stringResource( R.string.txt_save_as_draft) )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            TextButton( onClick = onClickSave ) {
+                Text( stringResource(R.string.txt_save ) )
+            }
         }
     }
 }

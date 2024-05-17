@@ -5,6 +5,7 @@ import com.google.android.gms.maps.model.LatLng
 import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.domain.model.card.FieldType
 import dev.vinicius.busycardapp.domain.model.card.TextType
+import dev.vinicius.busycardapp.presentation.card_detail.CardInfoEvent
 
 sealed class CardEditingEvent {
     sealed class CardEvent: CardEditingEvent() {
@@ -13,7 +14,11 @@ sealed class CardEditingEvent {
         data class OnSelectField(val field: Field?): CardEvent()
 
 
-        object OnSaveCard: CardEvent()
+        sealed class OnSaveEvent: CardEvent() {
+            data object OnSaveCard: OnSaveEvent()
+            data object OnSaveCardAsDraft: OnSaveEvent()
+        }
+
 
         sealed class OnChangeCard: CardEvent() {
             data class Info(
@@ -66,6 +71,9 @@ sealed class CardEditingEvent {
 
         object OnShowCardInfoDialog: DialogEvent()
         object OnDismissCardInfoDialog: DialogEvent()
+
+        data object OnShowSaveDialog: DialogEvent()
+        data object OnDismissSaveDialog: DialogEvent()
 
     }
 

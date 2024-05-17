@@ -12,6 +12,7 @@ import dev.vinicius.busycardapp.domain.model.card.TextType
 import dev.vinicius.busycardapp.domain.usecase.card.GetCardById
 import dev.vinicius.busycardapp.domain.usecase.card.SaveCard
 import dev.vinicius.busycardapp.presentation.card_detail.CardDetailViewModel
+import dev.vinicius.busycardapp.presentation.card_detail.CardInfoEvent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
@@ -150,7 +151,7 @@ class CardEditingViewModel @Inject constructor(
                     )
                 }
             }
-            CardEditingEvent.CardEvent.OnSaveCard -> {
+            is CardEditingEvent.CardEvent.OnSaveEvent -> {
                 val card = Card(
                     id = _state.value.cardId,
                     name = _state.value.cardName,
@@ -158,8 +159,12 @@ class CardEditingViewModel @Inject constructor(
                     mainContact = _state.value.mainContactField?.value ?: "",
                 ).apply {
                     image.uri = _state.value.cardImageUri
+
+                    if (event is CardEditingEvent.CardEvent.OnSaveEvent.OnSaveCardAsDraft) {
+                        isDraft = true
+                    }
+
                 }
-                Log.d(TAG, "handleCardEvent: card: $card")
                 viewModelScope.launch {
                     saveCard(card)
                         .onStart {
@@ -178,13 +183,11 @@ class CardEditingViewModel @Inject constructor(
                             _effect.update { CardEditingEffect.ClosePage }
                         }
                 }
-
             }
-
             is CardEditingEvent.CardEvent.OnChangeCard -> handleOnChangeCardValue(event)
         }
     }
-    
+
     private fun handleOnChangeCardValue(event: CardEditingEvent.CardEvent.OnChangeCard) {
         when (event) {
             is CardEditingEvent.CardEvent.OnChangeCard.MainContact -> {
@@ -367,7 +370,18 @@ class CardEditingViewModel @Inject constructor(
                     )
                 }
             }
+            CardEditingEvent.DialogEvent.OnDismissSaveDialog ->
+                _state.update {
+                    it.copy(
+                        showSaveDialog = false
+                    )
+                }
+            CardEditingEvent.DialogEvent.OnShowSaveDialog ->
+                _state.update {
+                    it.copy(
+                        showSaveDialog = true
+                    )
+                }
         }
     }
-
 }

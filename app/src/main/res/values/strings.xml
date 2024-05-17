@@ -37,4 +37,6 @@
     <string name="txt_text">Text</string>
     <string name="txt_confirm_delete">Confirm deletion of this card?</string>
     <string name="txt_delete">Delete</string>
+    <string name="txt_save">Save</string>
+    <string name="txt_save_as_draft">Save as draft</string>
 </resources>
