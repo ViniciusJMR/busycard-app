@@ -8,7 +8,7 @@ data class Card(
     var owner: String? = null,
     var mainContact: String = "",
     var image: CardImage = CardImage(),
-    val fields: List<Field>,
+    val fields: List<Field> = emptyList(),
     var cardState: CardState = CardState.NOT_SHARED,
     var isDraft: Boolean = false,
 )

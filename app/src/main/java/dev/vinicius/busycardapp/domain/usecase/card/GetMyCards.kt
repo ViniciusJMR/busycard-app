@@ -31,7 +31,7 @@ class GetMyCards @Inject constructor(
         cardRepository.getByIds(cardsId)
             .collect{
                 Log.d(TAG, "execute: cards = $it")
-                emit(it)
+                emit(it.filter { !it.isDraft })
             }
     }
 }

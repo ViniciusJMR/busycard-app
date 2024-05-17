@@ -30,12 +30,25 @@ class CardRepository @Inject constructor(
     }
 
     override suspend fun getByIds(ids: List<String>): Flow<List<Card>> = flow{
-        emit(database.collection("cards")
+        val prodCardsTask = database.collection("cards")
             .whereIn("id", ids)
             .get()
+
+
+        val draftCardsTask = database.collection("draftCards")
+            .whereIn("id", ids)
+            .get()
+
+        val draftCards = draftCardsTask
             .await()
             .map { it.toObject(FirebaseCardModel::class.java).mapToDomainModel(emptyList()) }
-        )
+
+        val prodCards = prodCardsTask
+            .await()
+            .map { it.toObject(FirebaseCardModel::class.java).mapToDomainModel(emptyList()) }
+
+        val cards = prodCards + draftCards
+        emit(cards)
     }
 
     override suspend fun getAll(): Flow<List<Card>> = flow {
@@ -54,6 +67,7 @@ class CardRepository @Inject constructor(
             }
         }
     }
+
 
     override suspend fun deleteById(id: String) {
         database.collection("cards").document(id).delete().await()
