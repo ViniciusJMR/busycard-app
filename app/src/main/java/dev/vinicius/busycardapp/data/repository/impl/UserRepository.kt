@@ -1,5 +1,6 @@
 package dev.vinicius.busycardapp.data.repository.impl
 
+import android.util.Log
 import com.google.firebase.database.getValue
 import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.FieldValue
@@ -16,6 +17,10 @@ class UserRepository @Inject constructor(
 
 ): IUserRepository<String, User> {
     private val database = Firebase.firestore
+
+    companion object {
+        private const val TAG = "UserRepository"
+    }
 
     override suspend fun saveMyCardId(userId: String, cardId: String) {
         database.collection("users")
@@ -103,6 +108,7 @@ class UserRepository @Inject constructor(
     }
 
     override suspend fun saveDraftCardId(userId: String, cardId: String) {
+        Log.d(TAG, "saveDraftCardId: $userId, $cardId")
         database.collection("users")
             .document(userId)
             .update("draftCards", FieldValue.arrayUnion(cardId))
@@ -135,6 +141,10 @@ class UserRepository @Inject constructor(
 
     // Should Not be used
     override suspend fun getAll(): Flow<List<User>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun get(item: User): Flow<User> {
         TODO("Not yet implemented")
     }
 

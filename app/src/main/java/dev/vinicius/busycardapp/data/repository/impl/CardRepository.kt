@@ -93,6 +93,39 @@ class CardRepository @Inject constructor(
         }
     }
 
+    override suspend fun get(item: Card): Flow<Card> = flow {
+        val docCard: String
+        val docFields: String
+
+        if (!item.isDraft) {
+            docCard = "cards"
+            docFields = "fields"
+        } else {
+            docCard = "draftCards"
+            docFields = "draftFields"
+        }
+
+        val id = item.id!!
+
+        val cardsSnapshot = database.collection(docCard).document(id).get()
+        val fieldsSnapshot = database.collection(docFields).document(id).get()
+        cardsSnapshot.await()
+        fieldsSnapshot.await()
+
+        when {
+            cardsSnapshot.isSuccessful -> {
+                val firebaseCard = cardsSnapshot.result.toObject(FirebaseCardModel::class.java)
+                Log.d(TAG, "getById: fields: ${fieldsSnapshot.result.data?.get("list")}")
+                val firebaseFields: List<Map<String, Any>> = fieldsSnapshot.result.data?.get("list") as List<Map<String, Any>>
+                val card = firebaseCard!!.mapToDomainModel(firebaseFields)
+                emit(card)
+            }
+            cardsSnapshot.isCanceled -> {
+                TODO()
+            }
+        }
+    }
+
     override suspend fun save(item: Card): String {
         val docCard: String
         val docFields: String
