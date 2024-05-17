@@ -16,18 +16,33 @@ class GetCardById @Inject constructor(
     private val repository: IRepository<String, Card>
 ): UseCase<String, Card>() {
     override suspend fun execute(param: String): Flow<Card> = flow {
-        repository.getById(param)
-            .collect { card ->
-                getUserUseCase()
-                    .collect{ user ->
-                        val myCards = user.myCards
-                        val sharedCards = user.sharedCards
-                        card.cardState = if (myCards.any { it== param }) CardState.MINE else CardState.NOT_SHARED
-                        if (card.cardState != CardState.MINE) {
-                            card.cardState = if (sharedCards.any { it == param }) CardState.SHARED else CardState.NOT_SHARED
-                        }
+        var card: Card
+        var state: CardState = CardState.NOT_SHARED
+        getUserUseCase()
+            .collect { user ->
+                val myCards = user.myCards
+                val sharedCards = user.sharedCards
+                val draftCards = user.draftCards
+
+                val isShared = sharedCards.any { it == param }
+                val isMine = myCards.any { it == param } or draftCards.any { it == param }
+
+                card = Card(
+                    id = param,
+                    isDraft = draftCards.any { it == param },
+                )
+
+                state = when {
+                    isMine -> CardState.MINE
+                    isShared -> CardState.SHARED
+                    else -> CardState.NOT_SHARED
+                }
+
+                repository.get(card)
+                    .collect { card ->
+                        card.cardState = state
+                        emit(card)
                     }
-                emit(card)
             }
     }
 }
