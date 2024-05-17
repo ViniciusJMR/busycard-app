@@ -1,5 +1,6 @@
 package dev.vinicius.busycardapp.domain.usecase.card
 
+import android.util.Log
 import dev.vinicius.busycardapp.core.UseCase
 import dev.vinicius.busycardapp.domain.model.card.Card
 import dev.vinicius.busycardapp.domain.model.user.User
@@ -14,15 +15,25 @@ class SaveCard @Inject constructor(
     private val cardRepository: IRepository<String, Card>,
     private val userRepository: IUserRepository<String, User>,
 ): UseCase.NoSource<Card>() {
+
+    companion object {
+        private const val TAG = "SaveCard"
+    }
+
     override suspend fun execute(param: Card) = flow {
         // Validation
 
         // Change owner to logged user
         param.owner = auth.getCurrentUserId()
 
+        Log.d(TAG, "Card: $param")
         // Save
         val key = cardRepository.save(param)
-        userRepository.saveMyCardId(auth.getCurrentUserId(), key)
+        if (param.isDraft) {
+            userRepository.saveDraftCardId(auth.getCurrentUserId(), key)
+        } else {
+            userRepository.saveMyCardId(auth.getCurrentUserId(), key)
+        }
         emit(Unit)
     }
 }
