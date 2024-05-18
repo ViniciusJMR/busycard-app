@@ -6,12 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.vinicius.busycardapp.domain.model.card.CardState
-import dev.vinicius.busycardapp.domain.usecase.card.DeleteCardById
-import dev.vinicius.busycardapp.domain.usecase.card.GetCardById
-import dev.vinicius.busycardapp.domain.usecase.card.GetMyCards
-import dev.vinicius.busycardapp.domain.usecase.card.GetSharedCards
-import dev.vinicius.busycardapp.domain.usecase.card.RemoveSharedCard
-import dev.vinicius.busycardapp.domain.usecase.card.SaveSharedCard
+import dev.vinicius.busycardapp.domain.usecase.card.delete.DeleteCardById
+import dev.vinicius.busycardapp.domain.usecase.card.read.GetCardById
+import dev.vinicius.busycardapp.domain.usecase.card.delete.RemoveSharedCard
+import dev.vinicius.busycardapp.domain.usecase.card.write.SaveSharedCard
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch

@@ -9,10 +9,9 @@ import dev.vinicius.busycardapp.domain.model.card.Card
 import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.domain.model.card.FieldType
 import dev.vinicius.busycardapp.domain.model.card.TextType
-import dev.vinicius.busycardapp.domain.usecase.card.GetCardById
-import dev.vinicius.busycardapp.domain.usecase.card.SaveCard
+import dev.vinicius.busycardapp.domain.usecase.card.read.GetCardById
+import dev.vinicius.busycardapp.domain.usecase.card.write.SaveCard
 import dev.vinicius.busycardapp.presentation.card_detail.CardDetailViewModel
-import dev.vinicius.busycardapp.presentation.card_detail.CardInfoEvent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch

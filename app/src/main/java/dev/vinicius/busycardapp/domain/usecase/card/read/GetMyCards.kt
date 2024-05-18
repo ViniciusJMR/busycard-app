@@ -1,4 +1,4 @@
-package dev.vinicius.busycardapp.domain.usecase.card
+package dev.vinicius.busycardapp.domain.usecase.card.read
 
 import android.util.Log
 import dev.vinicius.busycardapp.core.UseCase

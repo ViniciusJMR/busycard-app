@@ -1,4 +1,4 @@
-package dev.vinicius.busycardapp.domain.usecase.card
+package dev.vinicius.busycardapp.domain.usecase.card.read
 
 import dev.vinicius.busycardapp.core.UseCase
 import dev.vinicius.busycardapp.domain.repository.IRepository

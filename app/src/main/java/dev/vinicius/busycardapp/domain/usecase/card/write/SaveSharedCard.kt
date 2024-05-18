@@ -1,4 +1,4 @@
-package dev.vinicius.busycardapp.domain.usecase.card
+package dev.vinicius.busycardapp.domain.usecase.card.write
 
 import dev.vinicius.busycardapp.core.UseCase
 import dev.vinicius.busycardapp.domain.model.user.User

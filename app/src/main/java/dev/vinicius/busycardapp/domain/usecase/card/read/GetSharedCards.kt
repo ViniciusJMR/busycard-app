@@ -1,4 +1,4 @@
-package dev.vinicius.busycardapp.domain.usecase.card
+package dev.vinicius.busycardapp.domain.usecase.card.read
 
 import android.util.Log
 import dev.vinicius.busycardapp.core.UseCase
@@ -11,19 +11,18 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class GetDraftCards @Inject constructor(
+class GetSharedCards @Inject constructor(
     private val auth: Auth,
     private val userRepository: IUserRepository<String, User>,
     private val cardRepository: IRepository<String, Card>
 ): UseCase.NoParam<List<Card>>() {
-
-    companion object {
-        val TAG = "GetDraftCards"
+    companion object{
+        val TAG = "GetSharedCards"
     }
 
     override suspend fun execute(): Flow<List<Card>> = flow {
         val userId = auth.getCurrentUserId()
-        val cardsId = userRepository.getDraftCardsId(userId)
+        val cardsId = userRepository.getSharedCardsId(userId)
         Log.d(TAG, "execute: cardsId = $cardsId")
         if (cardsId.isEmpty()){
             emit(emptyList())
@@ -32,7 +31,7 @@ class GetDraftCards @Inject constructor(
         cardRepository.getByIds(cardsId)
             .collect{
                 Log.d(TAG, "execute: cards = $it")
-                emit(it.filter { it.isDraft })
+                emit(it)
             }
     }
 }

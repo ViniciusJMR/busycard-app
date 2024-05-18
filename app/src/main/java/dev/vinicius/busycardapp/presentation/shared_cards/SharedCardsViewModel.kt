@@ -3,7 +3,7 @@ package dev.vinicius.busycardapp.presentation.shared_cards
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.vinicius.busycardapp.domain.usecase.card.GetSharedCards
+import dev.vinicius.busycardapp.domain.usecase.card.read.GetSharedCards
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.onStart
