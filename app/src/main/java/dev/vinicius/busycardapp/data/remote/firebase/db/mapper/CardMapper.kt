@@ -1,6 +1,7 @@
 package dev.vinicius.busycardapp.data.remote.firebase.db.mapper
 
 import android.net.Uri
+import android.util.Log
 import com.google.android.gms.maps.model.LatLng
 import dev.vinicius.busycardapp.data.remote.firebase.db.model.FirebaseCardModel
 import dev.vinicius.busycardapp.data.remote.firebase.db.model.FirebaseFieldModel
@@ -14,7 +15,7 @@ fun Card.mapToFirebaseModel() =
         id = id,
         name = name,
         owner = owner,
-        image = image.uri.toString(),
+        image = if (image.uri != null) image.uri.toString() else null,
         mainContact = mainContact,
         isDraft = isDraft,
     )
@@ -26,8 +27,10 @@ fun FirebaseCardModel.mapToDomainModel(fields: List<Map<String, Any>>) =
         owner = owner ?: "",
         mainContact = mainContact ?: "",
         image = CardImage(
-            uri = Uri.parse(image ?: ""),
-            path = image ?: ""
+            uri = let {
+                Log.d("CardMapper", "image: $image")
+                if (image != null) Uri.parse(image) else null
+            },
         ),
         fields = fields.map { mapFieldToDomainModel(it) },
         isDraft = isDraft ?: false,
