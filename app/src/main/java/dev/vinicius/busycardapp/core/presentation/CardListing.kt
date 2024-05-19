@@ -39,7 +39,7 @@ fun CardsListing(
             CardItem(
                 name = card.name,
                 mainContact = card.mainContact,
-                imageUri = card.image.path,
+                imageUri = card.image.uri.toString(),
                 onClick = { onClickItemCard(card.id!!) }
             )
         }
