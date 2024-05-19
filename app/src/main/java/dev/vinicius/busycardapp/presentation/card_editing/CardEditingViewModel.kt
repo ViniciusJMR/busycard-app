@@ -6,11 +6,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.vinicius.busycardapp.domain.model.card.Card
+import dev.vinicius.busycardapp.domain.model.card.CardImage
 import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.domain.model.card.FieldType
 import dev.vinicius.busycardapp.domain.model.card.TextType
 import dev.vinicius.busycardapp.domain.usecase.card.read.GetCardById
 import dev.vinicius.busycardapp.domain.usecase.card.write.SaveCard
+import dev.vinicius.busycardapp.domain.usecase.card.write.SaveCardFromDraft
 import dev.vinicius.busycardapp.presentation.card_detail.CardDetailViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,6 +27,7 @@ class CardEditingViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val getCardById: GetCardById,
     private val saveCard: SaveCard,
+    private val saveCardFromDraft: SaveCardFromDraft
 ): ViewModel(){
     private val _state = MutableStateFlow(CardEditingState())
     val state = _state.asStateFlow()
@@ -63,6 +66,7 @@ class CardEditingViewModel @Inject constructor(
                             cardId = card.id,
                             cardImageUri = card.image.uri,
                             cardName = card.name,
+                            isDraft = card.isDraft,
                             cardFields = card.fields.toMutableList(),
                             mainContactField = card.fields
                                 .filterIsInstance<Field.TextField>()
@@ -165,7 +169,12 @@ class CardEditingViewModel @Inject constructor(
 
                 }
                 viewModelScope.launch {
-                    saveCard(card)
+                    val useCase = if (_state.value.isDraft)
+                        saveCardFromDraft
+                    else
+                        saveCard
+
+                    useCase(card)
                         .onStart {
                             _state.update {
                                 it.copy(
