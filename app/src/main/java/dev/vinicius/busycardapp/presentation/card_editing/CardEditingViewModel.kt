@@ -161,7 +161,9 @@ class CardEditingViewModel @Inject constructor(
                     fields = _state.value.cardFields,
                     mainContact = _state.value.mainContactField?.value ?: "",
                 ).apply {
-                    image.uri = _state.value.cardImageUri
+                    _state.value.cardImageUri?.let {
+                        image = CardImage(uri = it)
+                    }
 
                     if (event is CardEditingEvent.CardEvent.OnSaveEvent.OnSaveCardAsDraft) {
                         isDraft = true
@@ -286,7 +288,7 @@ class CardEditingViewModel @Inject constructor(
                                 event.size?.let {
                                     size = it
                                 }
-                                image.uri = event.uri
+                                image = CardImage(uri = event.uri)
                             },
                         showBottomSheet = false
                     )
