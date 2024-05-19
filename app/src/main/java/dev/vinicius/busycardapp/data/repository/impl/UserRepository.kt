@@ -135,7 +135,7 @@ class UserRepository @Inject constructor(
     override suspend fun removeDraftCardId(userId: String, cardId: String) {
         database.collection("users")
             .document(userId)
-            .update("sharedCards", FieldValue.arrayRemove(cardId))
+            .update("draftCards", FieldValue.arrayRemove(cardId))
             .await()
     }
 
