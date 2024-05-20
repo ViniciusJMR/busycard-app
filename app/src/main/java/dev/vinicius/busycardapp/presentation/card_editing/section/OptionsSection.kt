@@ -45,8 +45,8 @@ import coil.compose.rememberAsyncImagePainter
 import dev.vinicius.busycardapp.R
 import dev.vinicius.busycardapp.core.checkForPermission
 import dev.vinicius.busycardapp.domain.model.card.Field
-import dev.vinicius.busycardapp.domain.model.card.FieldType
-import dev.vinicius.busycardapp.domain.model.card.TextType
+import dev.vinicius.busycardapp.domain.model.card.enums.FieldType
+import dev.vinicius.busycardapp.domain.model.card.enums.TextType
 import dev.vinicius.busycardapp.presentation.card_editing.CardEditingEvent
 import dev.vinicius.busycardapp.presentation.card_editing.component.DefaultDialog
 import dev.vinicius.busycardapp.presentation.card_editing.component.FullScreenDialog

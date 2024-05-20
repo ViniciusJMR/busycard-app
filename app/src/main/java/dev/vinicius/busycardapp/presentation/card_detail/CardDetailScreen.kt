@@ -57,7 +57,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.vinicius.busycardapp.R
-import dev.vinicius.busycardapp.domain.model.card.CardState
+import dev.vinicius.busycardapp.domain.model.card.enums.CardState
 import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.presentation.card_detail.component.CardInfoAddressField
 import dev.vinicius.busycardapp.presentation.card_detail.component.CardInfoImageField

@@ -1,6 +1,6 @@
 package dev.vinicius.busycardapp.domain.model.card
 
-import android.net.Uri
+import dev.vinicius.busycardapp.domain.model.card.enums.CardState
 
 data class Card(
     var id: String? = null,

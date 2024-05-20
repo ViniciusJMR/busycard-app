@@ -5,7 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.vinicius.busycardapp.domain.model.card.CardState
+import dev.vinicius.busycardapp.domain.model.card.enums.CardState
 import dev.vinicius.busycardapp.domain.usecase.card.delete.DeleteCardById
 import dev.vinicius.busycardapp.domain.usecase.card.read.GetCardById
 import dev.vinicius.busycardapp.domain.usecase.card.delete.RemoveSharedCard

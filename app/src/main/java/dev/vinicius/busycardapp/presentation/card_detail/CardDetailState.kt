@@ -1,6 +1,6 @@
 package dev.vinicius.busycardapp.presentation.card_detail
 
-import dev.vinicius.busycardapp.domain.model.card.CardState
+import dev.vinicius.busycardapp.domain.model.card.enums.CardState
 import dev.vinicius.busycardapp.domain.model.card.Field
 
 data class CardDetailState(

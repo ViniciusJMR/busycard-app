@@ -22,7 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import dev.vinicius.busycardapp.R
-import dev.vinicius.busycardapp.domain.model.card.TextType
+import dev.vinicius.busycardapp.domain.model.card.enums.TextType
 
 @Composable
 fun RadioOptions(

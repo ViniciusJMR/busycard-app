@@ -3,7 +3,7 @@ package dev.vinicius.busycardapp.domain.usecase.card.read
 import dev.vinicius.busycardapp.core.UseCase
 import dev.vinicius.busycardapp.domain.repository.IRepository
 import dev.vinicius.busycardapp.domain.model.card.Card
-import dev.vinicius.busycardapp.domain.model.card.CardState
+import dev.vinicius.busycardapp.domain.model.card.enums.CardState
 import dev.vinicius.busycardapp.domain.usecase.auth.GetUserUseCase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

@@ -3,9 +3,8 @@ package dev.vinicius.busycardapp.presentation.card_editing
 import android.net.Uri
 import com.google.android.gms.maps.model.LatLng
 import dev.vinicius.busycardapp.domain.model.card.Field
-import dev.vinicius.busycardapp.domain.model.card.FieldType
-import dev.vinicius.busycardapp.domain.model.card.TextType
-import dev.vinicius.busycardapp.presentation.card_detail.CardInfoEvent
+import dev.vinicius.busycardapp.domain.model.card.enums.FieldType
+import dev.vinicius.busycardapp.domain.model.card.enums.TextType
 
 sealed class CardEditingEvent {
     sealed class CardEvent: CardEditingEvent() {

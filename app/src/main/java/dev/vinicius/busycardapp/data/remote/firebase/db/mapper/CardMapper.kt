@@ -8,7 +8,7 @@ import dev.vinicius.busycardapp.data.remote.firebase.db.model.FirebaseFieldModel
 import dev.vinicius.busycardapp.domain.model.card.Card
 import dev.vinicius.busycardapp.domain.model.card.CardImage
 import dev.vinicius.busycardapp.domain.model.card.Field
-import dev.vinicius.busycardapp.domain.model.card.TextType
+import dev.vinicius.busycardapp.domain.model.card.enums.TextType
 
 fun Card.mapToFirebaseModel() =
     FirebaseCardModel(

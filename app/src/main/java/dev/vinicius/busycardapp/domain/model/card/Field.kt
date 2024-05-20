@@ -1,6 +1,7 @@
 package dev.vinicius.busycardapp.domain.model.card
 
 import com.google.android.gms.maps.model.LatLng
+import dev.vinicius.busycardapp.domain.model.card.enums.TextType
 
 
 sealed class Field(

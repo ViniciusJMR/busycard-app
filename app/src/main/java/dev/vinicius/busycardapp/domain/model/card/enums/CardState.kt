@@ -1,4 +1,4 @@
-package dev.vinicius.busycardapp.domain.model.card
+package dev.vinicius.busycardapp.domain.model.card.enums
 
 enum class CardState {
     MINE,

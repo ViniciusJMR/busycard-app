@@ -1,9 +1,6 @@
 package dev.vinicius.busycardapp.presentation.card_editing
 
 import android.util.Log
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -12,8 +9,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.vinicius.busycardapp.domain.model.card.Card
 import dev.vinicius.busycardapp.domain.model.card.CardImage
 import dev.vinicius.busycardapp.domain.model.card.Field
-import dev.vinicius.busycardapp.domain.model.card.FieldType
-import dev.vinicius.busycardapp.domain.model.card.TextType
+import dev.vinicius.busycardapp.domain.model.card.enums.FieldType
+import dev.vinicius.busycardapp.domain.model.card.enums.TextType
 import dev.vinicius.busycardapp.domain.usecase.card.read.GetCardById
 import dev.vinicius.busycardapp.domain.usecase.card.write.SaveCard
 import dev.vinicius.busycardapp.domain.usecase.card.write.SaveCardFromDraft
