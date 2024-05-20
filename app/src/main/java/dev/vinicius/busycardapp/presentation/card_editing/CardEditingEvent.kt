@@ -13,6 +13,8 @@ sealed class CardEditingEvent {
         data class OnDeleteField(val field: Field): CardEvent()
         data class OnSelectField(val field: Field?): CardEvent()
 
+        data class OnDragField(val field: Field, val offsetX: Int, val offsetY: Int): CardEvent()
+
 
         sealed class OnSaveEvent: CardEvent() {
             data object OnSaveCard: OnSaveEvent()

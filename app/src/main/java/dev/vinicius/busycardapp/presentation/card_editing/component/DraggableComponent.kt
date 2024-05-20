@@ -5,10 +5,6 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.IntOffset
@@ -17,31 +13,32 @@ import kotlin.math.roundToInt
 @Composable
 fun DraggableFieldComponent(
     modifier: Modifier = Modifier,
-    initialX: Int,
-    initialY: Int,
+    x: Int,
+    y: Int,
     onDragField: (Int, Int) -> Unit,
     onTapField: () -> Unit,
     content: @Composable () -> Unit
 ) {
+    val TAG = "DraggableFieldComponent"
     //TODO: Mudar para que o param onDragField seja o responsável por atualizar o field, não sendo necessário passar o field
 
-    var offsetX by remember { mutableIntStateOf(initialX) }
-    var offsetY by remember { mutableIntStateOf(initialY) }
+//    Log.d(TAG, "offsetX: $offsetX - offsetY: $offsetY")
     Box(
         content  = { content() },
         modifier = modifier
             .offset {
                 IntOffset(
-                    offsetX,
-                    offsetY,
+                    x,
+                    y,
                 )
             }
             .pointerInput(Unit) {
                 detectDragGestures { change, dragAmount ->
                     change.consume()
-                    offsetX += dragAmount.x.roundToInt()
-                    offsetY += dragAmount.y.roundToInt()
-                    onDragField(offsetX, offsetY)
+                    onDragField(
+                        dragAmount.x.roundToInt(),
+                        dragAmount.y.roundToInt()
+                    )
                 }
             }
             .pointerInput(Unit) {

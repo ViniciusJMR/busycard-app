@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -52,6 +53,8 @@ fun CardEditingScreen(
 
     val state by viewModel.state.collectAsState()
     val effect by viewModel.effect.collectAsState()
+    val fields = viewModel.fields
+    val updateUiState by viewModel.updateUiState.collectAsState()
 
     LaunchedEffect(effect) {
         effect?.let {
@@ -131,16 +134,18 @@ fun CardEditingScreen(
         ) {
             ShowCardSection(
                 event = event,
-                state = state
+                fields = fields,
+                updateUiState = updateUiState,
             )
             OptionsSection(
                 onAddField = { fieldType -> event(CardEditingEvent.CardEvent.OnAddField(fieldType)) },
                 onChangeField = { fieldEvent -> event(fieldEvent) },
                 onDismissModalSheet = { event(CardEditingEvent.ModalEvent.OnDismissModalSheet) },
                 onShowDialog = { event(CardEditingEvent.DialogEvent.OnShowTextTypeDialog) },
+                onMainContactChange = { event(CardEditingEvent.CardEvent.OnChangeCard.MainContact(it))},
+                onDeleteField = { event(CardEditingEvent.CardEvent.OnDeleteField(it)) },
                 currentlySelectedField = state.currentlySelectedField,
                 mainContactField = state.mainContactField,
-                onMainContactChange = { event(CardEditingEvent.CardEvent.OnChangeCard.MainContact(it))},
                 showBottomSheet = state.showBottomSheet
             )
         }

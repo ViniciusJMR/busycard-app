@@ -1,6 +1,10 @@
 package dev.vinicius.busycardapp.presentation.card_editing
 
 import android.util.Log
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -21,6 +25,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.random.Random
 
 @HiltViewModel
 class CardEditingViewModel @Inject constructor(
@@ -31,6 +36,17 @@ class CardEditingViewModel @Inject constructor(
 ): ViewModel(){
     private val _state = MutableStateFlow(CardEditingState())
     val state = _state.asStateFlow()
+
+    private val _fields = listOf<Field>().toMutableStateList()
+    val fields: List<Field>
+        get() = _fields
+
+    /* Gambiarra para atualizar o UI. Quando um campo era deletado o valor
+     * do campo excluído era passado para o próximo gerando um erro de sincronização
+     * dos fields no ShowCardSection e os verdadeiros fields
+     */
+    private val _updateUi = MutableStateFlow(0)
+    val updateUiState = _updateUi.asStateFlow()
 
     private val _effect: MutableStateFlow<CardEditingEffect?> = MutableStateFlow(null)
     val effect = _effect.asStateFlow()
@@ -73,6 +89,7 @@ class CardEditingViewModel @Inject constructor(
                                 .find { it.value == card.mainContact },
                         )
                     }
+                    _fields.addAll(card.fields)
                 }
 
         }
@@ -137,15 +154,29 @@ class CardEditingViewModel @Inject constructor(
                 // Check if this doesn't make the entire CardSurface component to recompose
                 val list = _state.value.cardFields.toMutableList()
                 list.add(field)
+                _fields.add(field)
                 _state.update {
                     it.copy(
                         cardFields = list,
                         currentlySelectedField = field
                     )
                 }
-                Log.d(TAG, "handleCardEvent: available fields ${_state.value.cardFields}")
+                Log.d(TAG, "handleCardEvent: available fields ${_fields}")
             }
-            is CardEditingEvent.CardEvent.OnDeleteField -> {}
+            is CardEditingEvent.CardEvent.OnDeleteField -> {
+                val list = _state.value.cardFields.toMutableList()
+                Log.d(TAG, "handleCardEvent: removed ${list.remove(event.field)}")
+                Log.d(TAG, "handleCardEvent: item ${event.field}")
+                _state.update {
+                    it.copy(
+                        cardFields = list,
+                        currentlySelectedField = null,
+                    )
+                }
+                val a = _fields.remove(event.field)
+                Log.d(TAG, "handleCardEvent: removed ${a}")
+                Log.d(TAG, "handleCardEvent: available fields ${_fields}")
+            }
             is CardEditingEvent.CardEvent.OnSelectField -> {
                 Log.d(TAG, "handleCardEvent: selected field: ${event.field}")
                 _state.update {
@@ -158,7 +189,7 @@ class CardEditingViewModel @Inject constructor(
                 val card = Card(
                     id = _state.value.cardId,
                     name = _state.value.cardName,
-                    fields = _state.value.cardFields,
+                    fields = _fields,
                     mainContact = _state.value.mainContactField?.value ?: "",
                 ).apply {
                     _state.value.cardImageUri?.let {
@@ -193,6 +224,15 @@ class CardEditingViewModel @Inject constructor(
                             _effect.update { CardEditingEffect.ClosePage }
                         }
                 }
+            }
+            is CardEditingEvent.CardEvent.OnDragField -> {
+                _state.update {
+                    it.copy(
+                        currentlySelectedField = event.field.apply { offsetX = event.offsetX; offsetY = event.offsetY },
+                        cardFields = it.cardFields
+                    )
+                }
+                _updateUi.update { random() }
             }
             is CardEditingEvent.CardEvent.OnChangeCard -> handleOnChangeCardValue(event)
         }
@@ -394,4 +434,6 @@ class CardEditingViewModel @Inject constructor(
                 }
         }
     }
+
+    private fun random() = Random.nextInt(0, 10000)
 }

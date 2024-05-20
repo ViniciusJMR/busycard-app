@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ChevronLeft
 import androidx.compose.material.icons.outlined.ChevronRight
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Upload
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -60,6 +61,7 @@ fun OptionsSection(
     modifier: Modifier = Modifier,
     onAddField: (FieldType) -> Unit,
     onChangeField: (CardEditingEvent.FieldEvent) -> Unit,
+    onDeleteField: (Field) -> Unit,
     onDismissModalSheet: () -> Unit,
     onShowDialog: () -> Unit,
     onMainContactChange: (Field.TextField) -> Unit,
@@ -78,6 +80,7 @@ fun OptionsSection(
                 FieldInfoMenu(
                     field = currentlySelectedField,
                     onChangeField = onChangeField,
+                    onDeleteField = { onDeleteField(currentlySelectedField) },
                     isMainContact = currentlySelectedField === mainContactField,
                     onMainContactChange = { textField -> onMainContactChange(textField) },
                     onShowDialog = onShowDialog
@@ -97,13 +100,20 @@ fun OptionsSection(
 @Composable
 fun FieldInfoMenu(
     modifier: Modifier = Modifier,
-    onChangeField: (CardEditingEvent.FieldEvent) -> Unit, // TODO: Mudar nome para onFieldChanged?,
-    onShowDialog: () -> Unit,
+    onChangeField: (CardEditingEvent.FieldEvent) -> Unit = {}, // TODO: Mudar nome para onFieldChanged?,
+    onDeleteField: () -> Unit = {},
+    onShowDialog: () -> Unit = {},
     isMainContact: Boolean,
-    onMainContactChange: (Field.TextField) -> Unit,
+    onMainContactChange: (Field.TextField) -> Unit = {},
     field: Field,
 ) {
     Column {
+        IconButton(
+            modifier = Modifier.align(Alignment.End),
+            onClick = onDeleteField
+        ) {
+            Icon(Icons.Outlined.Delete, contentDescription = null)
+        }
         when (field) {
             is Field.AddressField -> {
                 AddressFieldMenu(
