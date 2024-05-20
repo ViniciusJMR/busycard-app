@@ -67,5 +67,46 @@ fun RadioOptions(
             }
         }
     }
+}
 
+@Composable
+fun <T: Enum<T>> GRadioOptions(
+    modifier: Modifier = Modifier,
+    onOptionSelected: (T) -> Unit,
+    stringsForOptions: @Composable (T) -> String,
+    options: List<T>,
+    currentlySelectedOption: T
+) {
+    var selectedOption by remember { mutableStateOf(currentlySelectedOption) }
+// Note that Modifier.selectableGroup() is essential to ensure correct accessibility behavior
+    Column(Modifier.selectableGroup()) {
+        options.forEach { text ->
+            val textValue = stringsForOptions(text)
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+                    .selectable(
+                        selected = (text == selectedOption),
+                        onClick = {
+                            selectedOption = text
+                            onOptionSelected(text)
+                        },
+                        role = Role.RadioButton
+                    )
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RadioButton(
+                    selected = (text == selectedOption),
+                    onClick = null
+                )
+                Text(
+                    text = textValue,
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+            }
+        }
+    }
 }

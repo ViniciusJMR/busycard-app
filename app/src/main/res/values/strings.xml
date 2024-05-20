@@ -39,4 +39,11 @@
     <string name="txt_delete">Delete</string>
     <string name="txt_save">Save</string>
     <string name="txt_save_as_draft">Save as draft</string>
+    <string name="txt_font_default">Default</string>
+    <string name="txt_font_serif">Serif</string>
+    <string name="txt_font_sans_serif">Sans Serif</string>
+    <string name="txt_font_monospace">Monospace</string>
+    <string name="txt_font_cursive">Cursive</string>
+    <string name="label_text_type">"Type: "</string>
+    <string name="label_field_font">"Font: "</string>
 </resources>

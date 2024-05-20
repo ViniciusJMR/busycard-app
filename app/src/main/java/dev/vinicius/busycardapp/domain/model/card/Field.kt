@@ -1,6 +1,7 @@
 package dev.vinicius.busycardapp.domain.model.card
 
 import com.google.android.gms.maps.model.LatLng
+import dev.vinicius.busycardapp.domain.model.card.enums.FieldFont
 import dev.vinicius.busycardapp.domain.model.card.enums.TextType
 
 
@@ -17,6 +18,7 @@ sealed class Field(
         override var size: Int= 0,
         var localization: LatLng? = null,
         var textLocalization: String = "",
+        var font: FieldFont = FieldFont.SANS_SERIF,
     ): Field(name, offsetX, offsetY, size)
 
     data class ImageField(
@@ -34,5 +36,6 @@ sealed class Field(
         override var size: Int= 0,
         var textType: TextType = TextType.TEXT,
         var value: String = "",
+        var font: FieldFont = FieldFont.SANS_SERIF,
     ): Field(name, offsetX, offsetY, size)
 }

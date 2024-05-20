@@ -111,6 +111,7 @@ class CardEditingViewModel @Inject constructor(
                             value = "abcd",
                             offsetX = 200,
                             offsetY = 200,
+                            size = 20,
                             textType = TextType.TEXT
                         )
                     }
@@ -120,6 +121,7 @@ class CardEditingViewModel @Inject constructor(
                             value = "(99) 99999-9999",
                             offsetX = 200,
                             offsetY = 200,
+                            size = 20,
                             textType = TextType.PHONE
                         )
                     }
@@ -129,6 +131,7 @@ class CardEditingViewModel @Inject constructor(
                             value = "place@holder.com",
                             offsetX = 200,
                             offsetY = 200,
+                            size = 20,
                             textType = TextType.EMAIL
                         )
                     }
@@ -287,6 +290,9 @@ class CardEditingViewModel @Inject constructor(
                                 }
                                 event.value?.let {
                                     value = it
+                                }
+                                event.font?.let {
+                                    font = it
                                 }
                             },
                         showBottomSheet = false

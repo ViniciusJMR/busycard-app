@@ -33,12 +33,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import dev.vinicius.busycardapp.R
 import dev.vinicius.busycardapp.domain.model.card.Field
+import dev.vinicius.busycardapp.domain.model.card.enums.FieldFont
 import dev.vinicius.busycardapp.presentation.card_editing.CardEditingEvent
 import dev.vinicius.busycardapp.presentation.card_editing.component.DraggableFieldComponent
 import dev.vinicius.busycardapp.ui.theme.BusyCardAppTheme
@@ -109,7 +112,10 @@ fun CardSurface(
                 ) {
                     when (field) {
                         is Field.AddressField ->  {
-                            AddressFieldShow(addressText = field.textLocalization)
+                            AddressFieldShow(
+                                addressText = field.textLocalization,
+                                font = field.font,
+                            )
                         }
                         is Field.ImageField -> {
                             ImageFieldShow(
@@ -121,6 +127,8 @@ fun CardSurface(
                             TextFieldShow(
                                 modifier = modifier,
                                 text = field.value,
+                                font = field.font,
+                                size = field.size,
                             )
                         }
                     }
@@ -162,6 +170,7 @@ fun ImageFieldShow(
 fun AddressFieldShow(
     modifier: Modifier = Modifier,
     addressText: String,
+    font: FieldFont,
 ) {
     val TAG = "AddressFieldShow"
     Log.d(TAG, "REcomposiçaõ - valor do texto: $addressText")
@@ -171,7 +180,16 @@ fun AddressFieldShow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(imageVector = Icons.Outlined.LocationOn, contentDescription = "")
-        Text(text = addressText)
+        Text(
+            text = addressText,
+            fontFamily = when(font) {
+                FieldFont.DEFAULT -> FontFamily.Default
+                FieldFont.SERIF -> FontFamily.Serif
+                FieldFont.SANS_SERIF -> FontFamily.SansSerif
+                FieldFont.MONOSPACE -> FontFamily.Monospace
+                FieldFont.CURSIVE -> FontFamily.Cursive
+            }
+        )
     }
 }
 
@@ -179,6 +197,8 @@ fun AddressFieldShow(
 fun TextFieldShow(
     modifier: Modifier = Modifier,
     text: String,
+    font: FieldFont,
+    size: Int,
 ) {
     val TAG = "TextFieldShow"
     Log.d(TAG, "REcomposição - valor do texto: $text")
@@ -186,6 +206,14 @@ fun TextFieldShow(
     Text(
         modifier = modifier,
         text = text,
+        fontSize = size.sp,
+        fontFamily = when(font) {
+            FieldFont.DEFAULT -> FontFamily.Default
+            FieldFont.SERIF -> FontFamily.Serif
+            FieldFont.SANS_SERIF -> FontFamily.SansSerif
+            FieldFont.MONOSPACE -> FontFamily.Monospace
+            FieldFont.CURSIVE -> FontFamily.Cursive
+        }
     )
 }
 
@@ -193,9 +221,9 @@ fun TextFieldShow(
 @Composable
 private fun AddressFieldShowPreview() {
     BusyCardAppTheme {
-        AddressFieldShow(
-            modifier = Modifier.padding(8.dp),
-            addressText = "Rua do Amor, 123"
-        )
+//        AddressFieldShow(
+//            modifier = Modifier.padding(8.dp),
+//            addressText = "Rua do Amor, 123"
+//        )
     }
 }

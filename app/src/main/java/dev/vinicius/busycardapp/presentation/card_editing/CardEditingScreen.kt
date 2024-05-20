@@ -35,8 +35,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.vinicius.busycardapp.R
-import dev.vinicius.busycardapp.presentation.card_detail.CardInfoEvent
-import dev.vinicius.busycardapp.presentation.card_detail.component.DialogComponent
+import dev.vinicius.busycardapp.core.presentation.component.DialogComponent
 import dev.vinicius.busycardapp.presentation.card_editing.component.CardInfoDialog
 import dev.vinicius.busycardapp.presentation.card_editing.section.OptionsSection
 import dev.vinicius.busycardapp.presentation.card_editing.section.ShowCardSection

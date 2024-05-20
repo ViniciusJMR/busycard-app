@@ -40,20 +40,28 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import dev.vinicius.busycardapp.R
 import dev.vinicius.busycardapp.core.checkForPermission
+import dev.vinicius.busycardapp.core.presentation.component.DialogComponent
 import dev.vinicius.busycardapp.domain.model.card.Field
+import dev.vinicius.busycardapp.domain.model.card.enums.FieldFont
 import dev.vinicius.busycardapp.domain.model.card.enums.FieldType
 import dev.vinicius.busycardapp.domain.model.card.enums.TextType
 import dev.vinicius.busycardapp.presentation.card_editing.CardEditingEvent
 import dev.vinicius.busycardapp.presentation.card_editing.component.DefaultDialog
 import dev.vinicius.busycardapp.presentation.card_editing.component.FullScreenDialog
+import dev.vinicius.busycardapp.presentation.card_editing.component.GRadioOptions
 import dev.vinicius.busycardapp.presentation.card_editing.component.GoogleMapComponent
 import dev.vinicius.busycardapp.presentation.card_editing.component.LauncherForActivityResultComponent
 import dev.vinicius.busycardapp.presentation.card_editing.component.RadioOptions
 import dev.vinicius.busycardapp.presentation.card_editing.component.SelectableOption
+import dev.vinicius.busycardapp.ui.theme.BusyCardAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -152,17 +160,22 @@ fun TextFieldMenu(
 ) {
     var fieldValue by remember { mutableStateOf(field.value) }
     var fieldType by remember { mutableStateOf(field.textType) }
-    var showDialog by remember { mutableStateOf(false) }
+    var fieldFont by remember { mutableStateOf(field.font) }
+    var fieldSize by remember { mutableIntStateOf(field.size) }
+
+    var showTypeDialog by remember { mutableStateOf(false) }
+    var showFontDialog by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 8.dp, end = 8.dp),
     ) {
-        if (showDialog) {
-            DefaultDialog(
-                onDismissRequest = { showDialog = false },
-                onConfirmation = { showDialog = false },
-                dialogTitle = "Choose Text Type"
+        if (showTypeDialog) {
+            DialogComponent(
+                onDismiss = { showTypeDialog = false },
+                onConfirm = { showTypeDialog = false },
+                confirmText = R.string.txt_close,
             ) {
                 RadioOptions(
                     onOptionSelected = { fieldType = it },
@@ -172,6 +185,59 @@ fun TextFieldMenu(
             }
         }
 
+        if (showFontDialog) {
+            DialogComponent(
+                onDismiss = { showFontDialog = false },
+                onConfirm = { showFontDialog = false },
+                confirmText = R.string.txt_close,
+            ) {
+                GRadioOptions(
+                    onOptionSelected = { fieldFont = it },
+                    options = FieldFont.entries,
+                    currentlySelectedOption = fieldFont,
+                    stringsForOptions = {
+                        when (it) {
+                            FieldFont.DEFAULT -> stringResource(R.string.txt_font_default)
+                            FieldFont.SERIF -> stringResource(R.string.txt_font_serif)
+                            FieldFont.SANS_SERIF -> stringResource(R.string.txt_font_sans_serif)
+                            FieldFont.MONOSPACE -> stringResource(R.string.txt_font_monospace)
+                            FieldFont.CURSIVE -> stringResource(R.string.txt_font_cursive)
+                        }
+                    }
+                )
+            }
+
+        }
+
+        Row (
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = fieldValue,
+                fontFamily = when (fieldFont) {
+                    FieldFont.DEFAULT -> FontFamily.Default
+                    FieldFont.SERIF -> FontFamily.Serif
+                    FieldFont.SANS_SERIF -> FontFamily.SansSerif
+                    FieldFont.MONOSPACE -> FontFamily.Monospace
+                    FieldFont.CURSIVE -> FontFamily.Cursive
+                },
+                fontSize = fieldSize.sp,
+            )
+        }
+        Spacer(Modifier.size(8.dp))
+        Row (
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            IconButton(onClick = { fieldSize -= 1}) {
+                Icon(Icons.Outlined.ChevronLeft, contentDescription = null)
+            }
+            IconButton(onClick = { fieldSize += 1}) {
+                Icon(Icons.Outlined.ChevronRight, contentDescription = null)
+            }
+
+        }
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -180,18 +246,39 @@ fun TextFieldMenu(
                 fieldValue = it
             }
         )
-        Spacer(Modifier.size(4.dp))
-        TextButton(
-            onClick = { showDialog = true },
-        ) {
-            val textValue = when (fieldType) {
-                TextType.TEXT -> stringResource(R.string.txt_texttype_text)
-                TextType.PHONE -> stringResource(R.string.txt_texttype_phone)
-                TextType.EMAIL -> stringResource(R.string.txt_texttype_email)
+        Spacer(Modifier.size(8.dp))
+        Row (verticalAlignment = Alignment.CenterVertically) {
+            Text(stringResource(R.string.label_text_type))
+            TextButton(
+                onClick = { showTypeDialog = true },
+            ) {
+                val textValue = when (fieldType) {
+                    TextType.TEXT -> stringResource(R.string.txt_texttype_text)
+                    TextType.PHONE -> stringResource(R.string.txt_texttype_phone)
+                    TextType.EMAIL -> stringResource(R.string.txt_texttype_email)
+                }
+                Text(textValue)
             }
-            Text(textValue)
         }
-        Spacer(Modifier.size(16.dp))
+        Spacer(Modifier.size(4.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(stringResource(R.string.label_field_font))
+            TextButton(
+                onClick = { showFontDialog= true },
+            ) {
+                Text(
+                    when (fieldFont) {
+                        FieldFont.DEFAULT -> stringResource(R.string.txt_font_default)
+                        FieldFont.SERIF -> stringResource(R.string.txt_font_serif)
+                        FieldFont.SANS_SERIF -> stringResource(R.string.txt_font_sans_serif)
+                        FieldFont.MONOSPACE -> stringResource(R.string.txt_font_monospace)
+                        FieldFont.CURSIVE -> stringResource(R.string.txt_font_cursive)
+                    }
+                )
+            }
+
+        }
+        Spacer(Modifier.size(32.dp))
         Button(
             modifier = Modifier
                 .fillMaxWidth()
@@ -201,6 +288,8 @@ fun TextFieldMenu(
                     CardEditingEvent.FieldEvent.OnTextFieldChange(
                         value = fieldValue,
                         textType = fieldType,
+                        font = fieldFont,
+                        size = fieldSize,
                     )
                 )
             },
@@ -208,6 +297,24 @@ fun TextFieldMenu(
             Text(stringResource(R.string.txt_label_confirm))
         }
     }
+}
+
+@Preview
+@Composable
+private fun TextFieldMenuPreview() {
+    BusyCardAppTheme {
+        TextFieldMenu(
+            onChangeText = {},
+            onChangeTextType = {},
+            field = Field.TextField(
+                value = "Texto",
+                textType = TextType.TEXT,
+                font = FieldFont.DEFAULT,
+                size = 16
+            )
+        )
+    }
+
 }
 
 @Composable

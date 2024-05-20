@@ -8,6 +8,7 @@ import dev.vinicius.busycardapp.data.remote.firebase.db.model.FirebaseFieldModel
 import dev.vinicius.busycardapp.domain.model.card.Card
 import dev.vinicius.busycardapp.domain.model.card.CardImage
 import dev.vinicius.busycardapp.domain.model.card.Field
+import dev.vinicius.busycardapp.domain.model.card.enums.FieldFont
 import dev.vinicius.busycardapp.domain.model.card.enums.TextType
 
 fun Card.mapToFirebaseModel() =
@@ -96,6 +97,7 @@ fun mapDomainFieldsToFirebaseModel(items: List<Field>): List<Map<String, Any>> =
                     "size" to size,
                     "textType" to textType,
                     "value" to value,
+                    "font" to font,
                 )
             }
         }
@@ -143,6 +145,7 @@ fun mapFieldToDomainModel(item: Map<String, Any>): Field {
             size,
             TextType.valueOf(item["textType"] as String),
             item["value"] as String,
+            FieldFont.valueOf((item["font"] ?: "SANS_SERIF") as String)
         )
 
         else -> {

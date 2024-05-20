@@ -3,6 +3,7 @@ package dev.vinicius.busycardapp.presentation.card_editing
 import android.net.Uri
 import com.google.android.gms.maps.model.LatLng
 import dev.vinicius.busycardapp.domain.model.card.Field
+import dev.vinicius.busycardapp.domain.model.card.enums.FieldFont
 import dev.vinicius.busycardapp.domain.model.card.enums.FieldType
 import dev.vinicius.busycardapp.domain.model.card.enums.TextType
 
@@ -40,6 +41,7 @@ sealed class CardEditingEvent {
             var size: Int? = null,
             var textType: TextType? = null,
             var value: String? = null,
+            var font: FieldFont? = null,
         ): FieldEvent()
         data class OnTextFieldTypeChange(val textType: TextType): FieldEvent()
 
