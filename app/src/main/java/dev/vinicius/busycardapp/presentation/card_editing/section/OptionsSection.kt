@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ChevronLeft
 import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Upload
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -42,6 +43,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -398,8 +400,10 @@ fun AddressFieldMenu(
     val context = LocalContext.current
 
     var textLocalization by remember { mutableStateOf(field.textLocalization) }
+    var fieldFont by remember { mutableStateOf(field.font) }
     var localization by remember { mutableStateOf(field.localization) }
     var showMap by remember { mutableStateOf(false) }
+    var showFontDialog by remember { mutableStateOf(false) }
 
     val locationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
@@ -430,31 +434,107 @@ fun AddressFieldMenu(
         }
     }
 
+    if (showFontDialog) {
+        DialogComponent(
+            onDismiss = { showFontDialog = false },
+            onConfirm = { showFontDialog = false },
+            confirmText = R.string.txt_close,
+        ) {
+            GRadioOptions(
+                onOptionSelected = { fieldFont = it },
+                options = FieldFont.entries,
+                currentlySelectedOption = fieldFont,
+                stringsForOptions = {
+                    when (it) {
+                        FieldFont.DEFAULT -> stringResource(R.string.txt_font_default)
+                        FieldFont.SERIF -> stringResource(R.string.txt_font_serif)
+                        FieldFont.SANS_SERIF -> stringResource(R.string.txt_font_sans_serif)
+                        FieldFont.MONOSPACE -> stringResource(R.string.txt_font_monospace)
+                        FieldFont.CURSIVE -> stringResource(R.string.txt_font_cursive)
+                    }
+                }
+            )
+        }
+
+    }
+
     Column {
+        Spacer(modifier = Modifier.padding(8.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            Icon(
+                Icons.Outlined.LocationOn,
+                modifier = Modifier.size(field.size.dp),
+                contentDescription = null,
+            )
+            Text(
+                text = textLocalization,
+                fontFamily = when (fieldFont) {
+                    FieldFont.DEFAULT -> FontFamily.Default
+                    FieldFont.SERIF -> FontFamily.Serif
+                    FieldFont.SANS_SERIF -> FontFamily.SansSerif
+                    FieldFont.MONOSPACE -> FontFamily.Monospace
+                    FieldFont.CURSIVE -> FontFamily.Cursive
+                },
+                fontSize = field.size.sp,
+            )
+        }
+        Spacer(modifier = Modifier.padding(8.dp))
         OutlinedTextField(
             modifier = modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(start = 8.dp, end = 8.dp),
             value = textLocalization,
             onValueChange = {
                 textLocalization = it
             }
         )
         Spacer(modifier = Modifier.padding(4.dp))
-        TextButton(onClick = {
-            if (!checkForPermission(context)) {
-                locationPermissionLauncher.launch(
-                    arrayOf(
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                    )
+        Row(
+            modifier = Modifier.padding(start = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(stringResource(R.string.label_field_font))
+            TextButton(
+                onClick = { showFontDialog= true },
+            ) {
+                Text(
+                    when (fieldFont) {
+                        FieldFont.DEFAULT -> stringResource(R.string.txt_font_default)
+                        FieldFont.SERIF -> stringResource(R.string.txt_font_serif)
+                        FieldFont.SANS_SERIF -> stringResource(R.string.txt_font_sans_serif)
+                        FieldFont.MONOSPACE -> stringResource(R.string.txt_font_monospace)
+                        FieldFont.CURSIVE -> stringResource(R.string.txt_font_cursive)
+                    }
                 )
-            } else {
-                showMap = true
             }
-        }) {
-            Text(stringResource(R.string.txt_label_address_localization))
+
         }
-        Spacer(modifier = Modifier.padding(8.dp))
+        Spacer(modifier = Modifier.padding(4.dp))
+        TextButton(
+            modifier = Modifier.padding(start = 8.dp, end = 8.dp),
+            onClick = {
+                if (!checkForPermission(context)) {
+                    locationPermissionLauncher.launch(
+                        arrayOf(
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION
+                        )
+                    )
+                } else {
+                    showMap = true
+                }
+            }) {
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(R.string.txt_label_address_localization),
+                textAlign = TextAlign.Center,
+            )
+        }
+        Spacer(modifier = Modifier.padding(16.dp))
 
         Button(
             modifier = Modifier
@@ -466,6 +546,7 @@ fun AddressFieldMenu(
                     CardEditingEvent.FieldEvent.OnAddressFieldChange(
                         textLocalization = textLocalization,
                         localization = localization,
+                        font = fieldFont,
                     )
                 )
             }

@@ -60,6 +60,7 @@ sealed class CardEditingEvent {
             var size: Int? = null,
             var textLocalization: String? = null,
             var localization: LatLng? = null,
+            var font: FieldFont? = null,
         ): FieldEvent()
     }
 

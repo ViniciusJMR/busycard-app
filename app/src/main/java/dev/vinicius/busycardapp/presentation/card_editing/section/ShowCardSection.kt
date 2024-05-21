@@ -115,6 +115,7 @@ fun CardSurface(
                             AddressFieldShow(
                                 addressText = field.textLocalization,
                                 font = field.font,
+                                size = field.size,
                             )
                         }
                         is Field.ImageField -> {
@@ -171,6 +172,7 @@ fun AddressFieldShow(
     modifier: Modifier = Modifier,
     addressText: String,
     font: FieldFont,
+    size: Int,
 ) {
     val TAG = "AddressFieldShow"
     Log.d(TAG, "REcomposiçaõ - valor do texto: $addressText")
@@ -179,7 +181,11 @@ fun AddressFieldShow(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(imageVector = Icons.Outlined.LocationOn, contentDescription = "")
+        Icon(
+            modifier = Modifier.size(size.dp),
+            imageVector = Icons.Outlined.LocationOn,
+            contentDescription = "",
+        )
         Text(
             text = addressText,
             fontFamily = when(font) {
@@ -188,7 +194,8 @@ fun AddressFieldShow(
                 FieldFont.SANS_SERIF -> FontFamily.SansSerif
                 FieldFont.MONOSPACE -> FontFamily.Monospace
                 FieldFont.CURSIVE -> FontFamily.Cursive
-            }
+            },
+            fontSize = size.sp,
         )
     }
 }

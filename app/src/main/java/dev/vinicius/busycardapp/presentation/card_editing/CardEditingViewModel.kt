@@ -140,6 +140,7 @@ class CardEditingViewModel @Inject constructor(
                             name = "address field 1",
                             offsetX = 200,
                             offsetY = 200,
+                            size = 20,
                         )
                     }
                     FieldType.IMAGE -> {
@@ -358,6 +359,9 @@ class CardEditingViewModel @Inject constructor(
                                 }
                                 event.localization?.let {
                                     localization = it
+                                }
+                                event.font?.let {
+                                    font = it
                                 }
                             },
                         showBottomSheet = false
