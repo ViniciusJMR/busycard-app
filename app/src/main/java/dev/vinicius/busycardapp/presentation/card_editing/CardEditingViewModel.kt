@@ -354,6 +354,9 @@ class CardEditingViewModel @Inject constructor(
                                 event.offsetY?.let {
                                     offsetY = it
                                 }
+                                event.size?.let {
+                                    size = it
+                                }
                                 event.textLocalization?.let {
                                     textLocalization = it
                                 }

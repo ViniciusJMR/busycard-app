@@ -240,6 +240,7 @@ fun TextFieldMenu(
             }
 
         }
+        Spacer(Modifier.size(8.dp))
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -401,6 +402,7 @@ fun AddressFieldMenu(
 
     var textLocalization by remember { mutableStateOf(field.textLocalization) }
     var fieldFont by remember { mutableStateOf(field.font) }
+    var fieldSize by remember { mutableIntStateOf(field.size) }
     var localization by remember { mutableStateOf(field.localization) }
     var showMap by remember { mutableStateOf(false) }
     var showFontDialog by remember { mutableStateOf(false) }
@@ -467,7 +469,7 @@ fun AddressFieldMenu(
         ) {
             Icon(
                 Icons.Outlined.LocationOn,
-                modifier = Modifier.size(field.size.dp),
+                modifier = Modifier.size(fieldSize.dp),
                 contentDescription = null,
             )
             Text(
@@ -479,8 +481,21 @@ fun AddressFieldMenu(
                     FieldFont.MONOSPACE -> FontFamily.Monospace
                     FieldFont.CURSIVE -> FontFamily.Cursive
                 },
-                fontSize = field.size.sp,
+                fontSize = fieldSize.sp,
             )
+        }
+        Spacer(Modifier.size(8.dp))
+        Row (
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            IconButton(onClick = { fieldSize -= 1}) {
+                Icon(Icons.Outlined.ChevronLeft, contentDescription = null)
+            }
+            IconButton(onClick = { fieldSize += 1}) {
+                Icon(Icons.Outlined.ChevronRight, contentDescription = null)
+            }
+
         }
         Spacer(modifier = Modifier.padding(8.dp))
         OutlinedTextField(
@@ -547,6 +562,7 @@ fun AddressFieldMenu(
                         textLocalization = textLocalization,
                         localization = localization,
                         font = fieldFont,
+                        size = fieldSize,
                     )
                 )
             }
