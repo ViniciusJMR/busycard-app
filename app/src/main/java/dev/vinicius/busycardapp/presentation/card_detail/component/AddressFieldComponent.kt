@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.Icon
@@ -23,10 +24,13 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.google.android.gms.maps.model.LatLng
 import dev.vinicius.busycardapp.R
 import dev.vinicius.busycardapp.domain.model.card.Field
+import dev.vinicius.busycardapp.domain.model.card.enums.FieldFont
 
 @Composable
 fun CardInfoAddressField(
@@ -98,8 +102,22 @@ fun CardInfoAddressField(
             showDialog = true
         }
     ) {
-        Icon(imageVector = Icons.Outlined.LocationOn, contentDescription = null)
-        Text(text = field.textLocalization)
+        Icon(
+            imageVector = Icons.Outlined.LocationOn,
+            contentDescription = null,
+            modifier = Modifier.size(field.size.dp)
+        )
+        Text(
+            text = field.textLocalization,
+            fontSize = field.size.sp,
+            fontFamily = when(field.font) {
+                FieldFont.DEFAULT -> FontFamily.Default
+                FieldFont.SERIF -> FontFamily.Serif
+                FieldFont.SANS_SERIF -> FontFamily.SansSerif
+                FieldFont.MONOSPACE -> FontFamily.Monospace
+                FieldFont.CURSIVE -> FontFamily.Cursive
+            }
+        )
     }
 }
 
@@ -174,6 +192,7 @@ fun CompactAddressFieldComponent(
         },
         imageVector = Icons.Outlined.LocationOn,
         title = R.string.txt_location,
-        text = textLocalization
+        text = textLocalization,
+
     )
 }

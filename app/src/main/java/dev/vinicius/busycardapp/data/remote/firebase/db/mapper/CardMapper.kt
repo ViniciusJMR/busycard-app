@@ -80,6 +80,7 @@ fun mapDomainFieldsToFirebaseModel(items: List<Field>): List<Map<String, Any>> =
                     "size" to size,
                     "localization" to mapOf("lat" to localization?.latitude, "lng" to localization?.longitude),
                     "textLocalization" to textLocalization,
+                    "font" to font,
                 )
                 is Field.ImageField -> mapOf(
                     "type" to "IMAGE",
@@ -127,6 +128,7 @@ fun mapFieldToDomainModel(item: Map<String, Any>): Field {
             size,
             latLng,
             item["textLocalization"] as String,
+            FieldFont.valueOf((item["font"] ?: "SANS_SERIF") as String)
         )
         "IMAGE" -> Field.ImageField(
             item["name"] as String,
