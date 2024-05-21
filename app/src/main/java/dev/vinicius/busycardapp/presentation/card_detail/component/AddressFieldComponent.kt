@@ -31,6 +31,7 @@ import com.google.android.gms.maps.model.LatLng
 import dev.vinicius.busycardapp.R
 import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.domain.model.card.enums.FieldFont
+import dev.vinicius.busycardapp.domain.model.card.enums.LocationIconPosition
 
 @Composable
 fun CardInfoAddressField(
@@ -102,11 +103,13 @@ fun CardInfoAddressField(
             showDialog = true
         }
     ) {
-        Icon(
-            imageVector = Icons.Outlined.LocationOn,
-            contentDescription = null,
-            modifier = Modifier.size(field.size.dp)
-        )
+        if (field.iconPosition == LocationIconPosition.LEFT) {
+            Icon(
+                modifier = Modifier.size(field.iconSize.dp),
+                imageVector = Icons.Outlined.LocationOn,
+                contentDescription = "",
+            )
+        }
         Text(
             text = field.textLocalization,
             fontSize = field.size.sp,
@@ -118,6 +121,14 @@ fun CardInfoAddressField(
                 FieldFont.CURSIVE -> FontFamily.Cursive
             }
         )
+
+        if (field.iconPosition == LocationIconPosition.RIGHT) {
+            Icon(
+                modifier = Modifier.size(field.iconSize.dp),
+                imageVector = Icons.Outlined.LocationOn,
+                contentDescription = "",
+            )
+        }
     }
 }
 

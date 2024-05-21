@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -54,6 +55,7 @@ import dev.vinicius.busycardapp.core.presentation.component.DialogComponent
 import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.domain.model.card.enums.FieldFont
 import dev.vinicius.busycardapp.domain.model.card.enums.FieldType
+import dev.vinicius.busycardapp.domain.model.card.enums.LocationIconPosition
 import dev.vinicius.busycardapp.domain.model.card.enums.TextType
 import dev.vinicius.busycardapp.presentation.card_editing.CardEditingEvent
 import dev.vinicius.busycardapp.presentation.card_editing.component.DefaultDialog
@@ -231,6 +233,7 @@ fun TextFieldMenu(
             IconButton(onClick = { fieldSize -= 1}) {
                 Icon(Icons.Outlined.ChevronLeft, contentDescription = null)
             }
+            Text(stringResource(R.string.txt_text_size))
             IconButton(onClick = { fieldSize += 1}) {
                 Icon(Icons.Outlined.ChevronRight, contentDescription = null)
             }
@@ -406,9 +409,13 @@ fun AddressFieldMenu(
     var textLocalization by remember { mutableStateOf(field.textLocalization) }
     var fieldFont by remember { mutableStateOf(field.font) }
     var fieldSize by remember { mutableIntStateOf(field.size) }
+    var iconSize by remember { mutableIntStateOf(field.iconSize) }
     var localization by remember { mutableStateOf(field.localization) }
+    var locationIconPosition by remember { mutableStateOf(field.iconPosition) }
+
     var showMap by remember { mutableStateOf(false) }
     var showFontDialog by remember { mutableStateOf(false) }
+    var showLocationIconDialog by remember { mutableStateOf(false) }
 
     val locationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
@@ -463,17 +470,41 @@ fun AddressFieldMenu(
 
     }
 
+    if (showLocationIconDialog) {
+        DialogComponent(
+            onDismiss = { showLocationIconDialog = false },
+            onConfirm = { showLocationIconDialog = false },
+            confirmText = R.string.txt_close,
+        ) {
+            GRadioOptions(
+                onOptionSelected = { locationIconPosition = it },
+                options = LocationIconPosition.entries,
+                currentlySelectedOption = locationIconPosition,
+                stringsForOptions = {
+                    when (it) {
+                        LocationIconPosition.NONE -> stringResource(R.string.txt_locationicon_none)
+                        LocationIconPosition.LEFT -> stringResource(R.string.txt_locationicon_left)
+                        LocationIconPosition.RIGHT -> stringResource(R.string.txt_locationicon_right)
+                    }
+                }
+            )
+        }
+
+    }
+
     Column {
         Spacer(modifier = Modifier.padding(8.dp))
         Row(
             modifier = Modifier.align(Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
-                Icons.Outlined.LocationOn,
-                modifier = Modifier.size(fieldSize.dp),
-                contentDescription = null,
-            )
+            if (locationIconPosition == LocationIconPosition.LEFT) {
+                Icon(
+                    Icons.Outlined.LocationOn,
+                    modifier = Modifier.size(iconSize.dp),
+                    contentDescription = null,
+                )
+            }
             Text(
                 text = textLocalization,
                 fontFamily = when (fieldFont) {
@@ -485,16 +516,40 @@ fun AddressFieldMenu(
                 },
                 fontSize = fieldSize.sp,
             )
+            if (locationIconPosition == LocationIconPosition.RIGHT) {
+                Icon(
+                    Icons.Outlined.LocationOn,
+                    modifier = Modifier.size(iconSize.dp),
+                    contentDescription = null,
+                )
+            }
         }
-        Spacer(Modifier.size(8.dp))
+        Spacer(Modifier.size(16.dp))
         Row (
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             IconButton(onClick = { fieldSize -= 1}) {
                 Icon(Icons.Outlined.ChevronLeft, contentDescription = null)
             }
+            Text(stringResource(R.string.txt_text_size))
             IconButton(onClick = { fieldSize += 1}) {
+                Icon(Icons.Outlined.ChevronRight, contentDescription = null)
+            }
+
+        }
+        Spacer(modifier = Modifier.height(2.dp))
+        Row (
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            IconButton(onClick = { iconSize -= 1}) {
+                Icon(Icons.Outlined.ChevronLeft, contentDescription = null)
+            }
+            Text(stringResource(R.string.icon_size))
+            IconButton(onClick = { iconSize += 1}) {
                 Icon(Icons.Outlined.ChevronRight, contentDescription = null)
             }
 
@@ -516,7 +571,7 @@ fun AddressFieldMenu(
         ) {
             Text(stringResource(R.string.label_field_font))
             TextButton(
-                onClick = { showFontDialog= true },
+                onClick = { showFontDialog = true },
             ) {
                 Text(
                     when (fieldFont) {
@@ -528,7 +583,24 @@ fun AddressFieldMenu(
                     }
                 )
             }
+        }
 
+        Row(
+            modifier = Modifier.padding(start = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(stringResource(R.string.label_location_icon_position))
+            TextButton(
+                onClick = { showLocationIconDialog= true },
+            ) {
+                Text(
+                    when (locationIconPosition) {
+                        LocationIconPosition.NONE -> stringResource(R.string.txt_locationicon_none)
+                        LocationIconPosition.LEFT -> stringResource(R.string.txt_locationicon_left)
+                        LocationIconPosition.RIGHT -> stringResource(R.string.txt_locationicon_right)
+                    }
+                )
+            }
         }
         Spacer(modifier = Modifier.padding(4.dp))
         TextButton(
@@ -565,6 +637,8 @@ fun AddressFieldMenu(
                         localization = localization,
                         font = fieldFont,
                         size = fieldSize,
+                        iconSize = iconSize,
+                        iconPosition = locationIconPosition,
                     )
                 )
             }

@@ -10,6 +10,7 @@ import dev.vinicius.busycardapp.domain.model.card.Card
 import dev.vinicius.busycardapp.domain.model.card.CardImage
 import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.domain.model.card.enums.FieldType
+import dev.vinicius.busycardapp.domain.model.card.enums.LocationIconPosition
 import dev.vinicius.busycardapp.domain.model.card.enums.TextType
 import dev.vinicius.busycardapp.domain.usecase.card.read.GetCardById
 import dev.vinicius.busycardapp.domain.usecase.card.write.SaveCard
@@ -141,6 +142,8 @@ class CardEditingViewModel @Inject constructor(
                             offsetX = 200,
                             offsetY = 200,
                             size = 20,
+                            iconPosition = LocationIconPosition.LEFT,
+                            iconSize = 40,
                         )
                     }
                     FieldType.IMAGE -> {
@@ -365,6 +368,12 @@ class CardEditingViewModel @Inject constructor(
                                 }
                                 event.font?.let {
                                     font = it
+                                }
+                                event.iconSize?.let {
+                                    iconSize = it
+                                }
+                                event.iconPosition?.let {
+                                    iconPosition = it
                                 }
                             },
                         showBottomSheet = false

@@ -42,6 +42,7 @@ import coil.compose.rememberAsyncImagePainter
 import dev.vinicius.busycardapp.R
 import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.domain.model.card.enums.FieldFont
+import dev.vinicius.busycardapp.domain.model.card.enums.LocationIconPosition
 import dev.vinicius.busycardapp.presentation.card_editing.CardEditingEvent
 import dev.vinicius.busycardapp.presentation.card_editing.component.DraggableFieldComponent
 import dev.vinicius.busycardapp.ui.theme.BusyCardAppTheme
@@ -116,6 +117,8 @@ fun CardSurface(
                                 addressText = field.textLocalization,
                                 font = field.font,
                                 size = field.size,
+                                iconSize = field.iconSize,
+                                locationIconPosition = field.iconPosition,
                             )
                         }
                         is Field.ImageField -> {
@@ -173,6 +176,8 @@ fun AddressFieldShow(
     addressText: String,
     font: FieldFont,
     size: Int,
+    iconSize: Int,
+    locationIconPosition: LocationIconPosition
 ) {
     val TAG = "AddressFieldShow"
     Log.d(TAG, "REcomposiçaõ - valor do texto: $addressText")
@@ -181,11 +186,14 @@ fun AddressFieldShow(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(
-            modifier = Modifier.size(size.dp),
-            imageVector = Icons.Outlined.LocationOn,
-            contentDescription = "",
-        )
+        if (locationIconPosition == LocationIconPosition.LEFT) {
+            Icon(
+                modifier = Modifier.size(iconSize.dp),
+                imageVector = Icons.Outlined.LocationOn,
+                contentDescription = "",
+            )
+
+        }
         Text(
             text = addressText,
             fontFamily = when(font) {
@@ -197,6 +205,14 @@ fun AddressFieldShow(
             },
             fontSize = size.sp,
         )
+        if (locationIconPosition == LocationIconPosition.RIGHT) {
+            Icon(
+                modifier = Modifier.size(iconSize.dp),
+                imageVector = Icons.Outlined.LocationOn,
+                contentDescription = "",
+            )
+
+        }
     }
 }
 

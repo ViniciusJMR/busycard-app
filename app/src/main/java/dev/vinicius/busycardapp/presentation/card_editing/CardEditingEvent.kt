@@ -5,6 +5,7 @@ import com.google.android.gms.maps.model.LatLng
 import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.domain.model.card.enums.FieldFont
 import dev.vinicius.busycardapp.domain.model.card.enums.FieldType
+import dev.vinicius.busycardapp.domain.model.card.enums.LocationIconPosition
 import dev.vinicius.busycardapp.domain.model.card.enums.TextType
 
 sealed class CardEditingEvent {
@@ -61,6 +62,8 @@ sealed class CardEditingEvent {
             var textLocalization: String? = null,
             var localization: LatLng? = null,
             var font: FieldFont? = null,
+            var iconSize : Int? = null,
+            var iconPosition : LocationIconPosition? = null,
         ): FieldEvent()
     }
 

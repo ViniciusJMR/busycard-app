@@ -9,6 +9,7 @@ import dev.vinicius.busycardapp.domain.model.card.Card
 import dev.vinicius.busycardapp.domain.model.card.CardImage
 import dev.vinicius.busycardapp.domain.model.card.Field
 import dev.vinicius.busycardapp.domain.model.card.enums.FieldFont
+import dev.vinicius.busycardapp.domain.model.card.enums.LocationIconPosition
 import dev.vinicius.busycardapp.domain.model.card.enums.TextType
 
 fun Card.mapToFirebaseModel() =
@@ -81,6 +82,8 @@ fun mapDomainFieldsToFirebaseModel(items: List<Field>): List<Map<String, Any>> =
                     "localization" to mapOf("lat" to localization?.latitude, "lng" to localization?.longitude),
                     "textLocalization" to textLocalization,
                     "font" to font,
+                    "iconSize" to iconSize,
+                    "iconPosition" to iconPosition,
                 )
                 is Field.ImageField -> mapOf(
                     "type" to "IMAGE",
@@ -109,6 +112,7 @@ fun mapFieldToDomainModel(item: Map<String, Any>): Field {
     val offsetX = item["offsetX"].toString().toDouble().toInt()
     val offsetY = item["offsetY"].toString().toDouble().toInt()
     val size = item["size"].toString().toDouble().toInt()
+    val iconSize = (item["iconSize"] ?: 0L) as Long
 
     var latLng: LatLng? = null
     (item["localization"] as? Map<String, Double>)?.let {
@@ -128,7 +132,9 @@ fun mapFieldToDomainModel(item: Map<String, Any>): Field {
             size,
             latLng,
             item["textLocalization"] as String,
-            FieldFont.valueOf((item["font"] ?: "SANS_SERIF") as String)
+            FieldFont.valueOf((item["font"] ?: "SANS_SERIF") as String),
+            iconSize.toInt(),
+            LocationIconPosition.valueOf((item["iconPosition"] ?: "LEFT") as String),
         )
         "IMAGE" -> Field.ImageField(
             item["name"] as String,
