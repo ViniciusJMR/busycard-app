@@ -211,22 +211,18 @@ fun TextFieldMenu(
 
         }
 
-        Row (
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = fieldValue,
-                fontFamily = when (fieldFont) {
-                    FieldFont.DEFAULT -> FontFamily.Default
-                    FieldFont.SERIF -> FontFamily.Serif
-                    FieldFont.SANS_SERIF -> FontFamily.SansSerif
-                    FieldFont.MONOSPACE -> FontFamily.Monospace
-                    FieldFont.CURSIVE -> FontFamily.Cursive
-                },
-                fontSize = fieldSize.sp,
-            )
-        }
+        Text(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            text = fieldValue,
+            fontFamily = when (fieldFont) {
+                FieldFont.DEFAULT -> FontFamily.Default
+                FieldFont.SERIF -> FontFamily.Serif
+                FieldFont.SANS_SERIF -> FontFamily.SansSerif
+                FieldFont.MONOSPACE -> FontFamily.Monospace
+                FieldFont.CURSIVE -> FontFamily.Cursive
+            },
+            fontSize = fieldSize.sp,
+        )
         Spacer(Modifier.size(8.dp))
         Row (
             modifier = Modifier.fillMaxWidth(),
@@ -340,29 +336,36 @@ fun ImageFieldMenu(
     )
 
     Column {
-        Image(
-            painter = painter,
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .clip(CircleShape) // TODO: Change to param
-                .size(size.dp)
-        )
-        LauncherForActivityResultComponent(
-            onLauncherResult = {
-                imageUri.value = it
+        Column(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Image (
+                painter = painter,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .clip(CircleShape) // TODO: Change to param
+                    .size(size.dp)
+            )
+            LauncherForActivityResultComponent(
+                onLauncherResult = {
+                    imageUri.value = it
+                }
+            ) { launcher ->
+                IconButton(onClick = { launcher.launch("image/*") }) {
+                    Icon(
+                        Icons.Outlined.Upload,
+                        contentDescription = null
+                    )
+                }
             }
-        ) { launcher ->
-            IconButton(onClick = { launcher.launch("image/*") }) {
-                Icon(
-                    Icons.Outlined.Upload,
-                    contentDescription = null
-                )
-            }
+
         }
-        Spacer(modifier = Modifier.padding(4.dp))
-        Row(
-            verticalAlignment = Alignment.CenterVertically
+        Spacer(modifier = Modifier.padding(8.dp))
+        Row (
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             IconButton(onClick = { size-- }) {
                 Icon(Icons.Outlined.ChevronLeft, contentDescription = null)
@@ -372,7 +375,7 @@ fun ImageFieldMenu(
                 Icon(Icons.Outlined.ChevronRight, contentDescription = null)
             }
         }
-        Spacer(modifier = Modifier.padding(4.dp))
+        Spacer(modifier = Modifier.padding(16.dp))
         Button(
             modifier = Modifier
                 .fillMaxWidth()
@@ -463,9 +466,8 @@ fun AddressFieldMenu(
     Column {
         Spacer(modifier = Modifier.padding(8.dp))
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.align(Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
         ) {
             Icon(
                 Icons.Outlined.LocationOn,
