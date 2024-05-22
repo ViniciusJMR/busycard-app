@@ -42,6 +42,7 @@ import androidx.compose.ui.window.DialogProperties
 import coil.compose.rememberAsyncImagePainter
 import dev.vinicius.busycardapp.R
 import dev.vinicius.busycardapp.core.presentation.component.DialogComponent
+import dev.vinicius.busycardapp.domain.model.card.enums.CardColor
 import dev.vinicius.busycardapp.domain.model.card.enums.CardSize
 import dev.vinicius.busycardapp.ui.theme.BusyCardAppTheme
 
@@ -102,16 +103,21 @@ fun FullScreenDialog(
 @Composable
 fun CardInfoDialog(
     modifier: Modifier = Modifier,
-    onConfirmation: (String, Uri?, CardSize) -> Unit,
+    onConfirmation: (String, Uri?, CardSize, CardColor) -> Unit,
     onDismiss: () -> Unit,
     cardName: String,
     cardImageUri: Uri?,
     cardSize: CardSize,
+    cardColor: CardColor,
 ) {
     val sheetState = rememberModalBottomSheetState(true)
 
     var newCardName by remember { mutableStateOf(cardName) }
     var newCardSize by remember { mutableStateOf(cardSize) }
+    var newCardColor by remember { mutableStateOf(cardColor) }
+
+    var showSizeDialog by remember { mutableStateOf(false) }
+    var showColorDialog by remember { mutableStateOf(false) }
 
 
     val imageUri = rememberSaveable {
@@ -122,7 +128,6 @@ fun CardInfoDialog(
         imageUri.value?.toString() ?: R.drawable.outline_image_24
     )
 
-    var showSizeDialog by remember { mutableStateOf(false) }
 
     if (showSizeDialog) {
         DialogComponent(
@@ -140,6 +145,34 @@ fun CardInfoDialog(
                 },
                 options = CardSize.entries,
                 currentlySelectedOption = newCardSize
+            )
+        }
+    }
+
+    if (showColorDialog) {
+        DialogComponent(
+            onDismiss = { showColorDialog = false },
+            onConfirm = { showColorDialog = false },
+        ) {
+            GRadioOptions(
+                onOptionSelected = { newCardColor = it },
+                stringsForOptions = {
+                    when(it) {
+                        CardColor.Black -> "Preto"
+                        CardColor.DarkGray -> "Cinza escuro"
+                        CardColor.LightGray -> "Cinza claro"
+                        CardColor.White -> "Branco"
+                        CardColor.Red -> "Vermelho"
+                        CardColor.Green -> "Verde"
+                        CardColor.Blue -> "Azul"
+                        CardColor.Yellow -> "Amarelo"
+                        CardColor.Cyan -> "Ciano"
+                        CardColor.Magenta -> "Magenta"
+                        CardColor.Gray -> "Cinza"
+                    }
+                },
+                options = CardColor.entries,
+                currentlySelectedOption = newCardColor
             )
         }
     }
@@ -194,13 +227,34 @@ fun CardInfoDialog(
                 })
             }
         }
+        Spacer(modifier = Modifier.padding(8.dp))
+        Row (
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(text = "Cor do cartão: ")
+            TextButton(onClick = { showColorDialog = true }) {
+                Text(when(newCardColor) {
+                        CardColor.Black -> "Preto"
+                        CardColor.DarkGray -> "Cinza escuro"
+                        CardColor.LightGray -> "Cinza claro"
+                        CardColor.White -> "Branco"
+                        CardColor.Red -> "Vermelho"
+                        CardColor.Green -> "Verde"
+                        CardColor.Blue -> "Azul"
+                        CardColor.Yellow -> "Amarelo"
+                        CardColor.Cyan -> "Ciano"
+                        CardColor.Magenta -> "Magenta"
+                        CardColor.Gray -> "Cinza"
+                })
+            }
+        }
         Spacer(modifier = Modifier.padding(16.dp))
         Button(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.End),
             onClick = {
-                onConfirmation(newCardName, imageUri.value, newCardSize)
+                onConfirmation(newCardName, imageUri.value, newCardSize, newCardColor)
             }
         ) {
             Text(stringResource(R.string.txt_label_confirm))

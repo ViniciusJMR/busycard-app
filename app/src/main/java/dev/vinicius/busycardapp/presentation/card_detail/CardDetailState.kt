@@ -2,6 +2,7 @@ package dev.vinicius.busycardapp.presentation.card_detail
 
 import dev.vinicius.busycardapp.domain.model.card.enums.CardState
 import dev.vinicius.busycardapp.domain.model.card.Field
+import dev.vinicius.busycardapp.domain.model.card.enums.CardColor
 import dev.vinicius.busycardapp.domain.model.card.enums.CardSize
 
 data class CardDetailState(
@@ -13,6 +14,7 @@ data class CardDetailState(
     val fields: List<Field> = emptyList(),
     val text: String = "",
     val cardSize: CardSize = CardSize.SMALL,
+    val cardColor: CardColor = CardColor.DarkGray,
 
     val isScreenLoading: Boolean = false,
     val showBottomSheet: Boolean = false,

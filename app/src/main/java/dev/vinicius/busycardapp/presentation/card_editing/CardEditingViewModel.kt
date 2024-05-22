@@ -81,6 +81,8 @@ class CardEditingViewModel @Inject constructor(
                             cardImageUri = card.image.uri,
                             cardName = card.name,
                             isDraft = card.isDraft,
+                            cardSize = card.cardSize,
+                            cardColor = card.cardColor,
                             cardFields = card.fields.toMutableList(),
                             mainContactField = card.fields
                                 .filterIsInstance<Field.TextField>()
@@ -195,6 +197,7 @@ class CardEditingViewModel @Inject constructor(
                     name = _state.value.cardName,
                     fields = _fields,
                     cardSize = _state.value.cardSize,
+                    cardColor = _state.value.cardColor,
                     mainContact = _state.value.mainContactField?.value ?: "",
                 ).apply {
                     _state.value.cardImageUri?.let {
@@ -265,6 +268,7 @@ class CardEditingViewModel @Inject constructor(
                         cardImageUri = event.imagePath,
                         showCardInfoDialog = false,
                         cardSize = event.size,
+                        cardColor = event.color,
                     )
                 }
             }

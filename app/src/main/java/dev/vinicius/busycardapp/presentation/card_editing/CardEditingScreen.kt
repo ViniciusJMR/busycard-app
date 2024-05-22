@@ -81,13 +81,14 @@ fun CardEditingScreen(
 
     if (state.showCardInfoDialog) {
         CardInfoDialog(
-            onConfirmation = { name, uri, size ->
-                event(CardEditingEvent.CardEvent.OnChangeCard.Info(name, uri, size))
+            onConfirmation = { name, uri, size, color ->
+                event(CardEditingEvent.CardEvent.OnChangeCard.Info(name, uri, size, color))
             },
             onDismiss = { event(CardEditingEvent.DialogEvent.OnDismissCardInfoDialog) },
             cardName = state.cardName,
             cardImageUri = state.cardImageUri,
-            cardSize = state.cardSize
+            cardSize = state.cardSize,
+            cardColor = state.cardColor,
         )
     }
 
@@ -137,6 +138,7 @@ fun CardEditingScreen(
                 fields = fields,
                 updateUiState = updateUiState,
                 cardSize = state.cardSize,
+                cardColor = state.cardColor,
             )
             OptionsSection(
                 onAddField = { fieldType -> event(CardEditingEvent.CardEvent.OnAddField(fieldType)) },

@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import dev.vinicius.busycardapp.R
 import dev.vinicius.busycardapp.domain.model.card.Field
+import dev.vinicius.busycardapp.domain.model.card.enums.CardColor
 import dev.vinicius.busycardapp.domain.model.card.enums.CardSize
 import dev.vinicius.busycardapp.domain.model.card.enums.FieldFont
 import dev.vinicius.busycardapp.domain.model.card.enums.LocationIconPosition
@@ -57,6 +58,7 @@ fun ShowCardSection(
     fields: List<Field>,
     updateUiState: Int,
     cardSize: CardSize,
+    cardColor: CardColor
 ) {
     /* Gambiarra falada no Viewmodel
      * Sem ela a UI não é atualizada e o field não é arrastado pela tela
@@ -74,6 +76,7 @@ fun ShowCardSection(
         },
         fields = fields,
         cardSize = cardSize,
+        cardColor = cardColor,
     )
 
 }
@@ -85,6 +88,7 @@ fun CardSurface(
     onClickField: (Field) -> Unit,
     fields: List<Field>,
     cardSize: CardSize,
+    cardColor: CardColor
 ) {
     val TAG = "CardSurface"
     Surface(
@@ -96,7 +100,7 @@ fun CardSurface(
         Box(
             modifier = Modifier
                 .height(cardSize.value.dp)
-                .background(color = Color.DarkGray),
+                .background(color = Color(cardColor.color)),
         ) {
             Log.d(TAG, "CardSurface: fields: ${fields.map { "$it, "}}")
             fields.forEachIndexed { index, field ->

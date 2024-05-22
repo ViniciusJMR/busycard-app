@@ -59,6 +59,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.vinicius.busycardapp.R
 import dev.vinicius.busycardapp.domain.model.card.enums.CardState
 import dev.vinicius.busycardapp.domain.model.card.Field
+import dev.vinicius.busycardapp.domain.model.card.enums.CardColor
 import dev.vinicius.busycardapp.presentation.card_detail.component.CardInfoAddressField
 import dev.vinicius.busycardapp.presentation.card_detail.component.CardInfoImageField
 import dev.vinicius.busycardapp.presentation.card_detail.component.CardInfoTextField
@@ -183,7 +184,11 @@ fun CardDetailScreen(
         ) {
             if (!state.isScreenLoading) {
                 Log.d(TAG, "CardInfoScreen: fields: ${state.fields}")
-                CardRender(fields = state.fields, size = state.cardSize.value)
+                CardRender(
+                    fields = state.fields,
+                    size = state.cardSize.value,
+                    color = state.cardColor
+                )
             } else {
                 Text(text = stringResource(R.string.txt_loading))
             }
@@ -256,7 +261,8 @@ private fun CardDetailShareDialogPreview() {
 fun CardRender(
     modifier: Modifier = Modifier,
     fields: List<Field>,
-    size: Int
+    size: Int,
+    color: CardColor
 ) {
     Surface (
         modifier
@@ -266,7 +272,7 @@ fun CardRender(
         Box (
             Modifier
                 .height(size.dp)
-                .background(color = Color.DarkGray)
+                .background(color = Color(color.color))
         ){
             fields.forEach { field ->
                 Box (
@@ -395,6 +401,6 @@ private fun CardRenderPreview() {
     )
 
     BusyCardAppTheme {
-        CardRender(fields = a, size = 200)
+        CardRender(fields = a, size = 200, color = CardColor.DarkGray)
     }
 }

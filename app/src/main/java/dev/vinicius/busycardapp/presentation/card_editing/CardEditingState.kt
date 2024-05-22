@@ -2,6 +2,7 @@ package dev.vinicius.busycardapp.presentation.card_editing
 
 import android.net.Uri
 import dev.vinicius.busycardapp.domain.model.card.Field
+import dev.vinicius.busycardapp.domain.model.card.enums.CardColor
 import dev.vinicius.busycardapp.domain.model.card.enums.CardSize
 
 data class CardEditingState (
@@ -13,6 +14,7 @@ data class CardEditingState (
     var mainContactField: Field.TextField? = null,
     var isDraft: Boolean = false,
     var cardSize: CardSize = CardSize.SMALL,
+    var cardColor: CardColor = CardColor.DarkGray,
 
     var isScreenLoading: Boolean = false,
     var showBottomSheet: Boolean = false,

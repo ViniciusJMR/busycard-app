@@ -1,5 +1,6 @@
 package dev.vinicius.busycardapp.domain.model.card
 
+import dev.vinicius.busycardapp.domain.model.card.enums.CardColor
 import dev.vinicius.busycardapp.domain.model.card.enums.CardSize
 import dev.vinicius.busycardapp.domain.model.card.enums.CardState
 
@@ -13,4 +14,5 @@ data class Card(
     var cardState: CardState = CardState.NOT_SHARED,
     var isDraft: Boolean = false,
     var cardSize: CardSize = CardSize.SMALL,
+    var cardColor: CardColor = CardColor.DarkGray,
 )

@@ -68,6 +68,7 @@ class CardDetailViewModel @Inject constructor(
                             name = card.name,
                             owner = card.owner,
                             cardSize = card.cardSize,
+                            cardColor = card.cardColor,
                             fields = card.fields
                         )
                     }
