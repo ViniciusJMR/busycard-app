@@ -8,6 +8,7 @@ import dev.vinicius.busycardapp.data.remote.firebase.db.model.FirebaseFieldModel
 import dev.vinicius.busycardapp.domain.model.card.Card
 import dev.vinicius.busycardapp.domain.model.card.CardImage
 import dev.vinicius.busycardapp.domain.model.card.Field
+import dev.vinicius.busycardapp.domain.model.card.enums.CardSize
 import dev.vinicius.busycardapp.domain.model.card.enums.FieldFont
 import dev.vinicius.busycardapp.domain.model.card.enums.LocationIconPosition
 import dev.vinicius.busycardapp.domain.model.card.enums.TextType
@@ -20,6 +21,7 @@ fun Card.mapToFirebaseModel() =
         image = if (image.uri != null) image.uri.toString() else null,
         mainContact = mainContact,
         isDraft = isDraft,
+        cardSize = cardSize.name,
     )
 
 fun FirebaseCardModel.mapToDomainModel(fields: List<Map<String, Any>>) =
@@ -36,6 +38,7 @@ fun FirebaseCardModel.mapToDomainModel(fields: List<Map<String, Any>>) =
         ),
         fields = fields.map { mapFieldToDomainModel(it) },
         isDraft = isDraft ?: false,
+        cardSize = CardSize.valueOf(cardSize ?: "SMALL"),
     )
 
 

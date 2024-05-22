@@ -194,6 +194,7 @@ class CardEditingViewModel @Inject constructor(
                     id = _state.value.cardId,
                     name = _state.value.cardName,
                     fields = _fields,
+                    cardSize = _state.value.cardSize,
                     mainContact = _state.value.mainContactField?.value ?: "",
                 ).apply {
                     _state.value.cardImageUri?.let {
@@ -263,6 +264,7 @@ class CardEditingViewModel @Inject constructor(
                         cardName = event.name,
                         cardImageUri = event.imagePath,
                         showCardInfoDialog = false,
+                        cardSize = event.size,
                     )
                 }
             }

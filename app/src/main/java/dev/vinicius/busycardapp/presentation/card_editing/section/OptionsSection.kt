@@ -81,7 +81,7 @@ fun OptionsSection(
     currentlySelectedField: Field?,
     showBottomSheet: Boolean,
 ) {
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(true)
     if (showBottomSheet) {
         ModalBottomSheet(
             modifier = Modifier.padding(bottom = 16.dp),
@@ -228,6 +228,7 @@ fun TextFieldMenu(
         Spacer(Modifier.size(8.dp))
         Row (
             modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             IconButton(onClick = { fieldSize -= 1}) {

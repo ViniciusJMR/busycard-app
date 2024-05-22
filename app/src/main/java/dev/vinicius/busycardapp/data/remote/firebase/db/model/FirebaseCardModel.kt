@@ -13,4 +13,5 @@ data class FirebaseCardModel(
     var image: String? = null,
     var mainContact: String? = null,
     var isDraft: Boolean? = null,
+    var cardSize: String? = null,
 )

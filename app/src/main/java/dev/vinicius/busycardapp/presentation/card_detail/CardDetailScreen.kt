@@ -183,7 +183,7 @@ fun CardDetailScreen(
         ) {
             if (!state.isScreenLoading) {
                 Log.d(TAG, "CardInfoScreen: fields: ${state.fields}")
-                CardRender(fields = state.fields, size = 200)
+                CardRender(fields = state.fields, size = state.cardSize.value)
             } else {
                 Text(text = stringResource(R.string.txt_loading))
             }
@@ -398,4 +398,3 @@ private fun CardRenderPreview() {
         CardRender(fields = a, size = 200)
     }
 }
-

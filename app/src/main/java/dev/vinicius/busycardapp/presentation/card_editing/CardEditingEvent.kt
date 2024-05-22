@@ -3,6 +3,7 @@ package dev.vinicius.busycardapp.presentation.card_editing
 import android.net.Uri
 import com.google.android.gms.maps.model.LatLng
 import dev.vinicius.busycardapp.domain.model.card.Field
+import dev.vinicius.busycardapp.domain.model.card.enums.CardSize
 import dev.vinicius.busycardapp.domain.model.card.enums.FieldFont
 import dev.vinicius.busycardapp.domain.model.card.enums.FieldType
 import dev.vinicius.busycardapp.domain.model.card.enums.LocationIconPosition
@@ -27,6 +28,7 @@ sealed class CardEditingEvent {
             data class Info(
                 val name: String = "",
                 val imagePath: Uri? = null,
+                val size: CardSize = CardSize.SMALL,
             ): OnChangeCard()
 
             data class MainContact(val field: Field.TextField): OnChangeCard()
