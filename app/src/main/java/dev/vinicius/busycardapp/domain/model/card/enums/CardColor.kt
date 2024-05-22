@@ -4,15 +4,13 @@ import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.Color
 
 enum class CardColor (val color: Long) {
-    Black(0xFF000000),
-    DarkGray(0xFF444444),
-    Gray(0xFF888888),
-    LightGray(0xFFCCCCCC),
-    White(0xFFFFFFFF),
-    Red(0xFFFF0000),
-    Green(0xFF00FF00),
-    Blue(0xFF0000FF),
-    Yellow(0xFFFFFF00),
-    Cyan(0xFF00FFFF),
-    Magenta(0xFFFF00FF),
+    Black   (0XFF121111),
+    DarkGray(0XFF444444),
+    Gray    (0XFF888888),
+    LightGray(0XFFCCCCCC),
+    Red     (0XFFFF0000),
+    Green   (0XFF04D404),
+    Blue    (0XFF0909E0),
+    Yellow  (0XFFE3E30B),
+    Cyan    (0XFF08C9C9),
 }

@@ -161,13 +161,11 @@ fun CardInfoDialog(
                         CardColor.Black -> "Preto"
                         CardColor.DarkGray -> "Cinza escuro"
                         CardColor.LightGray -> "Cinza claro"
-                        CardColor.White -> "Branco"
                         CardColor.Red -> "Vermelho"
                         CardColor.Green -> "Verde"
                         CardColor.Blue -> "Azul"
                         CardColor.Yellow -> "Amarelo"
                         CardColor.Cyan -> "Ciano"
-                        CardColor.Magenta -> "Magenta"
                         CardColor.Gray -> "Cinza"
                     }
                 },
@@ -237,13 +235,11 @@ fun CardInfoDialog(
                         CardColor.Black -> "Preto"
                         CardColor.DarkGray -> "Cinza escuro"
                         CardColor.LightGray -> "Cinza claro"
-                        CardColor.White -> "Branco"
                         CardColor.Red -> "Vermelho"
                         CardColor.Green -> "Verde"
                         CardColor.Blue -> "Azul"
                         CardColor.Yellow -> "Amarelo"
                         CardColor.Cyan -> "Ciano"
-                        CardColor.Magenta -> "Magenta"
                         CardColor.Gray -> "Cinza"
                 })
             }
