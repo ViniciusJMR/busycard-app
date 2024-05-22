@@ -15,12 +15,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanOptions
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import dev.vinicius.busycardapp.R
 import dev.vinicius.busycardapp.core.presentation.CardsListing
 import dev.vinicius.busycardapp.presentation.destinations.CardDetailScreenDestination
 
@@ -73,7 +75,7 @@ fun SharedCardsScreen(
                 cards = state.cards
             )
         } else {
-            Text("Loading")
+            Text(stringResource(R.string.txt_loading))
         }
     }
 }

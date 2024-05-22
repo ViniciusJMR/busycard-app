@@ -16,11 +16,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import dev.vinicius.busycardapp.R
 import dev.vinicius.busycardapp.core.presentation.CardsListing
 import dev.vinicius.busycardapp.presentation.destinations.CardEditingScreenDestination
 import dev.vinicius.busycardapp.presentation.destinations.CardDetailScreenDestination
@@ -52,7 +54,7 @@ fun MyCardsScreen(
             modifier = Modifier.padding(it)
         ) {
             Text(
-                text = "My Cards",
+                text = "Meus Cartões",
                 style = MaterialTheme.typography.headlineSmall
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -72,7 +74,7 @@ fun MyCardsScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             Text(
-                text = "Draft Cards",
+                text = "Cartões em Rascunho",
                 style = MaterialTheme.typography.headlineSmall
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -86,7 +88,7 @@ fun MyCardsScreen(
                     cards = state.draftCards
                 )
             } else {
-                Text("Loading")
+                Text(stringResource(R.string.txt_loading))
             }
         }
     }
