@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -41,15 +42,13 @@ fun GoogleMapComponent(
     val context = LocalContext.current
     val TAG = "GoogleMapComponent"
 
+    var location by remember { mutableStateOf(latLng) }
+
     // TODO: Remove hardcoded location
     // Currently, it's in Brasília, Brazil
-    var location: LatLng = LatLng(-15.793889, -47.882778)
+    val brasiliaLocation = LatLng(-15.793889, -47.882778)
 
     var shouldFetchLocation by remember { mutableStateOf(true) }
-
-    val latLangList = remember {
-        mutableStateListOf<LatLng>()
-    }
 
     val mapProperties by remember {
         mutableStateOf(
@@ -70,34 +69,26 @@ fun GoogleMapComponent(
 
 
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(location, 15f)
+        position = CameraPosition.fromLatLngZoom(location ?: brasiliaLocation, 15f)
         Log.d(TAG, "GoogleMapComponent: setando cameraPositionState")
     }
 
-    if (latLng != null) {
-        location = latLng
-        latLangList.add(location)
-        shouldFetchLocation = false
-        Log.d(TAG, "GoogleMapComponent: Passando no != null")
-    } else {
-        getCurrentLocation(context,
-            onLocationFetched = {
-                if (shouldFetchLocation) {
+    LaunchedEffect(key1 = true) {
+        if (location == null) {
+            getCurrentLocation(context,
+                onLocationFetched = {
                     location = it
-                    latLangList.add(location)
-                    onMapClick(location)
-                    cameraPositionState.position = CameraPosition.fromLatLngZoom(location, 15f)
+                    onMapClick(it)
+                    cameraPositionState.position = CameraPosition.fromLatLngZoom(it, 15f)
                     Log.d(TAG, "GoogleMapComponent: Fetchou")
                     shouldFetchLocation = false
+                },
+                onLocationError = {
+                    Log.d(TAG, "GoogleMapComponent: Error getting location")
                 }
-            },
-            onLocationError = {
-                Log.d(TAG, "GoogleMapComponent: Error getting location")
-            }
-        )
+            )
+        }
     }
-
-
 
     Box(modifier = modifier.fillMaxSize()) {
         GoogleMap(
@@ -106,12 +97,11 @@ fun GoogleMapComponent(
             properties = mapProperties,
             uiSettings = mapUiSettings,
             onMapClick = {
-                latLangList.clear()
-                latLangList.add(it)
+                location = it
                 onMapClick(it)
             },
         ) {
-            latLangList.forEach {
+            location?.let {
                 Marker(
                     state = MarkerState(position = it),
                 )
@@ -126,7 +116,7 @@ fun GoogleMapComponent(
                 Button(onClick = onConfirm) { Text(stringResource(R.string.txt_ok)) }
             }
             Button(onClick = {
-                latLangList.clear()
+                location = null
                 onClearMarkers()
             }) { Text(stringResource(R.string.txt_clear_position)) }
         }
