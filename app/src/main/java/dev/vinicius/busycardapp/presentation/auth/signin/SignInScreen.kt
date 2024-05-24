@@ -45,34 +45,40 @@ fun SignInScreen(
         OutlinedTextField(
             value = state.name,
             onValueChange = { event(SignInEvent.OnNameChange(it)) },
-            label = { Text(stringResource(R.string.label_name))}
+            label = { Text(stringResource(R.string.label_name))},
+            singleLine = true,
         )
 
         OutlinedTextField(
+            singleLine = true,
             value = state.surname,
             onValueChange = { event(SignInEvent.OnSurnameChange(it)) },
             label = { Text(stringResource(R.string.label_surname))}
         )
 
         OutlinedTextField(
+            singleLine = true,
             value = state.username,
             onValueChange = { event(SignInEvent.OnUsernameChange(it)) },
             label = { Text(stringResource(R.string.label_username))}
         )
 
         OutlinedTextField(
+            singleLine = true,
             value = state.email,
             onValueChange = { event(SignInEvent.OnEmailChange(it)) },
             label = { Text(stringResource(R.string.label_email))}
         )
 
         OutlinedTextField(
+            singleLine = true,
             value = state.password,
             onValueChange = { event(SignInEvent.OnPasswordChange(it)) },
             label = { Text(stringResource(R.string.label_password))}
         )
 
         OutlinedTextField(
+            singleLine = true,
             value = state.password2,
             onValueChange = { event(SignInEvent.OnPassword2Change(it)) },
             label = { Text(stringResource(R.string.label_password2))}

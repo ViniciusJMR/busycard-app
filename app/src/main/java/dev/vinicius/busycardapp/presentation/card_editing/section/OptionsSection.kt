@@ -242,12 +242,14 @@ fun TextFieldMenu(
         }
         Spacer(Modifier.size(8.dp))
         OutlinedTextField(
+            label = { Text(stringResource(R.string.label_field_text)) },
             modifier = Modifier
                 .fillMaxWidth(),
             value = fieldValue,
             onValueChange = {
                 fieldValue = it
-            }
+            },
+            singleLine = true,
         )
         Spacer(Modifier.size(8.dp))
         Row (verticalAlignment = Alignment.CenterVertically) {
@@ -557,13 +559,15 @@ fun AddressFieldMenu(
         }
         Spacer(modifier = Modifier.padding(8.dp))
         OutlinedTextField(
+            label = { Text(stringResource(R.string.label_field_text)) },
             modifier = modifier
                 .fillMaxWidth()
                 .padding(start = 8.dp, end = 8.dp),
             value = textLocalization,
             onValueChange = {
                 textLocalization = it
-            }
+            },
+            singleLine = true,
         )
         Spacer(modifier = Modifier.padding(4.dp))
         Row(

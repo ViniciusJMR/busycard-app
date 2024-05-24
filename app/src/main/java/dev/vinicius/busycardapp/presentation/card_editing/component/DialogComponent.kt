@@ -207,6 +207,7 @@ fun CardInfoDialog(
         Spacer(modifier = Modifier.padding(8.dp))
 
         OutlinedTextField(
+            singleLine = true,
             modifier = Modifier.fillMaxWidth(),
             value = newCardName,
             onValueChange = { newCardName = it },
