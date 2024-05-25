@@ -17,6 +17,7 @@ data class CardEditingState (
     var cardColor: CardColor = CardColor.DarkGray,
 
     var isScreenLoading: Boolean = false,
+    var isSaveLoading: Boolean = false,
     var showBottomSheet: Boolean = false,
     var showTextTypeDialog: Boolean = false,
     var showCardInfoDialog: Boolean = false,

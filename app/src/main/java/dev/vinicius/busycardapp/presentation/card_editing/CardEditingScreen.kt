@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.outlined.Layers
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
@@ -109,9 +110,6 @@ fun CardEditingScreen(
                             contentDescription = stringResource(R.string.desc_save_current_card)
                         )
                     }
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(Icons.Outlined.Layers, contentDescription = "")
-                    }
                     IconButton(onClick = { event(CardEditingEvent.DialogEvent.OnShowCardInfoDialog)}) {
                         Icon(Icons.Outlined.Settings, contentDescription = "")
                     }
@@ -133,24 +131,28 @@ fun CardEditingScreen(
                 .padding(it),
             contentAlignment = Alignment.Center
         ) {
-            ShowCardSection(
-                event = event,
-                fields = fields,
-                updateUiState = updateUiState,
-                cardSize = state.cardSize,
-                cardColor = state.cardColor,
-            )
-            OptionsSection(
-                onAddField = { fieldType -> event(CardEditingEvent.CardEvent.OnAddField(fieldType)) },
-                onChangeField = { fieldEvent -> event(fieldEvent) },
-                onDismissModalSheet = { event(CardEditingEvent.ModalEvent.OnDismissModalSheet) },
-                onShowDialog = { event(CardEditingEvent.DialogEvent.OnShowTextTypeDialog) },
-                onMainContactChange = { event(CardEditingEvent.CardEvent.OnChangeCard.MainContact(it))},
-                onDeleteField = { event(CardEditingEvent.CardEvent.OnDeleteField(it)) },
-                currentlySelectedField = state.currentlySelectedField,
-                mainContactField = state.mainContactField,
-                showBottomSheet = state.showBottomSheet
-            )
+            if (state.isScreenLoading) {
+                CircularProgressIndicator()
+            } else {
+                ShowCardSection(
+                    event = event,
+                    fields = fields,
+                    updateUiState = updateUiState,
+                    cardSize = state.cardSize,
+                    cardColor = state.cardColor,
+                )
+                OptionsSection(
+                    onAddField = { fieldType -> event(CardEditingEvent.CardEvent.OnAddField(fieldType)) },
+                    onChangeField = { fieldEvent -> event(fieldEvent) },
+                    onDismissModalSheet = { event(CardEditingEvent.ModalEvent.OnDismissModalSheet) },
+                    onShowDialog = { event(CardEditingEvent.DialogEvent.OnShowTextTypeDialog) },
+                    onMainContactChange = { event(CardEditingEvent.CardEvent.OnChangeCard.MainContact(it))},
+                    onDeleteField = { event(CardEditingEvent.CardEvent.OnDeleteField(it)) },
+                    currentlySelectedField = state.currentlySelectedField,
+                    mainContactField = state.mainContactField,
+                    showBottomSheet = state.showBottomSheet
+                )
+            }
         }
     }
 }

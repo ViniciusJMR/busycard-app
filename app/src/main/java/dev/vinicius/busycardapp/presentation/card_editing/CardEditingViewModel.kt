@@ -72,11 +72,17 @@ class CardEditingViewModel @Inject constructor(
                 }
                 .catch {
                     Log.e(CardDetailViewModel.TAG, "Error: ${it.message}")
+                    _state.update {
+                        it.copy(
+                            isScreenLoading = false,
+                        )
+                    }
                 }
                 .collect{ card ->
                     Log.d(CardDetailViewModel.TAG, "Collected:  $card")
                     _state.update {
                         it.copy(
+                            isScreenLoading = false,
                             cardId = card.id,
                             cardImageUri = card.image.uri,
                             cardName = card.name,
@@ -219,17 +225,28 @@ class CardEditingViewModel @Inject constructor(
                         .onStart {
                             _state.update {
                                 it.copy(
-                                    isScreenLoading = true
+                                    isScreenLoading = true,
+                                    showSaveDialog = false,
                                 )
                             }
                         }
                         .catch {
                             Log.d(TAG, "handleCardEvent: error: $it")
                             it.printStackTrace()
+                            _state.update {
+                                it.copy(
+                                    isScreenLoading = false,
+                                )
+                            }
                         }
                         .collect{
                             Log.d(TAG, "handleCardEvent: Salvo com sucesso")
                             _effect.update { CardEditingEffect.ClosePage }
+                            _state.update {
+                                it.copy(
+                                    isScreenLoading = false,
+                                )
+                            }
                         }
                 }
             }
