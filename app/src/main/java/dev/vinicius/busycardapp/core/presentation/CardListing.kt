@@ -1,15 +1,25 @@
 package dev.vinicius.busycardapp.core.presentation
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.CreditCard
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,9 +29,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.vinicius.busycardapp.domain.model.card.Card
+import dev.vinicius.busycardapp.ui.theme.BusyCardAppTheme
 
 @Composable
 fun CardsListing(
@@ -30,18 +42,21 @@ fun CardsListing(
     cards: List<Card>
 ) {
     LazyColumn (
-        modifier = modifier
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center
     ) {
         items(
             items = cards,
             key = { card -> card.id!! }
         ) { card ->
             CardItem(
+                modifier = Modifier.padding(horizontal= 8.dp, vertical = 4.dp),
                 name = card.name,
                 mainContact = card.mainContact,
                 imageUri = card.image.uri.toString(),
                 onClick = { onClickItemCard(card.id!!) }
             )
+            HorizontalDivider()
         }
     }
 }
@@ -57,15 +72,16 @@ fun CardItem(
 ) {
     Surface (
         modifier = modifier
-            .fillMaxWidth()
-            .height(45.dp),
+            .fillMaxWidth(),
         onClick = onClick
     ){
-        Row {
+        Row (
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             Box( contentAlignment = Alignment.Center ) {
                 // Only used to signalize to the user there's a image there
                 // TODO: Use onState from AsyncImage
-                CircularProgressIndicator()
+                Icon(imageVector = Icons.Outlined.CreditCard, contentDescription = null)
                 AsyncImage(
                     model = imageUri,
                     contentDescription = null,
@@ -75,17 +91,53 @@ fun CardItem(
                         .size(40.dp)
                 )
             }
+            Spacer(Modifier.width(8.dp))
             Column {
                 Text(
                     text = name,
+                    style = MaterialTheme.typography.titleMedium
                 )
                 Text(
                     text = mainContact,
-                    style = TextStyle(
-                        fontWeight = FontWeight.Light
-                    )
+                    style = MaterialTheme.typography.bodySmall
                 )
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun CardItemPreview() {
+    BusyCardAppTheme {
+        CardItem(
+            name = "John Doe",
+            mainContact = "johndoe@gmail.com",
+            imageUri = "",
+            onClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun CardsListingPreview() {
+    BusyCardAppTheme {
+        CardsListing(
+            cards = listOf(
+                Card(
+                    id = "1",
+                    name = "John Doe",
+                    mainContact = "johndoe@gmail.com",
+                ),
+                Card(
+                    id = "2",
+                    name = "John Doe",
+                    mainContact = "johndoe@gmail.com",
+                )
+            ),
+            onClickItemCard = {},
+
+        )
     }
 }
