@@ -13,7 +13,6 @@ import androidx.compose.material.icons.outlined.TextFormat
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -24,10 +23,13 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import dev.vinicius.busycardapp.R
 import dev.vinicius.busycardapp.domain.model.card.Field
-import dev.vinicius.busycardapp.domain.model.card.TextType
+import dev.vinicius.busycardapp.domain.model.card.enums.FieldFont
+import dev.vinicius.busycardapp.domain.model.card.enums.TextType
 
 @Composable
 fun CardInfoTextField(
@@ -90,7 +92,15 @@ fun CardInfoTextField(
         modifier = Modifier.clickable {
             showDialog = true
         },
-        text = field.value
+        text = field.value,
+        fontSize = field.size.sp,
+        fontFamily = when(field.font) {
+            FieldFont.DEFAULT -> FontFamily.Default
+            FieldFont.SERIF -> FontFamily.Serif
+            FieldFont.SANS_SERIF -> FontFamily.SansSerif
+            FieldFont.MONOSPACE -> FontFamily.Monospace
+            FieldFont.CURSIVE -> FontFamily.Cursive
+        }
     )
 }
 

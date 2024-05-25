@@ -1,30 +1,47 @@
 package dev.vinicius.busycardapp.data.remote.firebase.db.mapper
 
+import android.net.Uri
+import android.util.Log
 import com.google.android.gms.maps.model.LatLng
 import dev.vinicius.busycardapp.data.remote.firebase.db.model.FirebaseCardModel
 import dev.vinicius.busycardapp.data.remote.firebase.db.model.FirebaseFieldModel
 import dev.vinicius.busycardapp.domain.model.card.Card
 import dev.vinicius.busycardapp.domain.model.card.CardImage
 import dev.vinicius.busycardapp.domain.model.card.Field
-import dev.vinicius.busycardapp.domain.model.card.TextType
+import dev.vinicius.busycardapp.domain.model.card.enums.CardColor
+import dev.vinicius.busycardapp.domain.model.card.enums.CardSize
+import dev.vinicius.busycardapp.domain.model.card.enums.FieldFont
+import dev.vinicius.busycardapp.domain.model.card.enums.LocationIconPosition
+import dev.vinicius.busycardapp.domain.model.card.enums.TextType
 
 fun Card.mapToFirebaseModel() =
     FirebaseCardModel(
-        id,
-        name,
-        owner,
-        image.uri.toString(),
-        mainContact,
+        id = id,
+        name = name,
+        owner = owner,
+        image = if (image.uri != null) image.uri.toString() else null,
+        mainContact = mainContact,
+        isDraft = isDraft,
+        cardSize = cardSize.name,
+        cardColor = cardColor.name,
     )
 
 fun FirebaseCardModel.mapToDomainModel(fields: List<Map<String, Any>>) =
     Card(
-        id,
-        name ?: "",
-        owner ?: "",
-        mainContact ?: "",
-        CardImage(path = image ?: ""),
-        fields.map { mapFieldToDomainModel(it) }
+        id = id,
+        name =name ?: "",
+        owner = owner ?: "",
+        mainContact = mainContact ?: "",
+        image = CardImage(
+            uri = let {
+                Log.d("CardMapper", "image: $image")
+                if (image != null) Uri.parse(image) else null
+            },
+        ),
+        fields = fields.map { mapFieldToDomainModel(it) },
+        isDraft = isDraft ?: false,
+        cardSize = CardSize.valueOf(cardSize ?: "SMALL"),
+        cardColor = CardColor.valueOf(cardColor ?: "DarkGray"),
     )
 
 
@@ -70,6 +87,9 @@ fun mapDomainFieldsToFirebaseModel(items: List<Field>): List<Map<String, Any>> =
                     "size" to size,
                     "localization" to mapOf("lat" to localization?.latitude, "lng" to localization?.longitude),
                     "textLocalization" to textLocalization,
+                    "font" to font,
+                    "iconSize" to iconSize,
+                    "iconPosition" to iconPosition,
                 )
                 is Field.ImageField -> mapOf(
                     "type" to "IMAGE",
@@ -87,6 +107,7 @@ fun mapDomainFieldsToFirebaseModel(items: List<Field>): List<Map<String, Any>> =
                     "size" to size,
                     "textType" to textType,
                     "value" to value,
+                    "font" to font,
                 )
             }
         }
@@ -97,6 +118,7 @@ fun mapFieldToDomainModel(item: Map<String, Any>): Field {
     val offsetX = item["offsetX"].toString().toDouble().toInt()
     val offsetY = item["offsetY"].toString().toDouble().toInt()
     val size = item["size"].toString().toDouble().toInt()
+    val iconSize = (item["iconSize"] ?: 0L) as Long
 
     var latLng: LatLng? = null
     (item["localization"] as? Map<String, Double>)?.let {
@@ -116,13 +138,19 @@ fun mapFieldToDomainModel(item: Map<String, Any>): Field {
             size,
             latLng,
             item["textLocalization"] as String,
+            FieldFont.valueOf((item["font"] ?: "SANS_SERIF") as String),
+            iconSize.toInt(),
+            LocationIconPosition.valueOf((item["iconPosition"] ?: "LEFT") as String),
         )
         "IMAGE" -> Field.ImageField(
             item["name"] as String,
             offsetX,
             offsetY,
             size,
-            CardImage(path = item["imageUrl"] as String),
+            CardImage(
+                uri = Uri.parse(item["imageUrl"] as String),
+                path = item["imageUrl"] as String
+            ),
         )
         "TEXT" -> Field.TextField(
             item["name"] as String,
@@ -131,6 +159,7 @@ fun mapFieldToDomainModel(item: Map<String, Any>): Field {
             size,
             TextType.valueOf(item["textType"] as String),
             item["value"] as String,
+            FieldFont.valueOf((item["font"] ?: "SANS_SERIF") as String)
         )
 
         else -> {

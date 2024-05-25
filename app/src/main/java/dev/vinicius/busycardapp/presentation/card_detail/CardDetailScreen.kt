@@ -1,6 +1,5 @@
 package dev.vinicius.busycardapp.presentation.card_detail
 
-import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,6 +19,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBackIosNew
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.CircularProgressIndicator
@@ -56,14 +57,16 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.vinicius.busycardapp.R
-import dev.vinicius.busycardapp.domain.model.card.CardState
+import dev.vinicius.busycardapp.domain.model.card.enums.CardState
 import dev.vinicius.busycardapp.domain.model.card.Field
+import dev.vinicius.busycardapp.domain.model.card.enums.CardColor
 import dev.vinicius.busycardapp.presentation.card_detail.component.CardInfoAddressField
 import dev.vinicius.busycardapp.presentation.card_detail.component.CardInfoImageField
 import dev.vinicius.busycardapp.presentation.card_detail.component.CardInfoTextField
 import dev.vinicius.busycardapp.presentation.card_detail.component.CompactAddressFieldComponent
 import dev.vinicius.busycardapp.presentation.card_detail.component.CompactTextFieldComponent
 import dev.vinicius.busycardapp.presentation.card_detail.component.DialogComponent
+import dev.vinicius.busycardapp.presentation.destinations.CardEditingScreenDestination
 import dev.vinicius.busycardapp.ui.theme.BusyCardAppTheme
 
 
@@ -71,7 +74,7 @@ import dev.vinicius.busycardapp.ui.theme.BusyCardAppTheme
 @RootNavGraph
 @Destination
 @Composable
-fun CardInfoScreen(
+fun CardDetailScreen(
     modifier: Modifier = Modifier,
     viewModel: CardDetailViewModel = hiltViewModel(),
     navigator: DestinationsNavigator,
@@ -103,6 +106,13 @@ fun CardInfoScreen(
         )
     }
 
+    if (state.showDeleteDialog) {
+        CardDetailDeleteDialog(
+            onConfirm = { event(CardInfoEvent.CardEvent.OnDeleteCard) },
+            onDismiss = { event(CardInfoEvent.DialogEvent.OnDismissDeleteDialog) },
+        )
+    }
+
     if (state.showBottomSheet) {
         CardInfoBottomSheet(
             cardState = state.cardState,
@@ -130,6 +140,20 @@ fun CardInfoScreen(
                         Icon(Icons.Outlined.ArrowBackIosNew, contentDescription = "")
                     }
                 },
+                actions = {
+                    if (state.cardState == CardState.MINE) {
+                        IconButton(
+                            onClick = { navigator.navigate(CardEditingScreenDestination(id = id)) }
+                        ) {
+                            Icon(Icons.Outlined.Edit, contentDescription = "")
+                        }
+                        IconButton(
+                            onClick = { event(CardInfoEvent.DialogEvent.OnShowDeleteDialog) }
+                        ) {
+                            Icon(Icons.Outlined.Delete, contentDescription = "")
+                        }
+                    }
+                }
             )
         },
         floatingActionButton = {
@@ -160,11 +184,26 @@ fun CardInfoScreen(
         ) {
             if (!state.isScreenLoading) {
                 Log.d(TAG, "CardInfoScreen: fields: ${state.fields}")
-                CardRender(fields = state.fields, size = 200)
+                CardRender(
+                    fields = state.fields,
+                    size = state.cardSize.value,
+                    color = state.cardColor
+                )
             } else {
                 Text(text = stringResource(R.string.txt_loading))
             }
         }
+    }
+}
+
+@Composable
+fun CardDetailDeleteDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
+    DialogComponent(
+        onConfirm = onConfirm,
+        onDismiss = onDismiss,
+        confirmText = R.string.txt_delete,
+    ) {
+        Text(text = stringResource(R.string.txt_confirm_delete))
     }
 }
 
@@ -222,7 +261,8 @@ private fun CardDetailShareDialogPreview() {
 fun CardRender(
     modifier: Modifier = Modifier,
     fields: List<Field>,
-    size: Int
+    size: Int,
+    color: CardColor
 ) {
     Surface (
         modifier
@@ -232,7 +272,7 @@ fun CardRender(
         Box (
             Modifier
                 .height(size.dp)
-                .background(color = Color.DarkGray)
+                .background(color = Color(color.color))
         ){
             fields.forEach { field ->
                 Box (
@@ -361,7 +401,6 @@ private fun CardRenderPreview() {
     )
 
     BusyCardAppTheme {
-        CardRender(fields = a, size = 200)
+        CardRender(fields = a, size = 200, color = CardColor.DarkGray)
     }
 }
-

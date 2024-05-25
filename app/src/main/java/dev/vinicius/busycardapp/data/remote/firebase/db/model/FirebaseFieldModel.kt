@@ -1,7 +1,7 @@
 package dev.vinicius.busycardapp.data.remote.firebase.db.model
 
-import dev.vinicius.busycardapp.domain.model.card.FieldType
-import dev.vinicius.busycardapp.domain.model.card.TextType
+import dev.vinicius.busycardapp.domain.model.card.enums.FieldType
+import dev.vinicius.busycardapp.domain.model.card.enums.TextType
 
 // Currently unused as firebase converter can't deserialized this class
 sealed class FirebaseFieldModel(

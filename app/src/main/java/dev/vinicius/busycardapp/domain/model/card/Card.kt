@@ -1,6 +1,8 @@
 package dev.vinicius.busycardapp.domain.model.card
 
-import android.net.Uri
+import dev.vinicius.busycardapp.domain.model.card.enums.CardColor
+import dev.vinicius.busycardapp.domain.model.card.enums.CardSize
+import dev.vinicius.busycardapp.domain.model.card.enums.CardState
 
 data class Card(
     var id: String? = null,
@@ -8,6 +10,9 @@ data class Card(
     var owner: String? = null,
     var mainContact: String = "",
     var image: CardImage = CardImage(),
-    val fields: List<Field>,
+    val fields: List<Field> = emptyList(),
     var cardState: CardState = CardState.NOT_SHARED,
+    var isDraft: Boolean = false,
+    var cardSize: CardSize = CardSize.SMALL,
+    var cardColor: CardColor = CardColor.DarkGray,
 )

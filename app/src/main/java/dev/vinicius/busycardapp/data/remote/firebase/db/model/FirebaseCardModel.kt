@@ -12,4 +12,7 @@ data class FirebaseCardModel(
     var owner: String? = null,
     var image: String? = null,
     var mainContact: String? = null,
+    var isDraft: Boolean? = null,
+    var cardSize: String? = null,
+    var cardColor: String? = null,
 )

@@ -54,13 +54,15 @@ fun LoginScreen(
         OutlinedTextField(
             value = state.email,
             onValueChange = { event(LoginEvent.OnEmailChange(it))},
-            label = { Text(stringResource(R.string.label_email))}
+            label = { Text(stringResource(R.string.label_email))},
+            singleLine = true,
         )
 
         OutlinedTextField(
+            singleLine = true,
             value = state.password,
             onValueChange = { event(LoginEvent.OnPasswordChange(it))},
-            label = { Text(stringResource(R.string.label_password))}
+            label = { Text(stringResource(R.string.label_password))},
         )
 
         Spacer(modifier = Modifier.padding(8.dp))

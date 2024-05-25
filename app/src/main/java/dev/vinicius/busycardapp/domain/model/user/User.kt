@@ -8,4 +8,5 @@ data class User (
     var email: String = "",
     val myCards: List<String> = emptyList(),
     val sharedCards: List<String> = emptyList(),
+    val draftCards: List<String> = emptyList()
 )

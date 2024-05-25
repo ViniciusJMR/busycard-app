@@ -1,5 +1,6 @@
 package dev.vinicius.busycardapp.data.repository.impl
 
+import android.util.Log
 import com.google.firebase.database.getValue
 import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.FieldValue
@@ -17,6 +18,10 @@ class UserRepository @Inject constructor(
 ): IUserRepository<String, User> {
     private val database = Firebase.firestore
 
+    companion object {
+        private const val TAG = "UserRepository"
+    }
+
     override suspend fun saveMyCardId(userId: String, cardId: String) {
         database.collection("users")
             .document(userId)
@@ -31,7 +36,7 @@ class UserRepository @Inject constructor(
             .get()
             .addOnSuccessListener { documentSnapshot ->
                 if (documentSnapshot.exists()) {
-                    myCards = documentSnapshot.get("myCards") as List<String>
+                    myCards = documentSnapshot.get("myCards") as? List<String> ?: emptyList()
                 }
             }
 
@@ -102,8 +107,52 @@ class UserRepository @Inject constructor(
         }
     }
 
+    override suspend fun saveDraftCardId(userId: String, cardId: String) {
+        Log.d(TAG, "saveDraftCardId: $userId, $cardId")
+        database.collection("users")
+            .document(userId)
+            .update("draftCards", FieldValue.arrayUnion(cardId))
+            .await()
+    }
+
+    override suspend fun getDraftCardsId(userId: String): List<String> {
+        var draftCards: List<String> = emptyList()
+
+        val task = database.collection("users")
+            .document(userId)
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    draftCards = documentSnapshot.get("draftCards") as? List<String> ?: emptyList()
+                }
+            }
+
+        task.await()
+
+        return draftCards
+    }
+
+    override suspend fun removeDraftCardId(userId: String, cardId: String) {
+        database.collection("users")
+            .document(userId)
+            .update("draftCards", FieldValue.arrayRemove(cardId))
+            .await()
+    }
+
     // Should Not be used
     override suspend fun getAll(): Flow<List<User>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun delete(item: User) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun get(item: User): Flow<User> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun deleteById(id: String) {
         TODO("Not yet implemented")
     }
 

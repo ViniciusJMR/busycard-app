@@ -29,12 +29,25 @@ class CardRepository @Inject constructor(
     }
 
     override suspend fun getByIds(ids: List<String>): Flow<List<Card>> = flow{
-        emit(database.collection("cards")
+        val prodCardsTask = database.collection("cards")
             .whereIn("id", ids)
             .get()
+
+
+        val draftCardsTask = database.collection("draftCards")
+            .whereIn("id", ids)
+            .get()
+
+        val draftCards = draftCardsTask
             .await()
             .map { it.toObject(FirebaseCardModel::class.java).mapToDomainModel(emptyList()) }
-        )
+
+        val prodCards = prodCardsTask
+            .await()
+            .map { it.toObject(FirebaseCardModel::class.java).mapToDomainModel(emptyList()) }
+
+        val cards = prodCards + draftCards
+        emit(cards)
     }
 
     override suspend fun getAll(): Flow<List<Card>> = flow {
@@ -52,6 +65,28 @@ class CardRepository @Inject constructor(
                 TODO()
             }
         }
+    }
+
+
+    override suspend fun deleteById(id: String) {
+        database.collection("cards").document(id).delete().await()
+        database.collection("fields").document(id).delete().await()
+    }
+
+    override suspend fun delete(item: Card) {
+        val docCard: String
+        val docFields: String
+
+        if (!item.isDraft) {
+            docCard = "cards"
+            docFields = "fields"
+        } else {
+            docCard = "draftCards"
+            docFields = "draftFields"
+        }
+
+        database.collection(docCard).document(item.id!!).delete().await()
+        database.collection(docFields).document(item.id!!).delete().await()
     }
 
     override suspend fun getById(id: String): Flow<Card> = flow {
@@ -74,14 +109,66 @@ class CardRepository @Inject constructor(
         }
     }
 
+    override suspend fun get(item: Card): Flow<Card> = flow {
+        val docCard: String
+        val docFields: String
+
+        if (!item.isDraft) {
+            docCard = "cards"
+            docFields = "fields"
+        } else {
+            docCard = "draftCards"
+            docFields = "draftFields"
+        }
+
+        val id = item.id!!
+
+        val cardsSnapshot = database.collection(docCard).document(id).get()
+        val fieldsSnapshot = database.collection(docFields).document(id).get()
+        cardsSnapshot.await()
+        fieldsSnapshot.await()
+
+        when {
+            cardsSnapshot.isSuccessful -> {
+                val firebaseCard = cardsSnapshot.result.toObject(FirebaseCardModel::class.java)
+                Log.d(TAG, "getById: fields: ${fieldsSnapshot.result.data?.get("list")}")
+                val firebaseFields: List<Map<String, Any>> = fieldsSnapshot.result.data?.get("list") as List<Map<String, Any>>
+                val card = firebaseCard!!.mapToDomainModel(firebaseFields)
+                emit(card)
+            }
+            cardsSnapshot.isCanceled -> {
+                TODO()
+            }
+        }
+    }
+
     override suspend fun save(item: Card): String {
-        database.collection("cards")
-        val key = UUID.randomUUID().toString()
-        item.id = key
+        val docCard: String
+        val docFields: String
+
+        if (!item.isDraft) {
+            docCard = "cards"
+            docFields = "fields"
+        } else {
+            docCard = "draftCards"
+            docFields = "draftFields"
+        }
+
+        val key: String
+        if (item.id != null) {
+            key = item.id!!
+        } else {
+            key = UUID.randomUUID().toString()
+            item.id = key
+        }
 
         item.image.uri = item.image.uri?.let {
-            val ext = it.path!!.substring(it.path!!.lastIndexOf(".") + 1)
-            val bucketPath = "cards/$key/cardImage.${ext}"
+            val bucketPath = "cards/$key/cardImage"
+            val subs = it.toString().substring(0, 4)
+            Log.d(TAG, "save: substring ${subs}")
+            if (subs.contains("http")) {
+                return@let it
+            }
             bucket.uploadFile(it, bucketPath)
         }
         Log.d(TAG, "save: uri: ${item.image.uri} - ${item.image.uri?.path}")
@@ -90,22 +177,25 @@ class CardRepository @Inject constructor(
             .filterIsInstance<Field.ImageField>()
             .forEach {
                 val uri = it.image.uri!!
-                val ext = uri.path!!.substring(uri.path!!.lastIndexOf(".") + 1)
-                val imageId = uri.toString().substring(uri.toString().lastIndexOf("%") + 1)
+                val imageId = uri.toString().substring(uri.toString().lastIndexOf("/") + 1)
 
-                val bucketPath = "fields/$key/$imageId.$ext"
+                if (uri.toString().substring(0, 4).contains("http")) {
+                    return@forEach
+                }
+
+                val bucketPath = "fields/$key/$imageId"
                 it.image.uri = bucket.uploadFile(uri, bucketPath)
             }
 
 
         database
-            .collection("cards")
+            .collection(docCard)
             .document(item.id.toString())
             .set(item.mapToFirebaseModel())
 
 
         database
-            .collection("fields")
+            .collection(docFields)
             .document(item.id.toString())
             .set(mapOf("list" to mapDomainFieldsToFirebaseModel(item.fields)))
 

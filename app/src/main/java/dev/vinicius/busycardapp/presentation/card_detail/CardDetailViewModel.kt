@@ -5,12 +5,11 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.vinicius.busycardapp.domain.model.card.CardState
-import dev.vinicius.busycardapp.domain.usecase.card.GetCardById
-import dev.vinicius.busycardapp.domain.usecase.card.GetMyCards
-import dev.vinicius.busycardapp.domain.usecase.card.GetSharedCards
-import dev.vinicius.busycardapp.domain.usecase.card.RemoveSharedCard
-import dev.vinicius.busycardapp.domain.usecase.card.SaveSharedCard
+import dev.vinicius.busycardapp.domain.model.card.enums.CardState
+import dev.vinicius.busycardapp.domain.usecase.card.delete.DeleteCardById
+import dev.vinicius.busycardapp.domain.usecase.card.read.GetCardById
+import dev.vinicius.busycardapp.domain.usecase.card.delete.RemoveSharedCard
+import dev.vinicius.busycardapp.domain.usecase.card.write.SaveSharedCard
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
@@ -25,8 +24,7 @@ class CardDetailViewModel @Inject constructor(
     private val getCardById: GetCardById,
     private val saveSharedCard: SaveSharedCard,
     private val removeSharedCard: RemoveSharedCard,
-    private val getSharedCards: GetSharedCards,
-    private val getMyCards: GetMyCards,
+    private val deleteCardById: DeleteCardById,
 ): ViewModel() {
 
     companion object {
@@ -69,6 +67,8 @@ class CardDetailViewModel @Inject constructor(
                             imagePath = card.image.path,
                             name = card.name,
                             owner = card.owner,
+                            cardSize = card.cardSize,
+                            cardColor = card.cardColor,
                             fields = card.fields
                         )
                     }
@@ -140,6 +140,35 @@ class CardDetailViewModel @Inject constructor(
                         }
                 }
             }
+            CardInfoEvent.CardEvent.OnDeleteCard -> {
+                viewModelScope.launch {
+                    deleteCardById(_state.value.id)
+                        .onStart {
+                            _state.update {
+                                it.copy(
+                                    isScreenLoading = true
+                                )
+                            }
+                        }
+                        .catch {
+                            _state.update {
+                                it.copy(
+                                    isScreenLoading = false
+                                )
+                            }
+                        }
+                        .collect {
+                            _state.update {
+                                it.copy(
+                                    isScreenLoading = false
+                                )
+                            }
+
+                            _effect.update { CardDetailEffect.ClosePage }
+                        }
+                    }
+
+            }
         }
     }
 
@@ -159,6 +188,21 @@ class CardDetailViewModel @Inject constructor(
                     )
                 }
             }
+
+            CardInfoEvent.DialogEvent.OnDismissDeleteDialog ->
+                _state.update {
+                    it.copy(
+                        showDeleteDialog = false
+                    )
+                }
+
+            CardInfoEvent.DialogEvent.OnShowDeleteDialog ->
+                _state.update {
+                    it.copy(
+                        showDeleteDialog = true
+                    )
+                }
+
         }
     }
 

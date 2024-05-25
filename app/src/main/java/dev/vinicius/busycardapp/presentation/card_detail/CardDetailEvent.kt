@@ -5,12 +5,18 @@ sealed class CardInfoEvent {
     sealed class CardEvent: CardInfoEvent() {
         data object OnSaveToSharedCard: CardEvent()
         data object OnDeleteFromSharedCard: CardEvent()
+
+        data object OnDeleteCard: CardEvent()
     }
 
     sealed class DialogEvent: CardInfoEvent() {
         data object OnShowShareDialog: DialogEvent()
 
         data object OnDismissShareDialog: DialogEvent()
+
+        data object OnShowDeleteDialog: DialogEvent()
+
+        data object OnDismissDeleteDialog: DialogEvent()
     }
 
     sealed class ModalEvent: CardInfoEvent() {
