@@ -8,7 +8,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CardMembership
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.CardMembership
 import androidx.compose.material.icons.outlined.CreditCard
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -34,6 +37,7 @@ import dev.vinicius.busycardapp.presentation.NavGraphs
 import dev.vinicius.busycardapp.presentation.appCurrentDestinationAsState
 import dev.vinicius.busycardapp.presentation.destinations.LoginScreenDestination
 import dev.vinicius.busycardapp.presentation.destinations.MyCardsScreenDestination
+import dev.vinicius.busycardapp.presentation.destinations.SearchCardsScreenDestination
 import dev.vinicius.busycardapp.presentation.destinations.SharedCardsScreenDestination
 import dev.vinicius.busycardapp.presentation.startAppDestination
 import dev.vinicius.busycardapp.ui.theme.BusyCardAppTheme
@@ -106,7 +110,8 @@ class MainActivity: ComponentActivity() {
         val icon: ImageVector,
         @StringRes val label: Int
     ) {
-        SharedCards(SharedCardsScreenDestination, Icons.Filled.CardMembership, R.string.label_bottomnav_shared_screen),
+        SharedCards(SharedCardsScreenDestination, Icons.Outlined.CardMembership, R.string.label_bottomnav_shared_screen),
+        SearchCards(SearchCardsScreenDestination, Icons.Outlined.Search, R.string.label_bottomnav_search_screen),
         MyCards(MyCardsScreenDestination, Icons.Outlined.CreditCard, R.string.label_bottomnav_mycards_screen)
     }
 
