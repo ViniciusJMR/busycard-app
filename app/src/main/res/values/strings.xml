@@ -54,4 +54,5 @@
     <string name="label_location_icon_position">Posição da Ícone:</string>
     <string name="label_field_text">Texto do campo</string>
     <string name="label_bottomnav_search_screen">Procurar</string>
+    <string name="txt_error_field_text">Este campo não pode estar vazio</string>
 </resources>

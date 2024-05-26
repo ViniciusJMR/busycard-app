@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ChevronLeft
 import androidx.compose.material.icons.outlined.ChevronRight
@@ -44,6 +45,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -166,6 +168,7 @@ fun TextFieldMenu(
     var fieldType by remember { mutableStateOf(field.textType) }
     var fieldFont by remember { mutableStateOf(field.font) }
     var fieldSize by remember { mutableIntStateOf(field.size) }
+    var error = fieldValue.isBlank()
 
     var showTypeDialog by remember { mutableStateOf(false) }
     var showFontDialog by remember { mutableStateOf(false) }
@@ -182,7 +185,10 @@ fun TextFieldMenu(
                 confirmText = R.string.txt_close,
             ) {
                 RadioOptions(
-                    onOptionSelected = { fieldType = it },
+                    onOptionSelected = {
+                        fieldValue = ""
+                        fieldType = it
+                    },
                     options = TextType.entries,
                     currentlySelectedOption = fieldType,
                 )
@@ -250,6 +256,18 @@ fun TextFieldMenu(
                 fieldValue = it
             },
             singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = when (fieldType) {
+                    TextType.TEXT -> KeyboardType.Text
+                    TextType.PHONE -> KeyboardType.Phone
+                    TextType.EMAIL -> KeyboardType.Email
+                }
+            ),
+            isError = error,
+            supportingText = {
+                if (error)
+                    Text(stringResource(R.string.txt_error_field_text))
+            },
         )
         Spacer(Modifier.size(8.dp))
         Row (verticalAlignment = Alignment.CenterVertically) {
@@ -298,6 +316,7 @@ fun TextFieldMenu(
                     )
                 )
             },
+            enabled = !error
         ) {
             Text(stringResource(R.string.txt_label_confirm))
         }
