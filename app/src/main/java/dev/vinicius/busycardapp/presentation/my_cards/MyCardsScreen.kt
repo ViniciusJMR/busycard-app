@@ -63,7 +63,7 @@ fun MyCardsScreen(
                     onClick = { tabIndex = 0 }
                 ) {
                     Text(
-                        modifier = Modifier.padding(8.dp),
+                        modifier = Modifier.padding(12.dp),
                         text = "Meus Cartões"
                     )
                 }
@@ -72,7 +72,7 @@ fun MyCardsScreen(
                     onClick = { tabIndex = 1 }
                 ) {
                     Text(
-                        modifier = Modifier.padding(8.dp),
+                        modifier = Modifier.padding(12.dp),
                         text = "Rascunho")
                 }
             }
@@ -118,7 +118,7 @@ fun MyCardsScreen(
             onRefresh = { viewModel.onEvent(MyCardsEvent.Refresh) }
         )
     } else {
-        Text("Loading")
+        Text(stringResource(R.string.txt_loading))
     }
 
 }
