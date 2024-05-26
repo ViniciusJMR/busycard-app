@@ -215,6 +215,33 @@ class CardEditingViewModel @Inject constructor(
                     }
 
                 }
+                val isCardValid = isCardInfoValid(card)
+                Log.e(TAG, "handleCardEvent: isCardValid - $isCardValid", )
+                if (!isCardValid) {
+                    _state.update {
+                        it.copy(
+                            isScreenLoading = false,
+                            showSaveDialog = false,
+                            showCardInfoDialog = true,
+                        )
+                    }
+                    return
+                }
+
+                val invalidField = validateFields(_fields)
+                Log.e(TAG, "handleCardEvent: invalidField - $invalidField", )
+                invalidField?.let { field ->
+                    _state.update {
+                        it.copy(
+                            showSaveDialog = false,
+                            isScreenLoading = false,
+                            showBottomSheet = true,
+                            currentlySelectedField = field,
+                        )
+                    }
+                    return
+                }
+
                 viewModelScope.launch {
                     val useCase = if (_state.value.isDraft)
                         saveCardFromDraft
@@ -478,4 +505,37 @@ class CardEditingViewModel @Inject constructor(
     }
 
     private fun random() = Random.nextInt(0, 10000)
+
+    private fun isCardInfoValid(card: Card): Boolean {
+        if (card.name.isBlank()) {
+            return false
+        }
+        return true
+    }
+
+
+    private fun validateFields(fields: List<Field>): Field? {
+        fields.forEach {
+            when (it) {
+                is Field.TextField -> {
+                    if (it.value.isBlank()) {
+                        return it
+                    }
+                }
+
+                is Field.AddressField -> {
+                    if (it.textLocalization.isBlank() && it.localization == null) {
+                        return it
+                    }
+                }
+
+                is Field.ImageField -> {
+                    if (it.image.uri == null) {
+                        return it
+                    }
+                }
+            }
+        }
+        return null
+    }
 }
