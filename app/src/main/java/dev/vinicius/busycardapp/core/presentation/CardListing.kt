@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,6 +21,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,24 +41,42 @@ import dev.vinicius.busycardapp.ui.theme.BusyCardAppTheme
 fun CardsListing(
     modifier: Modifier = Modifier,
     onClickItemCard: (String) -> Unit,
-    cards: List<Card>
+    cards: List<Card>,
+    searchQuery: String,
+    onSearchQueryChange: (String) -> Unit,
 ) {
-    LazyColumn (
-        modifier = modifier,
-        verticalArrangement = Arrangement.Center
+    Column (
+        modifier = Modifier.fillMaxSize()
     ) {
-        items(
-            items = cards,
-            key = { card -> card.id!! }
-        ) { card ->
-            CardItem(
-                modifier = Modifier.padding(horizontal= 8.dp, vertical = 4.dp),
-                name = card.name,
-                mainContact = card.mainContact,
-                imageUri = card.image.uri.toString(),
-                onClick = { onClickItemCard(card.id!!) }
-            )
-            HorizontalDivider()
+        OutlinedTextField(
+            value = searchQuery,
+            onValueChange = onSearchQueryChange,
+            placeholder = {
+                Text(text = "Search")
+            },
+            maxLines = 1,
+            singleLine = true,
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+        )
+        LazyColumn(
+            modifier = modifier,
+            verticalArrangement = Arrangement.Center
+        ) {
+            items(
+                items = cards,
+                key = { card -> card.id!! }
+            ) { card ->
+                CardItem(
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                    name = card.name,
+                    mainContact = card.mainContact,
+                    imageUri = card.image.uri.toString(),
+                    onClick = { onClickItemCard(card.id!!) }
+                )
+                HorizontalDivider(Modifier.padding(horizontal = 8.dp))
+            }
         }
     }
 }
@@ -137,7 +157,8 @@ private fun CardsListingPreview() {
                 )
             ),
             onClickItemCard = {},
-
+            searchQuery = "",
+            onSearchQueryChange = {},
         )
     }
 }
