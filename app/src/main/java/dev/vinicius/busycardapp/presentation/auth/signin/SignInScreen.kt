@@ -1,6 +1,7 @@
 package dev.vinicius.busycardapp.presentation.auth.signin
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -8,11 +9,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.vinicius.busycardapp.R
+import dev.vinicius.busycardapp.core.presentation.component.TextFieldComponent
 import dev.vinicius.busycardapp.presentation.auth.login.LoginEffect
 import dev.vinicius.busycardapp.presentation.auth.login.LoginEvent
 import dev.vinicius.busycardapp.presentation.auth.login.LoginViewModel
@@ -41,51 +45,56 @@ fun SignInScreen(
     }
 
 
-    Column {
-        OutlinedTextField(
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        TextFieldComponent(
             value = state.name,
             onValueChange = { event(SignInEvent.OnNameChange(it)) },
             label = { Text(stringResource(R.string.label_name))},
             singleLine = true,
         )
 
-        OutlinedTextField(
+        TextFieldComponent(
             singleLine = true,
             value = state.surname,
             onValueChange = { event(SignInEvent.OnSurnameChange(it)) },
             label = { Text(stringResource(R.string.label_surname))}
         )
 
-        OutlinedTextField(
+        TextFieldComponent(
             singleLine = true,
             value = state.username,
             onValueChange = { event(SignInEvent.OnUsernameChange(it)) },
             label = { Text(stringResource(R.string.label_username))}
         )
 
-        OutlinedTextField(
+        TextFieldComponent(
             singleLine = true,
             value = state.email,
             onValueChange = { event(SignInEvent.OnEmailChange(it)) },
-            label = { Text(stringResource(R.string.label_email))}
+            label = { Text(stringResource(R.string.label_email))},
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
         )
 
-        OutlinedTextField(
+        TextFieldComponent(
             singleLine = true,
             value = state.password,
             onValueChange = { event(SignInEvent.OnPasswordChange(it)) },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             label = { Text(stringResource(R.string.label_password))}
         )
 
-        OutlinedTextField(
+        TextFieldComponent(
             singleLine = true,
             value = state.password2,
             onValueChange = { event(SignInEvent.OnPassword2Change(it)) },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             label = { Text(stringResource(R.string.label_password2))}
         )
 
         OutlinedButton(onClick = { event(SignInEvent.OnSignIn) }) {
-            Text(stringResource(R.string.txt_login))
+            Text("Criar")
         }
     }
 }
