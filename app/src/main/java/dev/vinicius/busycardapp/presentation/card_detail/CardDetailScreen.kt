@@ -56,6 +56,7 @@ import com.journeyapps.barcodescanner.BarcodeEncoder
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.popUpTo
 import dev.vinicius.busycardapp.R
 import dev.vinicius.busycardapp.domain.model.card.enums.CardState
 import dev.vinicius.busycardapp.domain.model.card.Field
@@ -66,7 +67,9 @@ import dev.vinicius.busycardapp.presentation.card_detail.component.CardInfoTextF
 import dev.vinicius.busycardapp.presentation.card_detail.component.CompactAddressFieldComponent
 import dev.vinicius.busycardapp.presentation.card_detail.component.CompactTextFieldComponent
 import dev.vinicius.busycardapp.presentation.card_detail.component.DialogComponent
+import dev.vinicius.busycardapp.presentation.destinations.CardDetailScreenDestination
 import dev.vinicius.busycardapp.presentation.destinations.CardEditingScreenDestination
+import dev.vinicius.busycardapp.presentation.destinations.MyCardsScreenDestination
 import dev.vinicius.busycardapp.ui.theme.BusyCardAppTheme
 
 
@@ -143,7 +146,11 @@ fun CardDetailScreen(
                 actions = {
                     if (state.cardState == CardState.MINE) {
                         IconButton(
-                            onClick = { navigator.navigate(CardEditingScreenDestination(id = id)) }
+                            onClick = {
+                                navigator.navigate(CardEditingScreenDestination(id = id)) {
+                                    popUpTo(MyCardsScreenDestination)
+                                }
+                            }
                         ) {
                             Icon(Icons.Outlined.Edit, contentDescription = "")
                         }
