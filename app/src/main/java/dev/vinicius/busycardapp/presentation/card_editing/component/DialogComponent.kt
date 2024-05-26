@@ -119,7 +119,6 @@ fun CardInfoDialog(
     var showSizeDialog by remember { mutableStateOf(false) }
     var showColorDialog by remember { mutableStateOf(false) }
 
-
     val imageUri = rememberSaveable {
         mutableStateOf(cardImageUri)
     }
@@ -127,6 +126,8 @@ fun CardInfoDialog(
     val painter = rememberAsyncImagePainter(
         imageUri.value?.toString() ?: R.drawable.outline_image_24
     )
+
+    val error = newCardName.isBlank()
 
 
     if (showSizeDialog) {
@@ -212,6 +213,11 @@ fun CardInfoDialog(
             value = newCardName,
             onValueChange = { newCardName = it },
             label = { Text("Nome do Cartão") },
+            isError = error,
+            supportingText = {
+                if (error)
+                    Text(stringResource(R.string.txt_error_field_text))
+            },
         )
         Spacer(modifier = Modifier.padding(8.dp))
         Row (
@@ -252,7 +258,7 @@ fun CardInfoDialog(
                 .align(Alignment.End),
             onClick = {
                 onConfirmation(newCardName, imageUri.value, newCardSize, newCardColor)
-            }
+            },
         ) {
             Text(stringResource(R.string.txt_label_confirm))
         }
