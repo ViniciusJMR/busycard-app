@@ -57,4 +57,5 @@
     <string name="txt_error_field_text">Este campo não pode estar vazio</string>
     <string name="txt_error_image_field">Obrigatório ter uma imagem selecionada</string>
     <string name="txt_error_address_localization">Obrigatório que o Texto do Campo ou um lugar no mapa seja selecionado</string>
+    <string name="label_bottomnav_profile_screen">Perfil</string>
 </resources>
