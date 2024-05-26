@@ -55,4 +55,5 @@
     <string name="label_field_text">Texto do campo</string>
     <string name="label_bottomnav_search_screen">Procurar</string>
     <string name="txt_error_field_text">Este campo não pode estar vazio</string>
+    <string name="txt_error_image_field">Obrigatório ter uma imagem selecionada</string>
 </resources>

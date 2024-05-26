@@ -18,6 +18,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ChevronLeft
 import androidx.compose.material.icons.outlined.ChevronRight
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Upload
@@ -25,6 +26,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -360,9 +362,12 @@ fun ImageFieldMenu(
         imageUri.value?.toString() ?: R.drawable.outline_image_24
     )
 
-    Column {
+    var error = imageUri.value == null
+
+    Column (
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
         Column(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Image (
@@ -378,19 +383,35 @@ fun ImageFieldMenu(
                     imageUri.value = it
                 }
             ) { launcher ->
-                IconButton(onClick = { launcher.launch("image/*") }) {
-                    Icon(
-                        Icons.Outlined.Upload,
-                        contentDescription = null
-                    )
+                Row {
+                    IconButton(onClick = { launcher.launch("image/*") }) {
+                        Icon(
+                            Icons.Outlined.Upload,
+                            contentDescription = null
+                        )
+                    }
+
+                    IconButton(onClick = { imageUri.value = null }) {
+                        Icon(
+                            Icons.Outlined.Close,
+                            contentDescription = null
+                        )
+                    }
                 }
             }
 
         }
+        Spacer(modifier = Modifier.padding(4.dp))
+        if (error)
+            Text(
+                stringResource(R.string.txt_error_image_field),
+                color = MaterialTheme.colorScheme.error,
+            )
         Spacer(modifier = Modifier.padding(8.dp))
         Row (
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = { size-- }) {
                 Icon(Icons.Outlined.ChevronLeft, contentDescription = null)
@@ -413,6 +434,7 @@ fun ImageFieldMenu(
                     )
                 )
             },
+            enabled = !error,
         ) {
             Text(stringResource(R.string.txt_label_confirm))
         }
