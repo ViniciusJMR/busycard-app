@@ -461,6 +461,8 @@ fun AddressFieldMenu(
     var showFontDialog by remember { mutableStateOf(false) }
     var showLocationIconDialog by remember { mutableStateOf(false) }
 
+    var error = textLocalization.isBlank() && localization == null
+
     val locationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
     ) { permissions ->
@@ -599,6 +601,13 @@ fun AddressFieldMenu(
 
         }
         Spacer(modifier = Modifier.padding(8.dp))
+        if (error)
+            Text(
+                text = stringResource(R.string.txt_error_address_localization),
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                color = MaterialTheme.colorScheme.error,
+            )
+        Spacer(modifier = Modifier.padding(4.dp))
         OutlinedTextField(
             label = { Text(stringResource(R.string.label_field_text)) },
             modifier = modifier
@@ -611,6 +620,27 @@ fun AddressFieldMenu(
             singleLine = true,
         )
         Spacer(modifier = Modifier.padding(4.dp))
+        TextButton(
+            modifier = Modifier.padding(start = 8.dp, end = 8.dp),
+            onClick = {
+                if (!checkForPermission(context)) {
+                    locationPermissionLauncher.launch(
+                        arrayOf(
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION
+                        )
+                    )
+                } else {
+                    showMap = true
+                }
+            }) {
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(R.string.txt_label_address_localization),
+                textAlign = TextAlign.Center,
+            )
+        }
+        Spacer(modifier = Modifier.padding(8.dp))
         Row(
             modifier = Modifier.padding(start = 8.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -648,35 +678,14 @@ fun AddressFieldMenu(
                 )
             }
         }
-        Spacer(modifier = Modifier.padding(4.dp))
-        TextButton(
-            modifier = Modifier.padding(start = 8.dp, end = 8.dp),
-            onClick = {
-                if (!checkForPermission(context)) {
-                    locationPermissionLauncher.launch(
-                        arrayOf(
-                            Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.ACCESS_COARSE_LOCATION
-                        )
-                    )
-                } else {
-                    showMap = true
-                }
-            }) {
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = stringResource(R.string.txt_label_address_localization),
-                textAlign = TextAlign.Center,
-            )
-        }
         Spacer(modifier = Modifier.padding(16.dp))
 
         Button(
+            enabled = !error,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 8.dp, end = 8.dp),
             onClick = {
-                Log.d(TAG, "AddressFieldMenu: Button clicked - localization: $localization")
                 onChangeAddress(
                     CardEditingEvent.FieldEvent.OnAddressFieldChange(
                         textLocalization = textLocalization,
