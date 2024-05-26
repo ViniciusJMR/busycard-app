@@ -1,15 +1,12 @@
 package dev.vinicius.busycardapp.presentation.my_cards
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCard
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -18,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -30,8 +26,8 @@ import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.vinicius.busycardapp.R
 import dev.vinicius.busycardapp.core.presentation.CardsListing
-import dev.vinicius.busycardapp.presentation.destinations.CardEditingScreenDestination
 import dev.vinicius.busycardapp.presentation.destinations.CardDetailScreenDestination
+import dev.vinicius.busycardapp.presentation.destinations.CardEditingScreenDestination
 
 
 // Currently being used to check every card
@@ -117,7 +113,9 @@ fun MyCardsScreen(
             searchQuery = state.searchQuery,
             onSearchQueryChange = { query ->
                 viewModel.onEvent(MyCardsEvent.OnSearchQueryChange(query))
-            }
+            },
+            isRefreshing = state.isRefreshing,
+            onRefresh = { viewModel.onEvent(MyCardsEvent.Refresh) }
         )
     } else {
         Text("Loading")
@@ -141,7 +139,9 @@ fun DraftCardsScreen(
             searchQuery = state.searchQuery,
             onSearchQueryChange = { query ->
                 viewModel.onEvent(MyCardsEvent.OnSearchQueryChange(query))
-            }
+            },
+            isRefreshing = state.isRefreshing,
+            onRefresh = { viewModel.onEvent(MyCardsEvent.Refresh) }
         )
     } else {
         Text(stringResource(R.string.txt_loading))

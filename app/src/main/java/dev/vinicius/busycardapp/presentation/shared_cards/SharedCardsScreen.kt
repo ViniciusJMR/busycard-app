@@ -76,7 +76,9 @@ fun SharedCardsScreen(
                 searchQuery = state.searchQuery,
                 onSearchQueryChange = { query ->
                     viewModel.onEvent(SharedCardsEvent.OnSearchQueryChange(query))
-                }
+                },
+                isRefreshing = state.isRefreshing,
+                onRefresh = { viewModel.onEvent(SharedCardsEvent.Refresh) }
             )
         } else {
             Text(stringResource(R.string.txt_loading))

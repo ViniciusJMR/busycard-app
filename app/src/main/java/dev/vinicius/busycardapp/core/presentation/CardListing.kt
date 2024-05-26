@@ -1,5 +1,6 @@
 package dev.vinicius.busycardapp.core.presentation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,7 +34,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
+import dev.vinicius.busycardapp.core.presentation.component.PullToRefreshLazyColumn
 import dev.vinicius.busycardapp.domain.model.card.Card
 import dev.vinicius.busycardapp.ui.theme.BusyCardAppTheme
 
@@ -43,6 +46,8 @@ fun CardsListing(
     onClickItemCard: (String) -> Unit,
     cards: List<Card>,
     searchQuery: String,
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit,
     onSearchQueryChange: (String) -> Unit,
 ) {
     Column (
@@ -58,16 +63,13 @@ fun CardsListing(
             singleLine = true,
             modifier = Modifier
                 .padding(16.dp)
+                .zIndex(1f)
+                .background(MaterialTheme.colorScheme.surface)
                 .fillMaxWidth(),
         )
-        LazyColumn(
-            modifier = modifier,
-            verticalArrangement = Arrangement.Center
-        ) {
-            items(
-                items = cards,
-                key = { card -> card.id!! }
-            ) { card ->
+        PullToRefreshLazyColumn(
+            items = cards,
+            content = { card ->
                 CardItem(
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                     name = card.name,
@@ -75,9 +77,10 @@ fun CardsListing(
                     imageUri = card.image.uri.toString(),
                     onClick = { onClickItemCard(card.id!!) }
                 )
-                HorizontalDivider(Modifier.padding(horizontal = 8.dp))
-            }
-        }
+            },
+            isRefreshing = isRefreshing,
+            onRefresh = onRefresh,
+        )
     }
 }
 
@@ -159,6 +162,8 @@ private fun CardsListingPreview() {
             onClickItemCard = {},
             searchQuery = "",
             onSearchQueryChange = {},
+            isRefreshing = false,
+            onRefresh = {},
         )
     }
 }

@@ -7,4 +7,5 @@ data class SharedCardsState (
     val searchQuery: String = "",
 
     val isLoading: Boolean = true,
+    val isRefreshing: Boolean = false,
 )

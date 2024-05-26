@@ -7,4 +7,5 @@ data class SearchCardsState (
     val searchQuery: String = "",
 
     val isLoading: Boolean = true,
+    val isRefreshing: Boolean = false,
 )

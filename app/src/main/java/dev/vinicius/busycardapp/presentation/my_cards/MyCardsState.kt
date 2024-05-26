@@ -9,4 +9,5 @@ data class MyCardsState (
 
     val isMyCardsLoading: Boolean = true,
     val isDraftCardsLoading: Boolean = true,
+    val isRefreshing: Boolean = false,
 )

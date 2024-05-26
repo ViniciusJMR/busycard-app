@@ -26,25 +26,7 @@ class SharedCardsViewModel @Inject constructor(
     private var searchJob: Job? = null
 
     init {
-        viewModelScope.launch {
-            getSharedCards()
-                .onStart {
-                    _state.update {
-                        it.copy(
-                            isLoading = true
-                        )
-                    }
-                }
-                .collect{ cards ->
-                    _state.update {
-                        it.copy(
-                            cards = cards,
-                            isLoading = false
-                        )
-                    }
-                    cardsList = cards
-                }
-        }
+        gSharedCards()
     }
 
     fun onEvent(event: SharedCardsEvent) {
@@ -75,7 +57,32 @@ class SharedCardsViewModel @Inject constructor(
                     }
                 }
             }
-        }
 
+            SharedCardsEvent.Refresh -> gSharedCards()
+        }
     }
+
+    private fun gSharedCards() {
+        viewModelScope.launch {
+            getSharedCards()
+                .onStart {
+                    _state.update {
+                        it.copy(
+                            isLoading = true
+                        )
+                    }
+                }
+                .collect{ cards ->
+                    _state.update {
+                        it.copy(
+                            cards = cards,
+                            isLoading = false
+                        )
+                    }
+                    cardsList = cards
+                }
+        }
+    }
+
+
 }

@@ -18,8 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MyCardsViewModel @Inject constructor(
-    getMyCards: GetMyCards,
-    getDraftCards: GetDraftCards
+    private val getMyCards: GetMyCards,
+    private val getDraftCards: GetDraftCards
 ): ViewModel() {
     private val _state = MutableStateFlow(MyCardsState())
     val state = _state.asStateFlow()
@@ -29,14 +29,17 @@ class MyCardsViewModel @Inject constructor(
 
     private var searchJob: Job? = null
 
-
     init {
+        gMyCards()
+    }
+
+    private fun gMyCards() {
         viewModelScope.launch {
             getMyCards()
                 .onStart {
                     _state.update {
                         it.copy(
-                            isMyCardsLoading = true
+                            isMyCardsLoading = true,
                         )
                     }
                 }
@@ -44,7 +47,7 @@ class MyCardsViewModel @Inject constructor(
                     _state.update {
                         it.copy(
                             myCards = cards,
-                            isMyCardsLoading = false
+                            isMyCardsLoading = false,
                         )
                     }
                     myCardsList = cards
@@ -54,7 +57,7 @@ class MyCardsViewModel @Inject constructor(
                 .onStart {
                     _state.update {
                         it.copy(
-                            isDraftCardsLoading = true
+                            isDraftCardsLoading = true,
                         )
                     }
                 }
@@ -62,7 +65,7 @@ class MyCardsViewModel @Inject constructor(
                     _state.update {
                         it.copy(
                             draftCards = cards,
-                            isDraftCardsLoading = false
+                            isDraftCardsLoading = false,
                         )
                     }
                     draftCardsList = cards
@@ -102,6 +105,8 @@ class MyCardsViewModel @Inject constructor(
                     }
                 }
             }
+
+            MyCardsEvent.Refresh -> gMyCards()
         }
 
     }

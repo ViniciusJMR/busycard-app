@@ -28,25 +28,7 @@ class SearchCardsViewModel @Inject constructor(
     private var searchJob: Job? = null
 
     init {
-        viewModelScope.launch {
-            getAll()
-                .onStart {
-                    _state.update {
-                        it.copy(
-                            isLoading = true
-                        )
-                    }
-                }
-                .collect{ cards ->
-                    _state.update {
-                        it.copy(
-                            cards = cards,
-                            isLoading = false
-                        )
-                    }
-                    cardsList = cards
-                }
-        }
+        gAllCards()
     }
 
     fun onEvent(event: SearchCardsEvent) {
@@ -77,7 +59,31 @@ class SearchCardsViewModel @Inject constructor(
                     }
                 }
             }
+
+            SearchCardsEvent.Refresh -> gAllCards()
         }
 
+    }
+
+    private fun gAllCards() {
+        viewModelScope.launch {
+            getAll()
+                .onStart {
+                    _state.update {
+                        it.copy(
+                            isLoading = true
+                        )
+                    }
+                }
+                .collect{ cards ->
+                    _state.update {
+                        it.copy(
+                            cards = cards,
+                            isLoading = false
+                        )
+                    }
+                    cardsList = cards
+                }
+        }
     }
 }
