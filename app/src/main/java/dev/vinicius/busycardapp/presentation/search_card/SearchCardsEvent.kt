@@ -1,3 +1,5 @@
 package dev.vinicius.busycardapp.presentation.search_card
 
-sealed class SearchCardsEvent
+sealed class SearchCardsEvent {
+    data class OnSearchQueryChange(val query: String) : SearchCardsEvent()
+}

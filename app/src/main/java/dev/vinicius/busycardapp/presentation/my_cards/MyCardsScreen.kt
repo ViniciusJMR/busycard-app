@@ -11,10 +11,16 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -38,6 +44,8 @@ fun MyCardsScreen(
 ) {
     val state by viewModel.state.collectAsState()
 
+    var tabIndex by remember { mutableIntStateOf(0) }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         floatingActionButton = {
@@ -49,47 +57,93 @@ fun MyCardsScreen(
                 Icon(Icons.Filled.AddCard, contentDescription = "")
             }
         }
-    ){
+    ) {
         Column(
             modifier = Modifier.padding(it)
         ) {
-            Text(
-                text = "Meus Cartões",
-                style = MaterialTheme.typography.headlineSmall
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-
-            if (!state.isMyCardsLoading) {
-                CardsListing(
-                    modifier = Modifier.padding(it),
-                    onClickItemCard = { id ->
-                        navigator.navigate(CardDetailScreenDestination(id = id))
-                    },
-                    cards = state.myCards
-                )
-            } else {
-                Text("Loading")
+            TabRow(selectedTabIndex = tabIndex) {
+                Tab(
+                    selected = tabIndex == 0,
+                    onClick = { tabIndex = 0 }
+                ) {
+                    Text(
+                        modifier = Modifier.padding(8.dp),
+                        text = "Meus Cartões"
+                    )
+                }
+                Tab(
+                    selected = tabIndex == 1,
+                    onClick = { tabIndex = 1 }
+                ) {
+                    Text(
+                        modifier = Modifier.padding(8.dp),
+                        text = "Rascunho")
+                }
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Text(
-                text = "Cartões em Rascunho",
-                style = MaterialTheme.typography.headlineSmall
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-
-            if (!state.isDraftCardsLoading) {
-                CardsListing(
+            when (tabIndex) {
+                0 -> MyCardsScreen(
                     modifier = Modifier.padding(it),
-                    onClickItemCard = { id ->
-                        navigator.navigate(CardDetailScreenDestination(id = id))
-                    },
-                    cards = state.draftCards
+                    navigator = navigator,
+                    state = state,
+                    viewModel = viewModel
                 )
-            } else {
-                Text(stringResource(R.string.txt_loading))
+
+                1 -> DraftCardsScreen(
+                    modifier = Modifier.padding(it),
+                    navigator = navigator,
+                    state = state,
+                    viewModel = viewModel
+                )
             }
         }
+    }
+}
+
+@Composable
+fun MyCardsScreen(
+    modifier: Modifier = Modifier,
+    navigator: DestinationsNavigator,
+    state: MyCardsState,
+    viewModel: MyCardsViewModel,
+
+    ) {
+    if (!state.isMyCardsLoading) {
+        CardsListing(
+            onClickItemCard = { id ->
+                navigator.navigate(CardDetailScreenDestination(id = id))
+            },
+            cards = state.myCards,
+            searchQuery = state.searchQuery,
+            onSearchQueryChange = { query ->
+                viewModel.onEvent(MyCardsEvent.OnSearchQueryChange(query))
+            }
+        )
+    } else {
+        Text("Loading")
+    }
+
+}
+
+@Composable
+fun DraftCardsScreen(
+    modifier: Modifier = Modifier,
+    navigator: DestinationsNavigator,
+    state: MyCardsState,
+    viewModel: MyCardsViewModel,
+) {
+    if (!state.isDraftCardsLoading) {
+        CardsListing(
+            onClickItemCard = { id ->
+                navigator.navigate(CardDetailScreenDestination(id = id))
+            },
+            cards = state.draftCards,
+            searchQuery = state.searchQuery,
+            onSearchQueryChange = { query ->
+                viewModel.onEvent(MyCardsEvent.OnSearchQueryChange(query))
+            }
+        )
+    } else {
+        Text(stringResource(R.string.txt_loading))
     }
 }

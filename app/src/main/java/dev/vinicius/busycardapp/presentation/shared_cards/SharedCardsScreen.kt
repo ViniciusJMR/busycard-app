@@ -72,7 +72,11 @@ fun SharedCardsScreen(
                 onClickItemCard = { id ->
                     navigator.navigate(CardDetailScreenDestination(id = id))
                 },
-                cards = state.cards
+                cards = state.cards,
+                searchQuery = state.searchQuery,
+                onSearchQueryChange = { query ->
+                    viewModel.onEvent(SharedCardsEvent.OnSearchQueryChange(query))
+                }
             )
         } else {
             Text(stringResource(R.string.txt_loading))

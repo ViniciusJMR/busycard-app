@@ -3,8 +3,12 @@ package dev.vinicius.busycardapp.presentation.my_cards
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.vinicius.busycardapp.domain.model.card.Card
 import dev.vinicius.busycardapp.domain.usecase.card.read.GetDraftCards
 import dev.vinicius.busycardapp.domain.usecase.card.read.GetMyCards
+import dev.vinicius.busycardapp.presentation.search_card.SearchCardsEvent
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.onStart
@@ -19,6 +23,12 @@ class MyCardsViewModel @Inject constructor(
 ): ViewModel() {
     private val _state = MutableStateFlow(MyCardsState())
     val state = _state.asStateFlow()
+
+    private lateinit var myCardsList: List<Card>
+    private lateinit var draftCardsList: List<Card>
+
+    private var searchJob: Job? = null
+
 
     init {
         viewModelScope.launch {
@@ -37,6 +47,7 @@ class MyCardsViewModel @Inject constructor(
                             isMyCardsLoading = false
                         )
                     }
+                    myCardsList = cards
                 }
 
             getDraftCards()
@@ -54,7 +65,44 @@ class MyCardsViewModel @Inject constructor(
                             isDraftCardsLoading = false
                         )
                     }
+                    draftCardsList = cards
                 }
         }
+    }
+
+
+    fun onEvent(event: MyCardsEvent) {
+        when (event) {
+            is MyCardsEvent.OnSearchQueryChange -> {
+                _state.update {
+                    it.copy(
+                        searchQuery = event.query
+                    )
+                }
+                searchJob?.cancel()
+                searchJob = viewModelScope.launch {
+                    delay(500L)
+                    _state.update {
+                        it.copy(
+                            isMyCardsLoading = true,
+                            isDraftCardsLoading = true
+                        )
+                    }
+                    _state.update {
+                        it.copy(
+                            myCards = myCardsList.filter { it.name.contains(event.query, true) },
+                            draftCards = draftCardsList.filter { it.name.contains(event.query, true) },
+                        )
+                    }
+                    _state.update {
+                        it.copy(
+                            isMyCardsLoading = false,
+                            isDraftCardsLoading = false
+                        )
+                    }
+                }
+            }
+        }
+
     }
 }
