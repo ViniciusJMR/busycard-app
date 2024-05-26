@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BusyCardApp</string>
+    <string name="app_name">Business Card Manager</string>
     <string name="txt_texttype_text">Texto</string>
     <string name="txt_texttype_phone">Telefone</string>
     <string name="txt_texttype_email">Email</string>
