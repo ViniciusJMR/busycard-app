@@ -16,46 +16,38 @@ class AuthRepository @Inject constructor(
 
     private val auth = Firebase.auth
 
-    var currentUser: FirebaseUser? = auth.currentUser
+    override fun getCurrentUserId(): String = auth.currentUser?.uid ?: ""
 
-    override fun getCurrentUserId(): String = currentUser?.uid ?: ""
-
-    override fun isLogged() = currentUser != null
+    override fun isLogged() = auth.currentUser != null
 
     override suspend fun logIn(email: String, password: String) {
         val authTask = auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+                    Log.d(TAG, "successful login - ${auth.currentUser.toString()}")
+                } else {
+                    it.exception?.printStackTrace()
+                    throw Exception(it.exception)
+                }
+            }
         authTask.await()
-
-        when {
-            authTask.isSuccessful -> {
-                currentUser = authTask.result.user
-            }
-            authTask.isCanceled -> {
-                Log.e(TAG, "login: Error when trying to login. ${authTask.exception?.message}")
-                authTask.exception?.printStackTrace()
-            }
-
-        }
 
     }
 
     override fun logOut() {
         auth.signOut()
-        currentUser = null
     }
 
     override suspend fun signIn(email: String, password: String) {
         val authTask = auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+                    Log.d(TAG, "successful login - ${auth.currentUser.toString()}")
+                } else {
+                    it.exception?.printStackTrace()
+                    throw Exception(it.exception)
+                }
+            }
         authTask.await()
-
-        when {
-            authTask.isSuccessful -> {
-                currentUser = authTask.result.user
-            }
-            authTask.isCanceled -> {
-                Log.e(TAG, "login: Error when trying to create account. ${authTask.exception?.message}")
-                authTask.exception?.printStackTrace()
-            }
-        }
     }
 }
