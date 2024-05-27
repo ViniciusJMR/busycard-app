@@ -64,7 +64,7 @@ class CardDetailViewModel @Inject constructor(
                             isScreenLoading = false,
                             id = card.id ?: "",
                             cardState = card.cardState,
-                            imagePath = card.image.uri.toString(),
+                            imagePath = card.image.uri?.toString() ?: "",
                             name = card.name,
                             owner = card.owner,
                             cardSize = card.cardSize,
