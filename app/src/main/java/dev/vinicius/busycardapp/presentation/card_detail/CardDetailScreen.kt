@@ -82,6 +82,7 @@ fun CardDetailScreen(
     modifier: Modifier = Modifier,
     viewModel: CardDetailViewModel = hiltViewModel(),
     saveAsSharedCard: Boolean = false,
+    isFromDraft: Boolean = false,
     navigator: DestinationsNavigator,
     id: String,
 ) {
@@ -149,7 +150,7 @@ fun CardDetailScreen(
                     if (state.cardState == CardState.MINE) {
                         IconButton(
                             onClick = {
-                                navigator.navigate(CardEditingScreenDestination(id = id)) {
+                                navigator.navigate(CardEditingScreenDestination(id = id, isFromDraft = isFromDraft)) {
                                     popUpTo(MyCardsScreenDestination)
                                 }
                             }
@@ -166,15 +167,18 @@ fun CardDetailScreen(
             )
         },
         floatingActionButton = {
-            Column {
-                FloatingActionButton(
-                    onClick = {
-                        event( CardInfoEvent.DialogEvent.OnShowShareDialog )
+            Column (
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                if (!isFromDraft) {
+                    FloatingActionButton(
+                        onClick = {
+                            event( CardInfoEvent.DialogEvent.OnShowShareDialog )
+                        }
+                    ) {
+                        Icon(Icons.Outlined.Share, contentDescription = "")
                     }
-                ) {
-                    Icon(Icons.Outlined.Share, contentDescription = "")
                 }
-                Spacer(modifier = Modifier.height(8.dp))
                 FloatingActionButton(
                     onClick = {
                         event( CardInfoEvent.ModalEvent.OnShowBottomSheet )

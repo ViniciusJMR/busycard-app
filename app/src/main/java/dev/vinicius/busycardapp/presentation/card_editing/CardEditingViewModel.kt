@@ -60,8 +60,9 @@ class CardEditingViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             val id = savedStateHandle.get<String>("id") ?: return@launch
+            val isFromDraft = savedStateHandle.get<Boolean>("isFromDraft") ?: false
 
-            getCardById(id)
+            getCardById(Pair(id, isFromDraft))
                 .onStart {
                     Log.d(CardDetailViewModel.TAG, "Started")
                     _state.update {
@@ -243,7 +244,7 @@ class CardEditingViewModel @Inject constructor(
                 }
 
                 viewModelScope.launch {
-                    val useCase = if (_state.value.isDraft)
+                    val useCase = if (_state.value.isDraft && !card.isDraft)
                         saveCardFromDraft
                     else
                         saveCard

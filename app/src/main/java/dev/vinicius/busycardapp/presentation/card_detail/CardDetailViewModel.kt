@@ -44,9 +44,10 @@ class CardDetailViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             val id = savedStateHandle.get<String>("id") ?: return@launch
+            val isFromDraft = savedStateHandle.get<Boolean>("isFromDraft") ?: false
             val saveAsSharedCard = savedStateHandle.get<Boolean>("saveAsSharedCard") ?: false
             Log.d(TAG, "id: $id")
-            getCardById(id)
+            getCardById(Pair(id, isFromDraft))
                 .onStart {
                     Log.d(TAG, "Started")
                     _state.update {
@@ -147,7 +148,9 @@ class CardDetailViewModel @Inject constructor(
             }
             CardInfoEvent.CardEvent.OnDeleteCard -> {
                 viewModelScope.launch {
-                    deleteCardById(_state.value.id)
+                    val isFromDraft = savedStateHandle.get<Boolean>("isFromDraft") ?: false
+
+                    deleteCardById(Pair(_state.value.id, isFromDraft))
                         .onStart {
                             _state.update {
                                 it.copy(

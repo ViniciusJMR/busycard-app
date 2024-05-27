@@ -133,7 +133,7 @@ fun DraftCardsScreen(
     if (!state.isDraftCardsLoading) {
         CardsListing(
             onClickItemCard = { id ->
-                navigator.navigate(CardDetailScreenDestination(id = id))
+                navigator.navigate(CardDetailScreenDestination(id = id, isFromDraft = true))
             },
             cards = state.draftCards,
             searchQuery = state.searchQuery,

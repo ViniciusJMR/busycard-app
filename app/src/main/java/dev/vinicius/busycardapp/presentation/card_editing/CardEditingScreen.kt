@@ -48,7 +48,8 @@ import dev.vinicius.busycardapp.ui.theme.BusyCardAppTheme
 fun CardEditingScreen(
     navigator: DestinationsNavigator,
     viewModel: CardEditingViewModel = hiltViewModel(),
-    id: String?
+    isFromDraft: Boolean = false,
+    id: String?,
 ) {
 
     val state by viewModel.state.collectAsState()

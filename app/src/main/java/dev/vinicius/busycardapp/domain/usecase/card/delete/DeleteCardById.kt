@@ -11,18 +11,20 @@ import javax.inject.Inject
 class DeleteCardById @Inject constructor(
     private val getUserUseCase: GetUserUseCase,
     private val cardRepository: IRepository<String, Card>
-): UseCase.NoSource<String>(){
-    override suspend fun execute(param: String): Flow<Unit> = flow {
+): UseCase.NoSource<Pair<String, Boolean>>(){
+    override suspend fun execute(param: Pair<String, Boolean>): Flow<Unit> = flow {
         var card: Card
+        val id = param.first
+        val searchInDraft = param.second
+
         getUserUseCase()
             .collect { user ->
                 val draftCards = user.draftCards
 
                 card = Card(
-                    id = param,
-                    isDraft = draftCards.any { it == param },
+                    id = id,
+                    isDraft = searchInDraft,
                 )
-
                 cardRepository.delete(card)
                 emit(Unit)
             }

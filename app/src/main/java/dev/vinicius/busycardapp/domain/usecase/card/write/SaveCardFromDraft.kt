@@ -23,16 +23,21 @@ class SaveCardFromDraft @Inject constructor(
     }
 
     override suspend fun execute(param: Card): Flow<Unit> = flow {
+        // O Cartão que está sendo salvo tem ue ser sempre rascunho
+        // Mas Com o CardEditing esse valor pode vir como false ainda sim
+        param.isDraft = true
+        Log.d(TAG, "SALVANDO CARTÃO DE DRAFT PARA PROD")
         val userId = auth.getCurrentUserId()
-        Log.d(TAG, "Saving card from draft")
         val card = Card(
-            id = null,
+            id = param.id,
             name = param.name,
             owner = userId,
             mainContact = param.mainContact,
             image = CardImage(uri = param.image.uri),
             fields = param.fields,
             isDraft = false,
+            cardColor = param.cardColor,
+            cardSize = param.cardSize,
         )
         val cardId = cardRepository.save(card)
 

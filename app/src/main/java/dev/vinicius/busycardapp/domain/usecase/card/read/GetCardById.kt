@@ -12,22 +12,24 @@ import javax.inject.Inject
 class GetCardById @Inject constructor(
     private val getUserUseCase: GetUserUseCase,
     private val repository: IRepository<String, Card>
-): UseCase<String, Card>() {
-    override suspend fun execute(param: String): Flow<Card> = flow {
+): UseCase< Pair<String, Boolean>, Card>() {
+    override suspend fun execute(param:Pair<String, Boolean> ): Flow<Card> = flow {
         var card: Card
         var state: CardState = CardState.NOT_SHARED
+        val id = param.first
+        val searchInDraft = param.second
         getUserUseCase()
             .collect { user ->
                 val myCards = user.myCards
                 val sharedCards = user.sharedCards
                 val draftCards = user.draftCards
 
-                val isShared = sharedCards.any { it == param }
-                val isMine = myCards.any { it == param } or draftCards.any { it == param }
+                val isShared = sharedCards.any { it == id}
+                val isMine = myCards.any { it == id } or draftCards.any { it == id }
 
                 card = Card(
-                    id = param,
-                    isDraft = draftCards.any { it == param },
+                    id = id,
+                    isDraft = searchInDraft,
                 )
 
                 state = when {

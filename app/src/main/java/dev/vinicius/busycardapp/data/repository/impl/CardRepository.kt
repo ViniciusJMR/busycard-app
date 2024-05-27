@@ -121,6 +121,8 @@ class CardRepository @Inject constructor(
             docFields = "draftFields"
         }
 
+        Log.d(TAG, "get: docCard: $docCard, docFields: $docFields")
+
         val id = item.id!!
 
         val cardsSnapshot = database.collection(docCard).document(id).get()
@@ -188,16 +190,19 @@ class CardRepository @Inject constructor(
             }
 
 
-        database
+        val cardTask = database
             .collection(docCard)
             .document(item.id.toString())
             .set(item.mapToFirebaseModel())
 
 
-        database
+        val fieldsTask = database
             .collection(docFields)
             .document(item.id.toString())
             .set(mapOf("list" to mapDomainFieldsToFirebaseModel(item.fields)))
+
+        cardTask.await()
+        fieldsTask.await()
 
         return key
     }
