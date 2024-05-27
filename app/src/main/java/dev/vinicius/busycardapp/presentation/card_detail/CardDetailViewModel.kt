@@ -44,6 +44,7 @@ class CardDetailViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             val id = savedStateHandle.get<String>("id") ?: return@launch
+            val saveAsSharedCard = savedStateHandle.get<Boolean>("saveAsSharedCard") ?: false
             Log.d(TAG, "id: $id")
             getCardById(id)
                 .onStart {
@@ -73,6 +74,10 @@ class CardDetailViewModel @Inject constructor(
                         )
                     }
                 }
+
+            if (saveAsSharedCard) {
+                onEvent(CardInfoEvent.CardEvent.OnSaveToSharedCard)
+            }
         }
     }
 

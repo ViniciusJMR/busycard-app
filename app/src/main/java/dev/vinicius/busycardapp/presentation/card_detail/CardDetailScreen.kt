@@ -80,6 +80,7 @@ import dev.vinicius.busycardapp.ui.theme.BusyCardAppTheme
 fun CardDetailScreen(
     modifier: Modifier = Modifier,
     viewModel: CardDetailViewModel = hiltViewModel(),
+    saveAsSharedCard: Boolean = false,
     navigator: DestinationsNavigator,
     id: String,
 ) {

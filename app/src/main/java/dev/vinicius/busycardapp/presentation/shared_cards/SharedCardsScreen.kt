@@ -43,7 +43,7 @@ fun SharedCardsScreen(
         ScanContract()
     ) { result ->
         result.contents?.let {
-            navigator.navigate(CardDetailScreenDestination(id = it))
+            navigator.navigate(CardDetailScreenDestination(id = it, saveAsSharedCard = true))
         }
     }
 
