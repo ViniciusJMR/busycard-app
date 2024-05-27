@@ -161,7 +161,8 @@ fun CompactAddressFieldComponent(
                 TextButton(
                     onClick = {
                         onCallIntent("geo:0,0?q=${Uri.encode(textLocalization)}")
-                    }
+                    },
+                    enabled = textLocalization.isNotBlank()
                 ) {
                     Text(stringResource(R.string.txt_search_text_map))
                 }
