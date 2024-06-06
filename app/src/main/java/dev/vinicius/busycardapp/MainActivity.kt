@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -112,7 +113,7 @@ class MainActivity: ComponentActivity() {
         val icon: ImageVector,
         @StringRes val label: Int
     ) {
-        SharedCards(SharedCardsScreenDestination, Icons.Outlined.CardMembership, R.string.label_bottomnav_shared_screen),
+        SharedCards(SharedCardsScreenDestination, Icons.Outlined.CardMembership, R.string.label_bottomnav_favorites_screen),
         SearchCards(SearchCardsScreenDestination, Icons.Outlined.Search, R.string.label_bottomnav_search_screen),
         MyCards(MyCardsScreenDestination, Icons.Outlined.CreditCard, R.string.label_bottomnav_mycards_screen),
         Profile(ProfileScreenDestination, Icons.Outlined.Person, R.string.label_bottomnav_profile_screen)
@@ -140,6 +141,7 @@ class MainActivity: ComponentActivity() {
                     icon = { Icon(destination.icon, contentDescription = stringResource(destination.label)) },
                     label = {
                         Text(
+                            textAlign = TextAlign.Center,
                             text = stringResource(destination.label),
                             style = MaterialTheme.typography.labelSmall
                         )
