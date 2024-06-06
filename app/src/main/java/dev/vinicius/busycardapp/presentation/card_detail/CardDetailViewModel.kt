@@ -108,6 +108,9 @@ class CardDetailViewModel @Inject constructor(
                                     isBottomSheetLoading = false
                                 )
                             }
+                            _effect.update {
+                                CardDetailEffect.ShowSnackbar("Erro ao adicionar cartão aos favoritos")
+                            }
                         }
                         .collect {
                             _state.update {
@@ -115,6 +118,9 @@ class CardDetailViewModel @Inject constructor(
                                     cardState = CardState.SHARED,
                                     isBottomSheetLoading = false
                                 )
+                            }
+                            _effect.update {
+                                CardDetailEffect.ShowSnackbar("Cartão adicionado aos favoritos")
                             }
                         }
                 }
@@ -135,6 +141,9 @@ class CardDetailViewModel @Inject constructor(
                                     isBottomSheetLoading = false
                                 )
                             }
+                            _effect.update {
+                                CardDetailEffect.ShowSnackbar("Erro ao remover cartão dos favoritos")
+                            }
                         }
                         .collect {
                             _state.update {
@@ -142,6 +151,9 @@ class CardDetailViewModel @Inject constructor(
                                     cardState = CardState.NOT_SHARED,
                                     isBottomSheetLoading = false
                                 )
+                            }
+                            _effect.update {
+                                CardDetailEffect.ShowSnackbar("Cartão removido dos favoritos")
                             }
                         }
                 }

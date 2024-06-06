@@ -19,18 +19,28 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.ArrowBackIosNew
+import androidx.compose.material.icons.outlined.CardMembership
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -40,11 +50,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -93,16 +105,8 @@ fun CardDetailScreen(
 
     val sheetState = rememberModalBottomSheetState()
 
-    LaunchedEffect(effect) {
-        effect?.let {
-            when(it) {
-                CardDetailEffect.ClosePage -> {
-                    navigator.navigateUp()
-                }
-            }
-            viewModel.resetEffect()
-        }
-    }
+    val snackbarHostState = remember { SnackbarHostState() }
+
 
     if (state.showShareDialog) {
         CardDetailShareDialog(
@@ -134,6 +138,9 @@ fun CardDetailScreen(
 
     Scaffold(
         Modifier.fillMaxSize(),
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
         topBar = {
             TopAppBar(
                 title = {
@@ -171,6 +178,26 @@ fun CardDetailScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 if (!isFromDraft) {
+                    if (state.cardState != CardState.MINE) {
+                        val onEvent: CardInfoEvent.CardEvent
+                        val icon: ImageVector
+
+                        if (state.cardState == CardState.SHARED) {
+                            onEvent = CardInfoEvent.CardEvent.OnDeleteFromSharedCard
+                            icon = Icons.Filled.Star
+                        } else {
+                            onEvent = CardInfoEvent.CardEvent.OnSaveToSharedCard
+                            icon = Icons.Outlined.StarOutline
+                        }
+
+                        FloatingActionButton(
+                            onClick = {
+                                event(onEvent)
+                            }
+                        ) {
+                            Icon(icon, contentDescription = null)
+                        }
+                    }
                     FloatingActionButton(
                         onClick = {
                             event( CardInfoEvent.DialogEvent.OnShowShareDialog )
@@ -189,6 +216,22 @@ fun CardDetailScreen(
             }
         }
     ) {
+
+        LaunchedEffect(effect) {
+            effect?.let {effect ->
+                when(effect) {
+                    CardDetailEffect.ClosePage -> {
+                        navigator.navigateUp()
+                    }
+
+                    is CardDetailEffect.ShowSnackbar -> {
+                        snackbarHostState.showSnackbar(message = effect.message)
+                    }
+                }
+                viewModel.resetEffect()
+            }
+        }
+
         Box (
             Modifier
                 .fillMaxSize()
@@ -354,31 +397,31 @@ fun CardInfoBottomSheet(
             )
         }
 
-        if (cardState != CardState.MINE) {
-            Row (
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                TextButton(onClick = {
-                    if (cardState != CardState.SHARED) {
-                        onAddToSharedCards()
-                    } else {
-                        onDeleteFromSharedCards()
-                    }
-                }) {
-                    if (cardState != CardState.SHARED) {
-                        Text(stringResource(R.string.txt_add_shared_cards))
-                    } else {
-                        Text(stringResource(R.string.txt_delete_shared_cards))
-                    }
-                }
-                if(isBottomSheetLoading){
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(25.dp)
-                    )
-                }
-            }
-        }
+//        if (cardState != CardState.MINE) {
+//            Row (
+//                modifier = Modifier.align(Alignment.CenterHorizontally),
+//                verticalAlignment = Alignment.CenterVertically,
+//            ) {
+//                TextButton(onClick = {
+//                    if (cardState != CardState.SHARED) {
+//                        onAddToSharedCards()
+//                    } else {
+//                        onDeleteFromSharedCards()
+//                    }
+//                }) {
+//                    if (cardState != CardState.SHARED) {
+//                        Text(stringResource(R.string.txt_add_shared_cards))
+//                    } else {
+//                        Text(stringResource(R.string.txt_delete_shared_cards))
+//                    }
+//                }
+//                if(isBottomSheetLoading){
+//                    CircularProgressIndicator(
+//                        modifier = Modifier.size(25.dp)
+//                    )
+//                }
+//            }
+//        }
 
         LazyColumn {
             items(fields) {
