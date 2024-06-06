@@ -47,6 +47,7 @@ sealed class CardEditingEvent {
             var textType: TextType? = null,
             var value: String? = null,
             var font: FieldFont? = null,
+            var color: Long? = null,
         ): FieldEvent()
         data class OnTextFieldTypeChange(val textType: TextType): FieldEvent()
 
@@ -66,6 +67,7 @@ sealed class CardEditingEvent {
             var textLocalization: String? = null,
             var localization: LatLng? = null,
             var font: FieldFont? = null,
+            var color: Long? = null,
             var iconSize : Int? = null,
             var iconPosition : LocationIconPosition? = null,
         ): FieldEvent()

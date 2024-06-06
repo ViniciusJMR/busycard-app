@@ -20,6 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -109,6 +110,7 @@ fun CardInfoAddressField(
                 modifier = Modifier.size(field.iconSize.dp),
                 imageVector = Icons.Outlined.LocationOn,
                 contentDescription = "",
+                tint = Color(field.color)
             )
         }
         Text(
@@ -120,7 +122,8 @@ fun CardInfoAddressField(
                 FieldFont.SANS_SERIF -> FontFamily.SansSerif
                 FieldFont.MONOSPACE -> FontFamily.Monospace
                 FieldFont.CURSIVE -> FontFamily.Cursive
-            }
+            },
+            color = Color(field.color)
         )
 
         if (field.iconPosition == LocationIconPosition.RIGHT) {
@@ -128,6 +131,7 @@ fun CardInfoAddressField(
                 modifier = Modifier.size(field.iconSize.dp),
                 imageVector = Icons.Outlined.LocationOn,
                 contentDescription = "",
+                tint = Color(field.color)
             )
         }
     }

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -29,12 +30,14 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -42,9 +45,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -70,6 +75,7 @@ import dev.vinicius.busycardapp.presentation.card_editing.component.LauncherForA
 import dev.vinicius.busycardapp.presentation.card_editing.component.RadioOptions
 import dev.vinicius.busycardapp.presentation.card_editing.component.SelectableOption
 import dev.vinicius.busycardapp.ui.theme.BusyCardAppTheme
+import kotlin.math.log
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -170,7 +176,10 @@ fun TextFieldMenu(
     var fieldType by remember { mutableStateOf(field.textType) }
     var fieldFont by remember { mutableStateOf(field.font) }
     var fieldSize by remember { mutableIntStateOf(field.size) }
+    var fieldColor by remember { mutableLongStateOf(field.color) }
     var error = fieldValue.isBlank()
+
+    Log.d("TextFieldMenu:", "color white: ${Color.White.value} | black: ${Color.Black.value} | fieldColor: $fieldColor")
 
     var showTypeDialog by remember { mutableStateOf(false) }
     var showFontDialog by remember { mutableStateOf(false) }
@@ -232,6 +241,7 @@ fun TextFieldMenu(
                 FieldFont.CURSIVE -> FontFamily.Cursive
             },
             fontSize = fieldSize.sp,
+            color = Color(fieldColor)
         )
         Spacer(Modifier.size(8.dp))
         Row (
@@ -303,6 +313,57 @@ fun TextFieldMenu(
             }
 
         }
+        Spacer(Modifier.size(4.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(stringResource(R.string.label_field_color))
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+            ) {
+                Row(
+                    Modifier
+                        .selectable(
+                            selected = (fieldColor == 0xFFFFFFFF),
+                            onClick = {
+                                fieldColor = 0xFFFFFFFF
+                            },
+                            role = Role.RadioButton
+                        ),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    RadioButton(
+                        selected = (fieldColor == 0xFFFFFFFF),
+                        onClick = null
+                    )
+                    Text(
+                        text = stringResource(R.string.txt_color_white),
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                }
+                Row(
+                    Modifier
+                        .selectable(
+                            selected = (fieldColor == 0xFF000000),
+                            onClick = {
+                                fieldColor = 0xFF000000
+                            },
+                            role = Role.RadioButton
+                        ),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    RadioButton(
+                        selected = (fieldColor == 0xFF000000),
+                        onClick = null
+                    )
+                    Text(
+                        text = stringResource(R.string.txt_color_black),
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                }
+            }
+        }
+
         Spacer(Modifier.size(32.dp))
         Button(
             modifier = Modifier
@@ -315,6 +376,7 @@ fun TextFieldMenu(
                         textType = fieldType,
                         font = fieldFont,
                         size = fieldSize,
+                        color = fieldColor,
                     )
                 )
             },
@@ -453,6 +515,8 @@ fun AddressFieldMenu(
     var textLocalization by remember { mutableStateOf(field.textLocalization) }
     var fieldFont by remember { mutableStateOf(field.font) }
     var fieldSize by remember { mutableIntStateOf(field.size) }
+    var fieldColor by remember { mutableLongStateOf(field.color) }
+
     var iconSize by remember { mutableIntStateOf(field.iconSize) }
     var localization by remember { mutableStateOf(field.localization) }
     var locationIconPosition by remember { mutableStateOf(field.iconPosition) }
@@ -549,6 +613,7 @@ fun AddressFieldMenu(
                     Icons.Outlined.LocationOn,
                     modifier = Modifier.size(iconSize.dp),
                     contentDescription = null,
+                    tint = Color(fieldColor)
                 )
             }
             Text(
@@ -561,12 +626,14 @@ fun AddressFieldMenu(
                     FieldFont.CURSIVE -> FontFamily.Cursive
                 },
                 fontSize = fieldSize.sp,
+                color = Color(fieldColor)
             )
             if (locationIconPosition == LocationIconPosition.RIGHT) {
                 Icon(
                     Icons.Outlined.LocationOn,
                     modifier = Modifier.size(iconSize.dp),
                     contentDescription = null,
+                    tint = Color(fieldColor)
                 )
             }
         }
@@ -678,8 +745,58 @@ fun AddressFieldMenu(
                 )
             }
         }
-        Spacer(modifier = Modifier.padding(16.dp))
 
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(stringResource(R.string.label_field_color))
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+            ) {
+                Row(
+                    Modifier
+                        .selectable(
+                            selected = (fieldColor == 0xFFFFFFFF),
+                            onClick = {
+                                fieldColor = 0xFFFFFFFF
+                            },
+                            role = Role.RadioButton
+                        ),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    RadioButton(
+                        selected = (fieldColor == 0xFFFFFFFF),
+                        onClick = null
+                    )
+                    Text(
+                        text = stringResource(R.string.txt_color_white),
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                }
+                Row(
+                    Modifier
+                        .selectable(
+                            selected = (fieldColor == 0xFF000000),
+                            onClick = {
+                                fieldColor = 0xFF000000
+                            },
+                            role = Role.RadioButton
+                        ),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    RadioButton(
+                        selected = (fieldColor == 0xFF000000),
+                        onClick = null
+                    )
+                    Text(
+                        text = stringResource(R.string.txt_color_black),
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.padding(16.dp))
         Button(
             enabled = !error,
             modifier = Modifier
@@ -694,6 +811,7 @@ fun AddressFieldMenu(
                         size = fieldSize,
                         iconSize = iconSize,
                         iconPosition = locationIconPosition,
+                        color = fieldColor,
                     )
                 )
             }

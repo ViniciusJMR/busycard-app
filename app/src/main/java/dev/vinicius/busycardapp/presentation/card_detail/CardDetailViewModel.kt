@@ -58,6 +58,7 @@ class CardDetailViewModel @Inject constructor(
                 }
                 .catch {
                     Log.e(TAG, "Error: ${it.message}")
+                    it.printStackTrace()
                 }
                 .collect{ card ->
                     Log.d(TAG, "Collected:  $card")

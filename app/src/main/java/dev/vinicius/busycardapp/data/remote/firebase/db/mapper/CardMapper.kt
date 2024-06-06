@@ -90,6 +90,7 @@ fun mapDomainFieldsToFirebaseModel(items: List<Field>): List<Map<String, Any>> =
                     "font" to font,
                     "iconSize" to iconSize,
                     "iconPosition" to iconPosition,
+                    "color" to color,
                 )
                 is Field.ImageField -> mapOf(
                     "type" to "IMAGE",
@@ -108,6 +109,7 @@ fun mapDomainFieldsToFirebaseModel(items: List<Field>): List<Map<String, Any>> =
                     "textType" to textType,
                     "value" to value,
                     "font" to font,
+                    "color" to color,
                 )
             }
         }
@@ -141,6 +143,12 @@ fun mapFieldToDomainModel(item: Map<String, Any>): Field {
             FieldFont.valueOf((item["font"] ?: "SANS_SERIF") as String),
             iconSize.toInt(),
             LocationIconPosition.valueOf((item["iconPosition"] ?: "LEFT") as String),
+            try {
+                // solução temporaria
+                item["color"] as Long
+            } catch (e: Exception) {
+                0XFFFFFFFF
+            }
         )
         "IMAGE" -> Field.ImageField(
             item["name"] as String,
@@ -159,7 +167,12 @@ fun mapFieldToDomainModel(item: Map<String, Any>): Field {
             size,
             TextType.valueOf(item["textType"] as String),
             item["value"] as String,
-            FieldFont.valueOf((item["font"] ?: "SANS_SERIF") as String)
+            FieldFont.valueOf((item["font"] ?: "SANS_SERIF") as String),
+            try {
+                item["color"] as Long
+            } catch (e: Exception) {
+                0XFFFFFFFF
+            }
         )
 
         else -> {

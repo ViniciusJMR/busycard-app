@@ -127,6 +127,7 @@ fun CardSurface(
                                 size = field.size,
                                 iconSize = field.iconSize,
                                 locationIconPosition = field.iconPosition,
+                                color = field.color,
                             )
                         }
                         is Field.ImageField -> {
@@ -141,6 +142,7 @@ fun CardSurface(
                                 text = field.value,
                                 font = field.font,
                                 size = field.size,
+                                color = field.color,
                             )
                         }
                     }
@@ -185,6 +187,7 @@ fun AddressFieldShow(
     font: FieldFont,
     size: Int,
     iconSize: Int,
+    color: Long,
     locationIconPosition: LocationIconPosition
 ) {
     val TAG = "AddressFieldShow"
@@ -199,6 +202,7 @@ fun AddressFieldShow(
                 modifier = Modifier.size(iconSize.dp),
                 imageVector = Icons.Outlined.LocationOn,
                 contentDescription = "",
+                tint = Color(color)
             )
 
         }
@@ -212,12 +216,14 @@ fun AddressFieldShow(
                 FieldFont.CURSIVE -> FontFamily.Cursive
             },
             fontSize = size.sp,
+            color = Color(color)
         )
         if (locationIconPosition == LocationIconPosition.RIGHT) {
             Icon(
                 modifier = Modifier.size(iconSize.dp),
                 imageVector = Icons.Outlined.LocationOn,
                 contentDescription = "",
+                tint = Color(color)
             )
 
         }
@@ -230,6 +236,7 @@ fun TextFieldShow(
     text: String,
     font: FieldFont,
     size: Int,
+    color: Long,
 ) {
     val TAG = "TextFieldShow"
     Log.d(TAG, "REcomposição - valor do texto: $text")
@@ -244,7 +251,8 @@ fun TextFieldShow(
             FieldFont.SANS_SERIF -> FontFamily.SansSerif
             FieldFont.MONOSPACE -> FontFamily.Monospace
             FieldFont.CURSIVE -> FontFamily.Cursive
-        }
+        },
+        color = Color(color)
     )
 }
 

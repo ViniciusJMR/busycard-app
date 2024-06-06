@@ -349,6 +349,9 @@ class CardEditingViewModel @Inject constructor(
                                 event.font?.let {
                                     font = it
                                 }
+                                event.color?.let {
+                                    color = it
+                                }
                             },
                         showBottomSheet = false
                     )
@@ -425,6 +428,9 @@ class CardEditingViewModel @Inject constructor(
                                 }
                                 event.iconPosition?.let {
                                     iconPosition = it
+                                }
+                                event.color?.let {
+                                    color = it
                                 }
                             },
                         showBottomSheet = false

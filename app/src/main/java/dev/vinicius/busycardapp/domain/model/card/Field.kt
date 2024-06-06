@@ -22,6 +22,7 @@ sealed class Field(
         var font: FieldFont = FieldFont.SANS_SERIF,
         var iconSize: Int = 0,
         var iconPosition: LocationIconPosition = LocationIconPosition.LEFT,
+        var color: Long = 0xFFFFFFFF,
     ): Field(name, offsetX, offsetY, size)
 
     data class ImageField(
@@ -40,5 +41,6 @@ sealed class Field(
         var textType: TextType = TextType.TEXT,
         var value: String = "",
         var font: FieldFont = FieldFont.SANS_SERIF,
+        var color: Long = 0xFFFFFFFF,
     ): Field(name, offsetX, offsetY, size)
 }
