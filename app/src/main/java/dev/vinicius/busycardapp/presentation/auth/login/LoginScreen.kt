@@ -1,6 +1,7 @@
 package dev.vinicius.busycardapp.presentation.auth.login
 
 import android.widget.Space
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
@@ -57,7 +58,8 @@ fun LoginScreen(
 
 
     Column (
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ){
         TextFieldComponent(
             value = state.email,

@@ -1,5 +1,6 @@
 package dev.vinicius.busycardapp.presentation.auth.signin
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedButton
@@ -47,7 +48,8 @@ fun SignInScreen(
 
 
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
         TextFieldComponent(
             value = state.name,
