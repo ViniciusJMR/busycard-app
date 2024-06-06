@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -82,6 +83,7 @@ fun SignInScreen(
             value = state.password,
             onValueChange = { event(SignInEvent.OnPasswordChange(it)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            visualTransformation = PasswordVisualTransformation(),
             label = { Text(stringResource(R.string.label_password))}
         )
 
@@ -90,6 +92,7 @@ fun SignInScreen(
             value = state.password2,
             onValueChange = { event(SignInEvent.OnPassword2Change(it)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            visualTransformation = PasswordVisualTransformation(),
             label = { Text(stringResource(R.string.label_password2))}
         )
 

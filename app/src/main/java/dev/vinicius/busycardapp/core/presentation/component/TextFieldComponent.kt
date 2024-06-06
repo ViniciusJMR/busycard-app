@@ -7,8 +7,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.VisualTransformation
 import dev.vinicius.busycardapp.R
 import dev.vinicius.busycardapp.presentation.auth.signin.SignInEvent
+import org.w3c.dom.Text
 
 
 @Composable
@@ -18,6 +20,7 @@ fun TextFieldComponent(
     label: @Composable () -> Unit,
     singleLine: Boolean = false,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
     modifier: Modifier = Modifier,
 ) {
     OutlinedTextField(
@@ -27,5 +30,6 @@ fun TextFieldComponent(
         label = label,
         singleLine = singleLine,
         keyboardOptions = keyboardOptions,
+        visualTransformation = visualTransformation,
     )
 }

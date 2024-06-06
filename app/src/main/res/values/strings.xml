@@ -59,4 +59,7 @@
     <string name="txt_error_address_localization">Obrigatório que o Texto do Campo ou um lugar no mapa seja selecionado</string>
     <string name="label_bottomnav_profile_screen">Perfil</string>
     <string name="label_bottomnav_favorites_screen">Favoritos</string>
+    <string name="label_field_color">Cor do Texto: </string>
+    <string name="txt_color_white">Branco</string>
+    <string name="txt_color_black">Preto</string>
 </resources>
