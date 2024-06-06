@@ -62,4 +62,5 @@
     <string name="label_field_color">Cor do Texto: </string>
     <string name="txt_color_white">Branco</string>
     <string name="txt_color_black">Preto</string>
+    <string name="txt_placeholder_search">Procurar</string>
 </resources>

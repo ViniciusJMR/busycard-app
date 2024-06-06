@@ -30,12 +30,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
+import dev.vinicius.busycardapp.R
 import dev.vinicius.busycardapp.core.presentation.component.PullToRefreshLazyColumn
 import dev.vinicius.busycardapp.domain.model.card.Card
 import dev.vinicius.busycardapp.ui.theme.BusyCardAppTheme
@@ -57,7 +59,7 @@ fun CardsListing(
             value = searchQuery,
             onValueChange = onSearchQueryChange,
             placeholder = {
-                Text(text = "Search")
+                Text(stringResource(R.string.txt_placeholder_search))
             },
             maxLines = 1,
             singleLine = true,
